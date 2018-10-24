@@ -2,6 +2,10 @@
 model NewModel
 
 global {
+	// Parameters
+	bool close_lake;
+	bool prev_close_lake;
+	bool recompute_path <- false;
 
 	string TYPE_MOTORBIKE <- "motorbyke";
 	string TYPE_CAR <- "car";
@@ -47,7 +51,11 @@ global {
 
 	geometry shape <- envelope(roads_shape_file);
 
-	map<string,rgb> col <- map(['footway'::#green,'residential'::#blue,'primary'::#orange,'secondary'::#yellow,'tertiary'::#indigo,'primary_link'::#black,'unclassified'::#black,'service'::#black,'living_street'::#black,'path'::#black,'secondary_link'::#black,'trunk'::#black,'pedestrian'::#darkgreen,'steps'::#black]);
+	map<string,rgb> col <- map(['footway'::#green,'residential'::#blue,'primary'::#orange,
+								'secondary'::#yellow,'tertiary'::#indigo,'primary_link'::#black,
+								'unclassified'::#black,'service'::#black,'living_street'::#black,
+								'path'::#black,'secondary_link'::#black,'trunk'::#black,
+								'pedestrian'::#darkgreen,'steps'::#black]);
 	
 	graph road_graph;
 	map<road,float> road_weights;
@@ -72,6 +80,30 @@ global {
 		road_graph <- as_edge_graph(road);
 		      	
 	}
+
+	reflex update_compute_path when: recompute_path {
+		recompute_path <- false;		
+	}
+
+
+	reflex close_roads when:(close_lake != prev_close_lake) {
+		list<road> roads;
+		if(close_lake) {
+			roads <- road where (!each.close);
+		} else {
+			roads <- list(road);
+		}
+		
+		road_geom <- union( roads accumulate(each.shape));		
+		ask pollutant_grid {active <- road_geom overlaps self;}
+		
+	    road_weights <- roads as_map (each::each.shape.perimeter);
+		road_graph <- as_edge_graph(roads);			
+
+		recompute_path <- true;
+		prev_close_lake <- close_lake;
+	}
+	
 
 	reflex update_rates when: (nb_moto != nb_moto_prev) {
 		nb_car <- 100 - nb_moto;
@@ -124,14 +156,6 @@ global {
 		road_weights <- road as_map (each::each.shape.perimeter / each.speed_coeff);
 		road_graph <- road_graph with_weights road_weights;
 	}
-	
-	aspect world {
-		write #zoom;
-		write #camera_target;
-		draw (shape + 1/#zoom) at_location #camera_target color: #yellow;
-		
-	}
-
 }
 
 species vehicle skills:[moving] {
@@ -148,7 +172,7 @@ species vehicle skills:[moving] {
 	float speed <- 40 #m /#s;
 
 	reflex move when: target != nil {
-		do goto target: target on: road_graph recompute_path: false move_weights: road_weights;
+		do goto target: target on: road_graph recompute_path: recompute_path move_weights: road_weights;
 		if target = location {
 			target <- nil ;
 		}
@@ -212,7 +236,11 @@ species road {
 	}
 	
 	aspect traffic {
-		draw shape+1/speed_coeff color: (speed_coeff=1.0)?#white : #red;
+		if(close_lake and close) {
+			draw shape+5 color: #orange;					
+		} else {
+			draw shape+1/speed_coeff color: (speed_coeff=1.0)?#white : #red;		
+		}
 	}
 	
 	aspect lines {
@@ -259,13 +287,10 @@ experiment exp {
 	parameter "Nombre de personne" var: nb_people <- 0 min: 0 max: 2000;
 	parameter "voiture <-> moto" var: nb_moto <- 100 min: 0 max: 100;
 	parameter "Nombre de personne par voiture" var: nb_people_car <- 2 min: 1 max: 7;
-
+	parameter "Fermer bord lac" var: close_lake <- false category: "Urban planning";
 	
 	output {
 		display d type: opengl background: #black {
-			graphics g {
-				draw world.shape empty: true border: #white;
-			}
 			species lake;
 			species river;
 			species building;
@@ -289,9 +314,7 @@ experiment exp {
 				data TYPE_MOTORBIKE value: vehicle count(each.type = TYPE_MOTORBIKE);
 				data TYPE_CAR value: vehicle count(each.type = TYPE_CAR);
 				data TYPE_TRUCK value: vehicle count(each.type = TYPE_TRUCK);
-			}		
-			
-			species species(world) aspect: world;						
+			}					
 		}
 		monitor "nb moto" value: dynamic_number_moto;
 		monitor "nb voitures" value: dynamic_number_car;
