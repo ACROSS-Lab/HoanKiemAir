@@ -65,7 +65,15 @@ global {
 	geometry road_geom;
 		
 	init {
-		create road from: roads_shape_file {}
+		create road from: roads_shape_file {
+			if(oneway = 0){
+				create road {
+					shape <- polyline(reverse(myself.shape.points));
+					type <- myself.type;
+					close <- myself.close;
+				}
+			}
+		}
 		create building from: buildings_shape_file;	
 		create lake from: lakes_shape_file;	
 		create river from: rivers_shape_file;
@@ -237,9 +245,9 @@ species road {
 	
 	aspect traffic {
 		if(close_lake and close) {
-			draw shape+5 color: #orange;					
+			draw shape+5 color: #orange end_arrow: 2;					
 		} else {
-			draw shape+1/speed_coeff color: (speed_coeff=1.0)?#white : #red;		
+			draw shape+1/speed_coeff color: (speed_coeff=1.0)?#white : #red end_arrow: 10;		
 		}
 	}
 	
