@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HoanKiemAir Controller</string>
+
+    <string name="label_category_simulation_params">Simulation parameters</string>
+    <string name="label_category_display">Display</string>
+
+    <string name="label_num_people">Number of people</string>
+    <string name="label_vehicle_ratio">Car/motorbike ratio</string>
+    <string name="label_car_capacity">Car capacity</string>
+    <string name="label_close_roads">Close roads</string>
+
+    <string name="label_display_mode">Display mode</string>
+    <string name="radio_button_traffic">Traffic</string>
+    <string name="radio_button_pollution">Pollution</string>
+</resources>
