@@ -1,7 +1,7 @@
 model NewModel
 
 global {
-	bool connect_to_mqtt_server <- true;
+	bool connect_to_mqtt_server <- false;
 	
 	int DISPLAY_MODE_TRAFFIC <- 0 const: true;
 	int DISPLAY_MODE_POLLUTION <- 1 const: true;
@@ -77,13 +77,12 @@ global {
 	init {
 		do create_roads("../includes/roads_scenario0_noClose.shp");
 		road_geom <- union(road accumulate (each.shape));
-				
-		active_cells <- pollutant_grid where (!empty(road overlapping each));
-		ask active_cells { active <- true; }
-		
-      	//Weights of the road
+		//Weights of the road
       	road_weights <- road as_map (each::each.shape.perimeter);
 		road_graph <- as_edge_graph(road);
+		
+		active_cells <- pollutant_grid where (!empty(road overlapping each));
+		ask active_cells { active <- true; }
 		
 		create building from: buildings_shape_file;	
 		create lake from: lakes_shape_file;	
@@ -106,13 +105,8 @@ global {
 	action create_roads(string file_name) {
 		shape_file roads_file <-  shape_file(file_name);
 		create road from:  roads_file with: [close_string::read("close")] {
+			close <- (close_string = "T") ? true : false;
 			if(oneway = 0) {
-				if (close_string = "T") {
-					close <- true;
-				}
-				else {
-					close <- false;
-				}
 				create road {
 					shape <- polyline(reverse(myself.shape.points));
 					type <- myself.type;
@@ -156,14 +150,15 @@ global {
 			write file_name;
 			roads <- road where (!each.close);
 		}
-		
-		road_geom <- union(roads accumulate(each.shape));		
-		ask pollutant_grid {active <- road_geom overlaps self;}
-		
-	    road_weights <- roads as_map (each::each.shape.perimeter);
-		road_graph <- as_edge_graph(roads);			
-
+		road_geom <- union(roads accumulate (each.shape));
+		//Weights of the road
+      	road_weights <- roads as_map (each::each.shape.perimeter);
+		road_graph <- as_edge_graph(roads);
 		recompute_path <- true;
+			
+		ask pollutant_grid {active <- road_geom overlaps self;}
+		ask vehicle {location <- any_location_in(road_geom);}
+		
 		close_roads_prev <- close_roads;
 	}
 	
@@ -390,7 +385,7 @@ experiment exp {
 	parameter "Car/motorbike ratio" var: nb_moto <- 100 min: 0 max: 100;
 	parameter "Number of people in each car" var: nb_people_car <- 2 min: 1 max: 7;
 	parameter "Close roads" var: close_roads <- false category: "Urban planning";
-	parameter "Road scenario" var: road_scenario;
+	parameter "Road scenario" var: road_scenario min: 0 max: 2;
 	
 	output {
 		display d type: opengl background: #black {
