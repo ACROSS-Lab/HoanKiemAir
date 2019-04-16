@@ -37,7 +37,7 @@ global {
 		}
 		
 	//	create cell from:road accumulate(each.my_geoms);
-		save cell type:'shp' to:"../../includes/traffic_show.shp" with:[id_cell_in_road::"num_cell"];
+		save cell type:'shp' to:"../../includes/road_pollution_grid.shp" with:[id_cell_in_road::"num_cell"];
 	}
 	
 }
