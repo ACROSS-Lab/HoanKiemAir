@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ip_text_hint">Address IP de l\'hôte</string>
+    <string name="button_connect">Se connecter</string>
+    <string name="label_category_simulation_params">Paramètres de simulation</string>
+    <string name="label_category_display">Affichage</string>
+    <string name="label_num_people">Nombre de personnes</string>
+    <string name="label_vehicle_ratio">Voiture/moto ratio</string>
+    <string name="label_car_capacity">Nombre de personnes dans chaque voiture</string>
+    <string name="label_close_roads">Fermer les routes</string>
+    <string name="label_display_mode">Mode d\'affichage</string>
+    <string name="radio_button_traffic">Trafic</string>
+    <string name="radio_button_pollution">Pollution</string>
+</resources>

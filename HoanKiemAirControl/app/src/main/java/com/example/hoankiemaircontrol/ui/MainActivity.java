@@ -2,14 +2,12 @@ package com.example.hoankiemaircontrol.ui;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.hoankiemaircontrol.R;
 import com.example.hoankiemaircontrol.network.MQTTConnector;
@@ -19,9 +17,9 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.lang.ref.WeakReference;
 
-public class MainActivity extends AppCompatActivity {
-    private static final String SERVER_ADDR = "192.168.0.146";
+import androidx.appcompat.app.AppCompatActivity;
 
+public class MainActivity extends AppCompatActivity {
     private static final int N_PEOPLE_MIN = 0;
     private static final int N_PEOPLE_MAX = 2000;
     private static final int VEHICLE_RATIO_MIN = 0;
@@ -52,13 +50,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Connect to MQTT server
+        String ip = getIntent().getStringExtra("ip");
         try {
-            mConnector = new MQTTConnector(SERVER_ADDR, null, null);
-            Toast.makeText(this, "Connection established!", Toast.LENGTH_SHORT).show();
+            mConnector = new MQTTConnector(ip, null, null);
         } catch (MqttException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Connection failed!", Toast.LENGTH_SHORT).show();
         }
 
         mTextNumPeopleMin = findViewById(R.id.text_num_people_min);

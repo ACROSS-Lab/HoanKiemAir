@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ip_text_hint">Địa chỉ IP của máy chủ</string>
+    <string name="button_connect">Kết nối</string>
+    <string name="label_category_simulation_params">Tham số mô phỏng</string>
+    <string name="label_category_display">Hiển thị</string>
+    <string name="label_num_people">Số lượng người</string>
+    <string name="label_vehicle_ratio">Tỉ lệ ô tô/xe máy</string>
+    <string name="label_car_capacity">Số lượng người trong ô tô</string>
+    <string name="label_close_roads">Cấm đường</string>
+    <string name="label_display_mode">Chế độ hiện thị</string>
+    <string name="radio_button_traffic">Giao thông</string>
+    <string name="radio_button_pollution">Ô nhiễm</string>
+</resources>

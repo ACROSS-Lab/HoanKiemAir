@@ -1,5 +1,6 @@
 package com.example.hoankiemaircontrol.network;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;

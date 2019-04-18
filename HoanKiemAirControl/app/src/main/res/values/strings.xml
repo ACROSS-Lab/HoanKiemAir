@@ -1,12 +1,16 @@
 <resources>
-    <string name="app_name">HoanKiemAir Controller</string>
+    <string name="app_name" translatable="false">HoanKiemAir Controller</string>
+    <string name="locale_lang" translatable="false">en</string>
+
+    <string name="ip_text_hint">Host IP address</string>
+    <string name="button_connect">Connect</string>
 
     <string name="label_category_simulation_params">Simulation parameters</string>
     <string name="label_category_display">Display</string>
 
     <string name="label_num_people">Number of people</string>
     <string name="label_vehicle_ratio">Car/motorbike ratio</string>
-    <string name="label_car_capacity">Car capacity</string>
+    <string name="label_car_capacity">Number of people in each car</string>
     <string name="label_close_roads">Close roads</string>
 
     <string name="label_display_mode">Display mode</string>
