@@ -405,6 +405,7 @@ experiment exp {
 	parameter "Car/motorbike ratio" var: nb_moto <- 100 min: 0 max: 100;
 	parameter "Number of people in each car" var: nb_people_car <- 2 min: 1 max: 7;
 	parameter "Close roads" var: close_roads <- false category: "Urban planning";
+	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
 	parameter "Road scenario" var: road_scenario min: 0 max: 2;
 	
 	output {

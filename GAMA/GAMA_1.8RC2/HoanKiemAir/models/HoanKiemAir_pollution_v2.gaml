@@ -134,6 +134,8 @@ global {
 				do listen with_name: "display_mode" store_to: "selected_display_mode";
 			}
 		}
+		
+		create additional_info;
 	}
 
 	reflex update_compute_path when: recompute_path {
@@ -379,28 +381,20 @@ species dummy_road schedules: [] {
 	list<point> lane_position_shift <- [];
 	
 	aspect default {
-		if(highlight) {
-		point new_point;
-		int lights_number;
-		
-		draw shape color: #grey end_arrow: 10;
-
-		loop i from: 0 to: segments_number-1 {
-			lights_number <- 3; // nombre de lumiere proportionnel a la densite de trafic et a la longueur du segment
-		 	loop j from:0 to: lights_number-1{// calcul des positions des points. Les points bougent: leur position est decalee selon le cycle
-//		 		if oneway = 1{		
+		if (highlight) {
+			point new_point;
+			int lights_number;
+			
+			draw shape color: #grey end_arrow: 10;
+	
+			loop i from: 0 to: segments_number-1 {
+				lights_number <- 3;
+			 	loop j from:0 to: lights_number-1{
 	 				new_point <- {shape.points[i].x + segments_x[i] * (j +  mod(cycle,20)/20)/lights_number, shape.points[i].y + segments_y[i] * (j + mod(cycle,20)/20)/lights_number};
 					draw circle(aspect_size, new_point) color: #white ;
-//		 		} 
-//		 		else {
-//	 				new_point <- {lane_position_shift[i].x + shape.points[i].x + segments_x[i] * (j + 1 -  mod(cycle,40)/40)/lights_number, lane_position_shift[i].y + shape.points[i].y + segments_y[i] * (j + 1 - mod(cycle,100)/100)/lights_number};
-//					draw circle(aspect_size, new_point) color: #purple;
-//					new_point <- {-lane_position_shift[i].x + shape.points[i].x + segments_x[i] * (j +  mod(cycle,40)/40)/lights_number, -lane_position_shift[i].y + shape.points[i].y + segments_y[i] * (j + mod(cycle,100)/100)/lights_number};
-//					draw circle(aspect_size, new_point) color: #purple;
-//				}	
-			}
-		}	
-	}
+				}
+			}	
+		}
 	}
 }
 
@@ -408,6 +402,32 @@ species lake {
 	aspect default {
 		draw shape color: #darkblue;
 	}	
+}
+
+species additional_info {
+	geometry rect(float x, float y, float width, float height) {
+		return polygon([{x, y}, {x + width, y}, {x + width, y + height}, {x, y + height}, {x, y}]);
+	}
+	
+	action draw_bar(float current_val, float max_val, float x, float y, float width, float height, 
+									string bar_name, string left_label, string right_label) {
+		float length_filled<- width * current_val / max_val;
+		float length_unfilled <- width - length_filled;
+		
+		draw rect(x, y, length_filled, height) color: #orange;
+		draw rect(x + length_filled, y, length_unfilled, height) color: #white;
+		
+		draw(bar_name) at: {x - 200, y - 50} font: font(10);
+		draw(left_label) at: {x - 20, y + 200} font: font(10);
+		draw(right_label) at: {x + width - 20, y + 200} font: font(10);
+		
+		return 0;
+	}
+	
+	aspect default {
+		do draw_bar(nb_people, 2000, 300, 1800, 500, 100, "Number of people: ", "0", "2000");
+		do draw_bar(nb_moto, 100, 300, 2200, 500, 100, "Car/motorbike ratio: ", "0", "100");
+	}
 }
 
 experiment exp {
@@ -423,12 +443,15 @@ experiment exp {
 			species road;
 			species vehicle;
 			species dummy_road;
+			
+			species additional_info;
 
-//			chart "pollution" background: #black axes: #white size: {0.7,0.5} position: {1,0} 
-//					x_label: "temps" y_label:"pollution"{
-//				data "pollution max" value: (pollutant_cell max_of(each.pollution)) color: #red marker: false;				
-//				data "pollution moyenne" value: mean(pollutant_cell accumulate(each.pollution)) color: #white marker: false;
-//			}	
+			chart "pollution" background: #black axes: #white size: {0.3, 0.4} position: {0.7, 0.6} 
+					x_label: "temps" y_label:"pollution"  {
+				data "pollution max" value: (pollutant_cell max_of(each.pollution)) color: #red marker: false;				
+				data "pollution moyenne" value: mean(pollutant_cell accumulate(each.pollution)) color: #white marker: false;
+			}
+			
 //			chart "vitesse"  background: #black axes: #white size: {0.7,0.5} position: {1,0.5} 
 //					x_label: "temps" y_label:"vitesse" {
 //				data "vitesse max" value: (vehicle max_of(each.real_speed)) color: #red marker: false;				
