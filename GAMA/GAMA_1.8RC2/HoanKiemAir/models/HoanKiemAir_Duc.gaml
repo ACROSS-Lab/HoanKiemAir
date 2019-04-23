@@ -232,19 +232,19 @@ species controller skills: [remoteGUI] {
 	int selected_display_mode <- display_mode;
 	int selected_road_scenario <- road_scenario_prev;
 	
-	reflex update_nb_people when: selected_nb_people != nb_people {
+	reflex update_nb_people when: selected_nb_people != nb_people_prev {
 		nb_people <- selected_nb_people;
 	}
 	
-	reflex update_nb_moto when: selected_nb_moto != nb_moto {
+	reflex update_nb_moto when: selected_nb_moto != nb_moto_prev {
 		nb_moto <- selected_nb_moto;
 	}
 	
-	reflex update_nb_people_car when: selected_nb_people_car != nb_people_car {
+	reflex update_nb_people_car when: selected_nb_people_car != nb_people_car_prev {
 		nb_people_car <- selected_nb_people_car;
 	}
 	
-	reflex update_roads when: selected_close_roads != close_roads {
+	reflex update_roads when: selected_close_roads != close_roads_prev {
 		close_roads <- selected_close_roads;
 	}
 	
@@ -252,7 +252,7 @@ species controller skills: [remoteGUI] {
 		display_mode <- selected_display_mode;
 	}
 	
-	reflex update_road_scenario when: selected_road_scenario != road_scenario {
+	reflex update_road_scenario when: selected_road_scenario != road_scenario_prev {
 		road_scenario <- selected_road_scenario;
 	}
 }
@@ -351,8 +351,28 @@ species road {
 
 species building {
 	int height <- 20 + rnd(10);
+	float pollution_rate;
+	list<pollutant_grid> pollution_cells;
+	rgb color;
+	
+	init {
+		pollution_rate <- 0.0;
+		pollution_cells <- pollutant_grid overlapping self;
+	}
+	
+	reflex update_pollution {
+		pollution_rate <- sum(pollution_cells accumulate each.pollution);
+		if (pollution_rate < 30) 	{
+			color <- #green;
+		} else if (pollution_rate < 60) {
+			color <- #orange;
+		} else {
+			color <- # red;
+		}
+	}
+	
 	aspect default {
-		draw shape color: #grey border: #darkgrey depth: height;
+		draw shape color: color border: #darkgrey depth: height;
 	}
 }
 
