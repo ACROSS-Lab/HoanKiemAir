@@ -47,9 +47,14 @@ global {
 		"essence"::[10::98.19,20::69.17,30::56.32,40::49.3,50::45.29],
 		"diesel"::[10::201.74,20::152,30::127.82,40::114.29,50::106.48]
 	];
+	
+	map<string, map<string, float>> emission_factor <- [
+		"motorbike"::["PM"::0.1, "SO2"::0.03, "NOx"::0.3, "CO"::3.62, "benzene"::0.023],
+		"car"::["PM"::0.1, "SO2"::0.17, "NOx"::1.5, "CO"::3.62, "benzene"::0.046]
+	];
 
 	float decrease_coeff <- 0.8;
-
+	
 	shape_file simulated_roads_shape_file <- shape_file("../includes/bigger_map/simulated_roads.shp");
 	shape_file dummy_roads_shape_file <- shape_file("../includes/bigger_map/smaller_dummy_roads.shp");
 	shape_file buildings_shape_file <- shape_file("../includes/bigger_map/buildings.shp");
@@ -135,7 +140,9 @@ global {
 			}
 		}
 		
-		create additional_info;
+		// Display additional information
+		create progress_bar;
+		create line_graph_mean_pollution;
 	}
 
 	reflex update_compute_path when: recompute_path {
@@ -241,8 +248,8 @@ species controller skills: [remoteGUI] {
 }
 
 species vehicle skills:[moving] {
-	rgb color  ;
-	string type  ;
+	rgb color;
+	string type;
 	int nb_people;
 	string carburant <- "essence";
 	
@@ -280,7 +287,7 @@ species vehicle skills:[moving] {
 	}
 	
 	aspect default {
-		draw ((type = TYPE_CAR)?rectangle(10,5):rectangle(5,2)) rotated_by(heading) color: color border: #black depth:3;
+		draw ((type = TYPE_CAR)?rectangle(20,10):rectangle(10, 4)) rotated_by(heading) color: color border: #black depth:3;
 	}
 }
 
@@ -305,7 +312,7 @@ species road {
 		if(close_roads and close) {
 			draw shape+5 color: #orange end_arrow: 2;					
 		} else if (display_mode = DISPLAY_MODE_TRAFFIC) {
-			draw shape+1/speed_coeff color: (speed_coeff=1.0)?#white : #red end_arrow: 10;		
+			draw shape+1/(speed_coeff * 2) color: (speed_coeff=1.0)?#white : #red end_arrow: 10;		
 		} else {
 			draw shape color: #white;
 		}
@@ -388,10 +395,18 @@ species dummy_road schedules: [] {
 			draw shape color: #grey end_arrow: 10;
 	
 			loop i from: 0 to: segments_number-1 {
+				// Calculate rotation angle
+				point u <- {segments_x[i] , segments_y[i]};
+				point v <- {1, 0};
+				float dot_prod <- u.x * v.x + u.y * v.y;
+				float angle <- acos(dot_prod / (sqrt(u.x ^ 2 + u.y ^ 2) + sqrt(v.x ^ 2 + v.y ^ 2)));
+				angle <- (u.x * -v.y + u.y * v.x > 0) ? angle : 360 - angle;
+				
 				lights_number <- 3;
 			 	loop j from:0 to: lights_number-1{
 	 				new_point <- {shape.points[i].x + segments_x[i] * (j +  mod(cycle,20)/20)/lights_number, shape.points[i].y + segments_y[i] * (j + mod(cycle,20)/20)/lights_number};
-					draw circle(aspect_size, new_point) color: #white ;
+//					draw circle(aspect_size, new_point) color: #white ;
+					draw rectangle(10, 4) at: new_point color: #yellow rotate: angle;
 				}
 			}	
 		}
@@ -404,14 +419,26 @@ species lake {
 	}	
 }
 
-species additional_info {
+species progress_bar {
+	float x;
+	float y;
+	float width;
+	float height;
+	
+	float tracked_val;
+	float tracked_val_max;
+	
+	string bar_name;
+	string left_label;
+	string right_label;
+	
 	geometry rect(float x, float y, float width, float height) {
 		return polygon([{x, y}, {x + width, y}, {x + width, y + height}, {x, y + height}, {x, y}]);
 	}
 	
-	action draw_bar(float current_val, float max_val, float x, float y, float width, float height, 
+	action draw_bar(float tracked_val, float tracked_val_max, float x, float y, float width, float height, 
 									string bar_name, string left_label, string right_label) {
-		float length_filled<- width * current_val / max_val;
+		float length_filled<- width * tracked_val / tracked_val_max;
 		float length_unfilled <- width - length_filled;
 		
 		draw rect(x, y, length_filled, height) color: #orange;
@@ -420,13 +447,67 @@ species additional_info {
 		draw(bar_name) at: {x - 200, y - 50} font: font(10);
 		draw(left_label) at: {x - 20, y + 200} font: font(10);
 		draw(right_label) at: {x + width - 20, y + 200} font: font(10);
-		
-		return 0;
+	}
+	
+	aspect default {	
+		do draw_bar(nb_people, 2000, 300, 1800, 500, 100, "Number of people: ", "0", "2000");
+		do draw_bar(nb_moto, 100, 300, 2200, 500, 100, "Car/motorbike ratio: ", "0", "100");
+	}
+}
+
+species line_graph_mean_pollution parent: line_graph {
+	float current_val -> mean(pollutant_cell accumulate(each.pollution));
+	float x <- 4000;
+	float y <- 1600;
+	float width <- 1300;
+	float height <- 1000;
+	
+	string label <- "Mean pollution:";
+}
+
+species line_graph schedules: [] {
+	list<float> val_list <- list_with(200, 0.0);
+	float current_val;
+	
+	float x;
+	float y;
+	float width;
+	float height;
+	
+	string label;
+	
+	point midpoint(point a, point b) {
+		return (a + b) / 2;
+	}
+	
+	action draw_line(point a, point b, int thickness <- 1, rgb color <- #yellow) {
+		draw line([a, b]) + thickness at: midpoint(a, b) color: color;
 	}
 	
 	aspect default {
-		do draw_bar(nb_people, 2000, 300, 1800, 500, 100, "Number of people: ", "0", "2000");
-		do draw_bar(nb_moto, 100, 300, 2200, 500, 100, "Car/motorbike ratio: ", "0", "100");
+		remove index: 0 from: val_list;
+		add item: current_val to: val_list at: length(val_list);
+		
+		point origin <- {x, y + height};
+		
+		// Draw axis
+		do draw_line(origin, {x, y});
+		do draw_line(origin, {x + width, y + height});
+		
+		float max_val <- max(val_list);
+		loop i from: 0 to: length(val_list) - 1 {
+			if (val_list[i] != 0) {
+				float val_x_pos <- origin.x + width / 200 * i;
+				write val_x_pos;
+				float val_height <- val_list[i] / max_val * height;
+				// Graph the value
+				do draw_line({val_x_pos, origin.y}, {val_x_pos, origin.y - val_height}, 3);
+			}
+		}
+		// Draw current value indicator
+		float current_val_height <- current_val / max_val * height;
+		do draw_line({x, y + height - current_val_height}, {x + width, y + height - current_val_height}, 2, #red);
+		draw label + " " + string(round(current_val)) at: {x,  y + height - current_val_height - 50} font: font(8) color: #red;
 	}
 }
 
@@ -443,14 +524,14 @@ experiment exp {
 			species road;
 			species vehicle;
 			species dummy_road;
+			species progress_bar;
+			species line_graph_mean_pollution;
 			
-			species additional_info;
-
-			chart "pollution" background: #black axes: #white size: {0.3, 0.4} position: {0.7, 0.6} 
-					x_label: "temps" y_label:"pollution"  {
-				data "pollution max" value: (pollutant_cell max_of(each.pollution)) color: #red marker: false;				
-				data "pollution moyenne" value: mean(pollutant_cell accumulate(each.pollution)) color: #white marker: false;
-			}
+//			chart "pollution" background: #black axes: #white size: {0.3, 0.4} position: {0.7, 0.6} 
+//					x_label: "temps" y_label:"pollution"  {
+//				data "pollution max" value: (pollutant_cell max_of(each.pollution)) color: #red marker: false;				
+//				data "pollution moyenne" value: mean(pollutant_cell accumulate(each.pollution)) color: #white marker: false;
+//			}
 			
 //			chart "vitesse"  background: #black axes: #white size: {0.7,0.5} position: {1,0.5} 
 //					x_label: "temps" y_label:"vitesse" {
