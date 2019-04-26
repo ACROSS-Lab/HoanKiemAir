@@ -49,8 +49,8 @@ global {
 	];
 	
 	map<string, map<string, float>> emission_factor <- [
-		"motorbike"::["PM"::0.1, "SO2"::0.03, "NOx"::0.3, "CO"::3.62, "benzene"::0.023],
-		"car"::["PM"::0.1, "SO2"::0.17, "NOx"::1.5, "CO"::3.62, "benzene"::0.046]
+		TYPE_MOTORBIKE::["PM"::0.1, "SO2"::0.03, "NOx"::0.3, "CO"::3.62, "benzene"::0.023],
+		TYPE_CAR::["PM"::0.1, "SO2"::0.17, "NOx"::1.5, "CO"::3.62, "benzene"::0.046]
 	];
 
 	float decrease_coeff <- 0.8;
@@ -92,7 +92,6 @@ global {
 			int i <- 0;
 			list<point> filtered_points <- shape.points;
 			loop while: i < length(filtered_points) - 1 {
-				write i;
 				if filtered_points[i] = filtered_points[i + 1] {
 					remove from: filtered_points index: i;
 				} else {
@@ -252,13 +251,14 @@ species vehicle skills:[moving] {
 	string type;
 	int nb_people;
 	string carburant <- "essence";
+	pollutant_cell current_cell;
 	
 	init {
 		location <- any_location_in(road_geom);
 	}
 	
 	point target <- nil ;
-	float speed <- 40 #m /#s;
+	float speed <- 50 #km / #h;
 
 	reflex move when: target != nil {
 		do goto target: target on: road_graph recompute_path: recompute_path move_weights: road_weights;
@@ -282,12 +282,19 @@ species vehicle skills:[moving] {
 		return (returnedValue != -1.0) ? returnedValue : pollution_rate[carburant][last(pollution_rate[carburant].keys)];
 	}
 	
-	float get_pollution {
-		return pollution_from_speed() * coeff_vehicle[type];
+	reflex emit_pollutant {
+		current_cell <- any(pollutant_cell overlapping self);
+		if current_cell != nil {
+			float dist_traveled_prev_cycle <- real_speed * step;
+			loop pollutant_type over:emission_factor[type].keys {
+				current_cell.pollutant_val[pollutant_type] <- current_cell.pollutant_val[pollutant_type] + 
+								dist_traveled_prev_cycle * emission_factor[type][pollutant_type]  #gram / #km * 10 ^ 5;
+			}
+		}
 	}
 	
 	aspect default {
-		draw ((type = TYPE_CAR)?rectangle(20,10):rectangle(10, 4)) rotated_by(heading) color: color border: #black depth:3;
+		draw ((type = TYPE_CAR) ? rectangle(20, 10) : rectangle(10, 4)) rotated_by(heading) color: color border: #black depth: 3;
 	}
 }
 
@@ -328,13 +335,13 @@ species road {
 
 species building {
 	int height <- 20 + rnd(10);
-	float pollution <- 0.0;
+	float pollutant_sum;
 	
 	aspect default {
 		rgb building_color;
-		if (pollution < 60) 	{
+		if (pollutant_sum < 60) 	{
 			building_color <- #green;
-		} else if (pollution < 150) {
+		} else if (pollutant_sum < 150) {
 			building_color <- #orange;
 		} else {
 			building_color <- # red;
@@ -344,32 +351,41 @@ species building {
 }
 
 species pollutant_cell {
-	float pollution;
 	list<pollutant_cell> neighbors;
 	list<building> affected_buildings;
 	
+	map<string, float> pollutant_val;
+	float pollutant_sum;
 	
-	reflex pollution_increase {
-		list<vehicle> vehicles_on_cell <- vehicle overlapping self;
-		pollution <- pollution + sum(vehicles_on_cell accumulate (each.get_pollution()));		
+	init {
+		pollutant_val <- ["PM"::0.0, "SO2"::0.0, "NOx"::0.0, "CO"::0.0, "benzene"::0.0];
 	}
 
 	reflex diffusion {
-		ask neighbors {
-			pollution <- pollution + 0.05 * myself.pollution;
+		pollutant_sum <- 0;
+		loop pollutant_type over: pollutant_val.keys {
+			ask neighbors {
+				// TODO: for Benoit : without with_precision : nan
+				self.pollutant_val[pollutant_type] <- self.pollutant_val[pollutant_type] + 0.05 * myself.pollutant_val[pollutant_type]
+																						with_precision 6;
+			}
+			
+			 pollutant_val[pollutant_type] <- pollutant_val[pollutant_type] * (1 - length(neighbors) * 0.05); 
+			
+			pollutant_sum <- (pollutant_sum + pollutant_val[pollutant_type]) with_precision 6;
 		}
-		pollution <- pollution * (1 - 8 * 0.05 );
+	}
+	
+	reflex decay when: mod(time, step) = 5 #s {
+		loop pollutant_type over: pollutant_val.keys {
+			pollutant_val[pollutant_type] <- pollutant_val[pollutant_type] * decrease_coeff;
+		}
 	}
 	
 	reflex spread_to_buildings when: length(affected_buildings) != 0{
 		loop b over: affected_buildings {
-			b.pollution <- pollution;
+			b.pollutant_sum <- pollutant_sum;
 		}
-	}
-
-	reflex update {
-		pollution <- pollution * decrease_coeff;		
-		color <- rgb(255*pollution/1000,0,0);
 	}
 }
 
@@ -377,15 +393,17 @@ species dummy_road schedules: [] {
 	bool highlight <- false;
 	int mid;
 	int oneway;
-	int linkToRoad;	// id d'une route normale liee a cette dummy_road. La densite de trafic afficher sur la dummy_road sera la meme que celle de la route liee
+	int linkToRoad;
 	float density <- 5.0;
-	road linked_road; // route liee a cette dummy road
+	road linked_road;
 	int segments_number ;
-	int aspect_size <- 5 ;	
+	int aspect_size <- 5;
 	list<float> segments_x <- [];
 	list<float> segments_y <- [];
 	list<float> segments_length <- [];
 	list<point> lane_position_shift <- [];
+	
+	float movement_time <- 5 #s;
 	
 	aspect default {
 		if (highlight) {
@@ -404,9 +422,9 @@ species dummy_road schedules: [] {
 				
 				lights_number <- 3;
 			 	loop j from:0 to: lights_number-1{
-	 				new_point <- {shape.points[i].x + segments_x[i] * (j +  mod(cycle,20)/20)/lights_number, shape.points[i].y + segments_y[i] * (j + mod(cycle,20)/20)/lights_number};
-//					draw circle(aspect_size, new_point) color: #white ;
-					draw rectangle(10, 4) at: new_point color: #yellow rotate: angle;
+	 				new_point <- {shape.points[i].x + segments_x[i] * (j + mod(time, movement_time)/movement_time)/lights_number, 
+	 											shape.points[i].y + segments_y[i] * (j + mod(time, movement_time)/movement_time)/lights_number};
+					draw rectangle(10, 4) at: new_point color: #yellow rotate: angle depth: 3;
 				}
 			}	
 		}
@@ -456,13 +474,14 @@ species progress_bar {
 }
 
 species line_graph_mean_pollution parent: line_graph {
-	float current_val -> mean(pollutant_cell accumulate(each.pollution));
+	float current_val -> mean(pollutant_cell accumulate(each.pollutant_sum));
 	float x <- 4000;
 	float y <- 1600;
 	float width <- 1300;
 	float height <- 1000;
 	
 	string label <- "Mean pollution:";
+	string unit <- "grams per cell";
 }
 
 species line_graph schedules: [] {
@@ -475,6 +494,7 @@ species line_graph schedules: [] {
 	float height;
 	
 	string label;
+	string unit;
 	
 	point midpoint(point a, point b) {
 		return (a + b) / 2;
@@ -498,7 +518,6 @@ species line_graph schedules: [] {
 		loop i from: 0 to: length(val_list) - 1 {
 			if (val_list[i] != 0) {
 				float val_x_pos <- origin.x + width / 200 * i;
-				write val_x_pos;
 				float val_height <- val_list[i] / max_val * height;
 				// Graph the value
 				do draw_line({val_x_pos, origin.y}, {val_x_pos, origin.y - val_height}, 3);
@@ -507,7 +526,7 @@ species line_graph schedules: [] {
 		// Draw current value indicator
 		float current_val_height <- current_val / max_val * height;
 		do draw_line({x, y + height - current_val_height}, {x + width, y + height - current_val_height}, 2, #red);
-		draw label + " " + string(round(current_val)) at: {x,  y + height - current_val_height - 50} font: font(8) color: #red;
+		draw label + " " + string(round(current_val)) + " " + unit at: {x,  y + height - current_val_height - 50} font: font(8) color: #red;
 	}
 }
 
