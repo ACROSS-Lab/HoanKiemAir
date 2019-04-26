@@ -19,22 +19,25 @@
   </projectCrs>
   <layer-tree-group>
     <customproperties/>
-    <layer-tree-layer checked="Qt::Unchecked" providerKey="ogr" name="roads" id="roads_9849c498_0058_4c10_a9d5_524042329292" source="../SHP_demonstrator/roads.shp" expanded="1">
+    <layer-tree-layer checked="Qt::Checked" providerKey="ogr" name="roads" id="roads_9849c498_0058_4c10_a9d5_524042329292" source="../SHP_demonstrator/roads.shp" expanded="1">
       <customproperties/>
     </layer-tree-layer>
     <layer-tree-layer checked="Qt::Checked" providerKey="ogr" name="Union" id="output_6c62a3ef_5a0c_48c6_835f_563900d0f007" source="./buildings_union.shp|layername=buildings_union" expanded="0">
       <customproperties/>
     </layer-tree-layer>
+    <layer-tree-layer checked="Qt::Unchecked" providerKey="ogr" name="HKA_maquette - railways" id="HKA_maquette___railways_76290bf4_f788_4f68_b4e2_e2a0c88fd88c" source="./HKA_maquette - railways.shp" expanded="1">
+      <customproperties/>
+    </layer-tree-layer>
     <layer-tree-layer checked="Qt::Unchecked" providerKey="ogr" name="buildings_test" id="buildings_test_d2d05884_29f8_463c_a1e1_298265e85c51" source="./buildings_test.shp" expanded="0">
       <customproperties/>
     </layer-tree-layer>
-    <layer-tree-layer checked="Qt::Checked" providerKey="ogr" name="HKA_maquette - roads" id="HKA_maquette___roads_aa344de0_07e5_4413_867a_99d1b089782d" source="./HKA_maquette - roads.shp" expanded="1">
+    <layer-tree-layer checked="Qt::Unchecked" providerKey="ogr" name="HKA_maquette - roads" id="HKA_maquette___roads_aa344de0_07e5_4413_867a_99d1b089782d" source="./HKA_maquette - roads.shp" expanded="0">
       <customproperties/>
     </layer-tree-layer>
     <layer-tree-layer checked="Qt::Unchecked" providerKey="ogr" name="HKA_maquette - buildings" id="HKA_maquette___buildings_795073c6_f225_4217_a304_3d0a0ea5104f" source="./HKA_maquette - buildings.shp" expanded="0">
       <customproperties/>
     </layer-tree-layer>
-    <layer-tree-layer checked="Qt::Unchecked" providerKey="ogr" name="HKA_maquette - buildings_admin" id="HKA_maquette___buildings_admin_72d0476d_657b_4fdc_984d_84d4bc894611" source="./HKA_maquette - buildings_admin.shp" expanded="1">
+    <layer-tree-layer checked="Qt::Checked" providerKey="ogr" name="HKA_maquette - buildings_admin" id="HKA_maquette___buildings_admin_72d0476d_657b_4fdc_984d_84d4bc894611" source="./HKA_maquette - buildings_admin.shp" expanded="1">
       <customproperties/>
     </layer-tree-layer>
     <layer-tree-layer checked="Qt::Unchecked" providerKey="ogr" name="HKA_maquette - natural" id="output_93764a91_f86c_4d09_b8fd_83e8933144da" source="./HKA_maquette - natural.shp|layername=HKA_maquette - natural" expanded="0">
@@ -50,9 +53,6 @@
       <customproperties/>
     </layer-tree-layer>
     <layer-tree-layer checked="Qt::Checked" providerKey="wms" name="Google Satellite" id="Google_Satellite_19b04d13_e507_4054_9a10_f73eea4b23c0" source="crs=EPSG:3857&amp;format&amp;type=xyz&amp;url=http://www.google.cn/maps/vt?lyrs%3Ds@189%26gl%3Dcn%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D&amp;zmax=18&amp;zmin=0" expanded="1">
-      <customproperties/>
-    </layer-tree-layer>
-    <layer-tree-layer checked="Qt::Unchecked" providerKey="ogr" name="HKA_maquette - railways" id="HKA_maquette___railways_76290bf4_f788_4f68_b4e2_e2a0c88fd88c" source="./HKA_maquette - railways.shp" expanded="1">
       <customproperties/>
     </layer-tree-layer>
     <custom-order enabled="0">
@@ -87,10 +87,10 @@
   <mapcanvas name="theMapCanvas" annotationsVisible="1">
     <units>meters</units>
     <extent>
-      <xmin>588994.31059999763965607</xmin>
-      <ymin>2325276.78308167215436697</ymin>
-      <xmax>589135.43486471474170685</xmax>
-      <ymax>2325451.58921342249959707</ymax>
+      <xmin>587544.50596939760725945</xmin>
+      <ymin>2325423.68256749166175723</ymin>
+      <xmax>587826.75449883181136101</xmax>
+      <ymax>2325773.29483093274757266</ymax>
     </extent>
     <rotation>0</rotation>
     <destinationsrs>
@@ -109,9 +109,9 @@
   </mapcanvas>
   <projectModels/>
   <legend updateDrawingOrder="true">
-    <legendlayer checked="Qt::Unchecked" name="roads" showFeatureCount="0" drawingOrder="-1" open="true">
+    <legendlayer checked="Qt::Checked" name="roads" showFeatureCount="0" drawingOrder="-1" open="true">
       <filegroup open="true" hidden="false">
-        <legendlayerfile visible="0" isInOverview="0" layerid="roads_9849c498_0058_4c10_a9d5_524042329292"/>
+        <legendlayerfile visible="1" isInOverview="0" layerid="roads_9849c498_0058_4c10_a9d5_524042329292"/>
       </filegroup>
     </legendlayer>
     <legendlayer checked="Qt::Checked" name="Union" showFeatureCount="0" drawingOrder="-1" open="false">
@@ -119,14 +119,19 @@
         <legendlayerfile visible="1" isInOverview="0" layerid="output_6c62a3ef_5a0c_48c6_835f_563900d0f007"/>
       </filegroup>
     </legendlayer>
+    <legendlayer checked="Qt::Unchecked" name="HKA_maquette - railways" showFeatureCount="0" drawingOrder="-1" open="true">
+      <filegroup open="true" hidden="false">
+        <legendlayerfile visible="0" isInOverview="0" layerid="HKA_maquette___railways_76290bf4_f788_4f68_b4e2_e2a0c88fd88c"/>
+      </filegroup>
+    </legendlayer>
     <legendlayer checked="Qt::Unchecked" name="buildings_test" showFeatureCount="0" drawingOrder="-1" open="false">
       <filegroup open="false" hidden="false">
         <legendlayerfile visible="0" isInOverview="0" layerid="buildings_test_d2d05884_29f8_463c_a1e1_298265e85c51"/>
       </filegroup>
     </legendlayer>
-    <legendlayer checked="Qt::Checked" name="HKA_maquette - roads" showFeatureCount="0" drawingOrder="-1" open="true">
-      <filegroup open="true" hidden="false">
-        <legendlayerfile visible="1" isInOverview="0" layerid="HKA_maquette___roads_aa344de0_07e5_4413_867a_99d1b089782d"/>
+    <legendlayer checked="Qt::Unchecked" name="HKA_maquette - roads" showFeatureCount="0" drawingOrder="-1" open="false">
+      <filegroup open="false" hidden="false">
+        <legendlayerfile visible="0" isInOverview="0" layerid="HKA_maquette___roads_aa344de0_07e5_4413_867a_99d1b089782d"/>
       </filegroup>
     </legendlayer>
     <legendlayer checked="Qt::Unchecked" name="HKA_maquette - buildings" showFeatureCount="0" drawingOrder="-1" open="false">
@@ -134,9 +139,9 @@
         <legendlayerfile visible="0" isInOverview="0" layerid="HKA_maquette___buildings_795073c6_f225_4217_a304_3d0a0ea5104f"/>
       </filegroup>
     </legendlayer>
-    <legendlayer checked="Qt::Unchecked" name="HKA_maquette - buildings_admin" showFeatureCount="0" drawingOrder="-1" open="true">
+    <legendlayer checked="Qt::Checked" name="HKA_maquette - buildings_admin" showFeatureCount="0" drawingOrder="-1" open="true">
       <filegroup open="true" hidden="false">
-        <legendlayerfile visible="0" isInOverview="0" layerid="HKA_maquette___buildings_admin_72d0476d_657b_4fdc_984d_84d4bc894611"/>
+        <legendlayerfile visible="1" isInOverview="0" layerid="HKA_maquette___buildings_admin_72d0476d_657b_4fdc_984d_84d4bc894611"/>
       </filegroup>
     </legendlayer>
     <legendlayer checked="Qt::Unchecked" name="HKA_maquette - natural" showFeatureCount="0" drawingOrder="-1" open="false">
@@ -162,11 +167,6 @@
     <legendlayer checked="Qt::Checked" name="Google Satellite" showFeatureCount="0" drawingOrder="-1" open="true">
       <filegroup open="true" hidden="false">
         <legendlayerfile visible="1" isInOverview="0" layerid="Google_Satellite_19b04d13_e507_4054_9a10_f73eea4b23c0"/>
-      </filegroup>
-    </legendlayer>
-    <legendlayer checked="Qt::Unchecked" name="HKA_maquette - railways" showFeatureCount="0" drawingOrder="-1" open="true">
-      <filegroup open="true" hidden="false">
-        <legendlayerfile visible="0" isInOverview="0" layerid="HKA_maquette___railways_76290bf4_f788_4f68_b4e2_e2a0c88fd88c"/>
       </filegroup>
     </legendlayer>
   </legend>
@@ -1774,10 +1774,10 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyDrawingHints="1" labelsEnabled="0" autoRefreshEnabled="0" refreshOnNotifyMessage="" simplifyDrawingTol="1" autoRefreshTime="0" type="vector" refreshOnNotifyEnabled="0" maxScale="0" readOnly="0" simplifyAlgorithm="0" simplifyLocal="1" styleCategories="AllStyleCategories" simplifyMaxScale="1" hasScaleBasedVisibilityFlag="0" geometry="Polygon" minScale="1e+08">
       <extent>
-        <xmin>587444.50383197411429137</xmin>
-        <ymin>2324452.07240516226738691</ymin>
-        <xmax>589594.96881818596739322</xmax>
-        <ymax>2327115.78488906100392342</ymax>
+        <xmin>587340.68974497681483626</xmin>
+        <ymin>2324451.0553522352129221</ymin>
+        <xmax>589823.52665204927325249</xmax>
+        <ymax>2327117.80489226896315813</ymax>
       </extent>
       <id>output_6c62a3ef_5a0c_48c6_835f_563900d0f007</id>
       <datasource>./buildings_union.shp|layername=buildings_union</datasource>

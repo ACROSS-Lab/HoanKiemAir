@@ -23,15 +23,6 @@ global {
 			create noad with: [location::p];
 		} 
 		
-//		geometry all_the_roads <- union(road);
-//		
-//		geometry noad_on_border <- line(world.shape.points) intersection all_the_roads;
-//		
-//		write noad_on_border.points;
-//		loop pBorder over: noad_on_border.points {
-//			create border_nodes with: [location::pBorder];
-//		} 		
-		
 		save nodes type: 'shp' to: "../../includes/roads_nodes.shp";
 	}
 	
