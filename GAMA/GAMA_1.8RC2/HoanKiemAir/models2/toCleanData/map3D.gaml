@@ -8,131 +8,94 @@
 model map3D
 
 global {
-	shape_file HKA_maquette__boundaries0_shape_file <- shape_file("../../includes/map3D_250419/HKA_maquette - boundaries.shp");
+	shape_file HKA_maquette__boundaries0_shape_file <- shape_file("../../includes/map3D_190503/HKA_maquette - boundaries.shp");
+	shape_file bound_without_roads_shape_file <- shape_file("../../includes/map3D_190503/g_h_ground.shp");
+	shape_file buildings_shape_file <- shape_file("../../includes/map3D_190503/buildings.shp");
+	shape_file buildings_admin_shape_file <- shape_file("../../includes/map3D_190503/buildings_admin.shp");
+	shape_file natural_shape_file <- shape_file("../../includes/map3D_190503/naturals.shp");
+	shape_file enlarged_road_shape_file <- shape_file("../../includes/map3D_190503/roads_buffer.shp");
 
-	shape_file boundarie0_shape_file <- shape_file("../../includes/map3D_250419/boundarie.shp");
-	
-	shape_file buildings_union0_shape_file <- shape_file("../../includes/map3D_250419/buildings.shp");
-	shape_file HKA_maquette__buildings_admin0_shape_file <- shape_file("../../includes/map3D_250419/buildings_admin.shp");
-	shape_file HKA_maquette__natural0_shape_file <- shape_file("../../includes/map3D_250419/naturals.shp");
-	shape_file HKA_maquette__roads0_shape_file <- shape_file("../../includes/map3D_250419/roads.shp");
+	shape_file g_h_ground0_shape_file <- shape_file("../../includes/map3D_190503/g_h_ground.shp");
 
 	geometry shape <- envelope(HKA_maquette__boundaries0_shape_file); 
 
-	ground the_ground;
-
 	init {		
-		create ground from: HKA_maquette__boundaries0_shape_file {
-			height <- 0.5;
-		}
-		the_ground <- first(ground);
+		//create ground from: HKA_maquette__boundaries0_shape_file;
+		// create cut_ground from: first(bound_without_roads_shape_file.contents).geometries with: [height::float(read("height"))];
+		create cut_ground from: bound_without_roads_shape_file.contents with: [height::float(read("height"))];
 		
-		create cut_ground from: boundarie0_shape_file {
-			height <- 0.5;			
-		}
-		save cut_ground type: shp to: "../../includes/map3D_250419/h2_ground.shp" attributes: ["height"::height];
+//		create road_enlarged from: enlarged_road_shape_file with:[height::float(read("height"))] {
+//			height <- 0.3;
+//		}			
+//		save road type: shp to: "../../includes/map3D_190503/h_roads.shp" attributes: ["height"::height];
+		
+//		create building from: buildings_shape_file {
+//			height <- 2.5 + rnd(-0.2,0.2);
+//		}
 
-		create road from: HKA_maquette__roads0_shape_file {
-			shape <- shape + 5#m;
-			height <- 0.3;
-		}	
-		save road type: shp to: "../../includes/map3D_250419/h_roads.shp" attributes: ["height"::height];
+//		save building type: shp to: "../../includes/map3D_190503/h_building.shp" attributes: ["height"::height];
 		
-		create building from: buildings_union0_shape_file {
-			height <- 2.5 + rnd(-0.2,0.2);
-		}
-		save building type: shp to: "../../includes/map3D_250419/h_building.shp" attributes: ["height"::height];
-		
-		create natural from: HKA_maquette__natural0_shape_file {
-			height <- 0.4;
-		}	
-		save natural type: shp to: "../../includes/map3D_250419/h_natural.shp" attributes: ["height"::height];
+//		create natural from: natural_shape_file with:[height::float(read("height"))]{
+//			height <- 0.4;
+//		}	
+//		save natural type: shp to: "../../includes/map3D_190503/h_natural.shp" attributes: ["height"::height];
 				
-		create building_admin from: HKA_maquette__buildings_admin0_shape_file {
-			height <- 0.4;
-		}		
-		save building_admin type: shp to: "../../includes/map3D_250419/h_building_admin.shp" attributes: ["height"::height];
+//		create building_admin from: buildings_admin_shape_file {
+//			height <- 1.0;
+//		}		
 	
-		save cut_ground type: shp to: "../../includes/map3D_250419/h3_ground.shp" attributes: ["height"::height];
-		save ground type: shp to: "../../includes/map3D_250419/h3_gg.shp" attributes: ["height"::height];
-		
-//		do cut_by_ground;
-//		do cut_by_roads;
-//		do cut_ground;	
-
-//		save (agents of_generic_species to_print) type: shp to: "../../includes/map3D_250419/result.shp" attributes: ["height"::height, "type"::type];
-	}
+//		save (agents of_generic_species to_print) type: shp to: "../../includes/map3D_190503/g_map_ground_roads.shp" attributes: ["height"::height];
 	
-	action cut_by_ground {
-		ask (agents of_generic_species to_print) - the_ground {
-			shape <- shape inter the_ground.shape;
-		}
-	}
-	
-//	action cut_ground {
-//		geometry sh <- the_ground.shape;
-//		sh <- sh - union(road collect each.shape);
-//		sh <- sh - union(natural collect each.shape);
-//		
-//		the_ground.shape <- sh;
-//	}
-	
-	action cut_by_roads {
-		geometry roadies <- union(road collect (each.shape));
-		ask ( ((agents - the_ground) - road) of_generic_species to_print)  {
-			shape <- (shape - roadies);
-		}		
+//		save (agents of_generic_species to_print) type: shp to: "../../includes/map3D_190503/result.shp" attributes: ["height"::height, "type"::type];
 	}
 }
 
 species to_print {
-	float height;
+	float height ;
 	string type; 
+	rgb color;
 	
 	init {
 		type <- species(self) as string;
+		
 	}
+	
+	aspect default {
+		draw shape color: color depth: 300 ;
+	}		
 }
 
 species building_admin parent: to_print {
-	aspect default {
-		draw shape color: #green;
-	}	
+	rgb color <- #grey;
+}
+species ground parent: to_print {
+	rgb color <- #red;
 }
 species natural parent: to_print {
-	aspect default {
-		draw shape color: #green;
-	}		
+	rgb color <- #green;
 }
 species building parent: to_print {
-	aspect default {
-		draw shape color: #grey border: #darkgrey;
-	}		
+	rgb color <- #grey ;
 }
 species road parent: to_print {
-	aspect default {
-		draw shape color: #black;
-	}
+	rgb color <-  #black;
 }
-
-species ground parent: to_print {
-	aspect default {
-		draw shape empty:true;
-	}
+species road_enlarged parent: to_print {
+	rgb color <-  #black;
 }
-
 species cut_ground parent: to_print {
-	aspect default {
-		draw shape empty:true;
-	}
+	rgb color <-  #orange;
 }
+
 
 experiment map3D type: gui {
 	output {
-		display d {
-			species ground;			
+		display d type: opengl {
+			species ground;		
+			species cut_ground;	
 			species building;
 			species building_admin;
+			species road_enlarged;
 			species natural;
 			species road;
 		}
