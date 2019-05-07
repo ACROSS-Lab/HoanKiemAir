@@ -55,8 +55,8 @@ global {
 
 	float decrease_coeff <- 0.8;
 	
-	shape_file simulated_roads_shape_file <- shape_file("../includes/bigger_map/simulated_roads.shp");
-	shape_file dummy_roads_shape_file <- shape_file("../includes/bigger_map/smaller_dummy_roads.shp");
+	shape_file simulated_roads_shape_file <- shape_file("../includes/bigger_map/roads.shp");
+	shape_file dummy_roads_shape_file <- shape_file("../includes/bigger_map/small_dummy_roads.shp");
 	shape_file buildings_shape_file <- shape_file("../includes/bigger_map/buildings.shp");
 	shape_file lakes_shape_file <- shape_file("../includes/bigger_map/lakes.shp");
 	shape_file pollutant_cells_shape_file <- shape_file("../includes/bigger_map/road_pollution_grid.shp");
