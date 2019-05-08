@@ -8,16 +8,16 @@
 model AddHeight
 
 global {
-	shape_file t_ground_cut_roads_naturals0_shape_file <- shape_file("../../includes/map3D_190503/t_ground_cut_roads_naturals.shp");
+	shape_file roads_buffer0_shape_file <- shape_file("../../includes/map3D_190508/roads_buffer.shp");
 
-	geometry shape <- envelope(t_ground_cut_roads_naturals0_shape_file);
+	geometry shape <- envelope(roads_buffer0_shape_file);
 	
 	init {
-		create to_print from: t_ground_cut_roads_naturals0_shape_file {
-			height <- 0.5;
+		create to_print from: roads_buffer0_shape_file {
+			height <- 0.3;
 		}
 		
-		save to_print to: "../../includes/map3D_190503/g_h_ground.shp" type: "shp" attributes: ["height"::height]; 
+		save to_print to: "../../includes/map3D_190508/roads_buffer.shp" type: "shp" attributes: ["height"::height]; 
 	}
 
 }
