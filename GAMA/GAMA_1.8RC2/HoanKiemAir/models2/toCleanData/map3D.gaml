@@ -10,7 +10,7 @@ model map3D
 global {
 	shape_file boundaries_shape_file <- shape_file("../../includes/map3D_190508/boundaries.shp");
 	
-	shape_file bound_without_roads_shape_file <- shape_file("../../includes/map3D_190508/g_h_ground.shp");
+	shape_file bound_without_roads_shape_file <- shape_file("../../includes/map3D_190508/g_ground_pluri.shp");
 	shape_file buildings_shape_file <- shape_file("../../includes/map3D_190508/buildings.shp");
 	
 	shape_file buildings_admin_shape_file <- shape_file("../../includes/map3D_190508/buildings_admin.shp");
@@ -20,6 +20,12 @@ global {
 	geometry shape <- envelope(boundaries_shape_file); 
 
 	init {		
+		create dummy {
+			shape <- rectangle(5292,3024) at_location {2646,1512};
+		}
+		save dummy type: shp to: "../../includes/map3D_190508/resize_rectangle.shp" ;	
+		
+		
 		create cut_ground from: bound_without_roads_shape_file with: [height::float(read("height"))];
 		
 		create road_enlarged from: enlarged_road_shape_file with:[height::float(read("height"))] ;
@@ -49,10 +55,14 @@ global {
 	}
 }
 
+species dummy {
+	
+}
+
 species to_print {
 	float height ;
 	string type; 
-	rgb color;
+	rgb color <- #green;
 	
 	init {
 		type <- species(self) as string;
@@ -98,6 +108,7 @@ experiment map3D type: gui {
 			species road_enlarged;
 			species natural;
 			species road;
+			species to_print;			
 		}
 	}
 }
