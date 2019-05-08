@@ -1,269 +1,265 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nested_scroll_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-<LinearLayout android:orientation="vertical"
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:textSize="18sp"
-        android:text="@string/label_category_simulation_params"
-        android:textColor="@color/primaryColor"
-        android:textStyle="bold"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:textSize="18sp"
-        android:textColor="@color/primaryTextColor"
-        android:text="@string/label_num_people"/>
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/text_num_people_min"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="18sp"
-            android:gravity="end"
-            tools:text="0" />
-
-        <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
-            android:id="@+id/seek_bar_num_people"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="12"
-            app:dsb_thumbSize="20dp"
-            app:dsb_rippleColor="@color/primaryLightColor"
-            app:dsb_progressColor="@color/primaryLightColor"
-            app:dsb_trackColor="@color/primaryLightColor"
-            app:dsb_indicatorColor="@color/primaryLightColor"
-            app:dsb_indicatorElevation="0dp"/>
-
-        <TextView
-            android:id="@+id/text_num_people_max"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="18sp"
-            tools:text="2000" />
-
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="15dp"
-        android:textColor="@color/primaryTextColor"
-        android:textSize="18sp"
-        android:text="@string/label_vehicle_ratio"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/text_vehicle_ratio_min"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="18sp"
-            android:gravity="end"
-            tools:text="0" />
-
-        <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
-            android:id="@+id/seek_bar_vehicle_ratio"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="12"
-            app:dsb_thumbSize="20dp"
-            app:dsb_rippleColor="@color/primaryLightColor"
-            app:dsb_progressColor="@color/primaryLightColor"
-            app:dsb_trackColor="@color/primaryLightColor"
-            app:dsb_indicatorColor="@color/primaryLightColor"
-            app:dsb_indicatorElevation="0dp" />
-
-        <TextView
-            android:id="@+id/text_vehicle_ratio_max"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="18sp"
-            tools:text="2000" />
-
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="15dp"
-        android:textColor="@color/primaryTextColor"
-        android:textSize="18sp"
-        android:text="@string/label_car_capacity"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/text_car_capacity_min"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="18sp"
-            android:gravity="end"
-            tools:text="0" />
-
-        <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
-            android:id="@+id/seek_bar_car_capacity"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="12"
-            app:dsb_thumbSize="20dp"
-            app:dsb_rippleColor="@color/primaryLightColor"
-            app:dsb_progressColor="@color/primaryLightColor"
-            app:dsb_trackColor="@color/primaryLightColor"
-            app:dsb_indicatorColor="@color/primaryLightColor"
-            app:dsb_indicatorElevation="0dp"/>
-
-        <TextView
-            android:id="@+id/text_car_capacity_max"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="18sp"
-            tools:text="2000" />
-
-    </LinearLayout>
-
-    <Switch
-        android:id="@+id/switch_close_roads"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="start"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="15dp"
-        android:text="@string/label_close_roads"
-        android:textSize="18sp"
-        android:textColor="@color/primaryTextColor"
-        android:checked="false" />
-
-    <RadioGroup
-        android:id="@+id/radio_group_road_scenarios"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:orientation="vertical"
-        android:checkedButton="@id/radio_button_scenario_0"
-        android:layout_marginStart="20dp">
-
-        <RadioButton
-            android:id="@+id/radio_button_scenario_0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Scenario 1"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:text="@string/label_category_simulation_params"
+            android:textColor="@color/primaryColor"
             android:textSize="18sp"
-            android:onClick="onRoadScenarioRadioButtonClicked"/>
+            android:textStyle="bold" />
 
-        <RadioButton
-            android:id="@+id/radio_button_scenario_1"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Scenario 2"
-            android:textSize="18sp"
-            android:onClick="onRoadScenarioRadioButtonClicked"/>
+            android:layout_marginStart="10dp"
+            android:text="@string/label_num_people"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="18sp" />
 
-        <RadioButton
-            android:id="@+id/radio_button_scenario_2"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/text_num_people_min"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:textSize="18sp"
+                tools:text="0" />
+
+            <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+                android:id="@+id/seek_bar_num_people"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="12"
+                app:dsb_indicatorColor="@color/primaryLightColor"
+                app:dsb_indicatorElevation="0dp"
+                app:dsb_progressColor="@color/primaryLightColor"
+                app:dsb_rippleColor="@color/primaryLightColor"
+                app:dsb_thumbSize="20dp"
+                app:dsb_trackColor="@color/primaryLightColor" />
+
+            <TextView
+                android:id="@+id/text_num_people_max"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                tools:text="2000" />
+
+        </LinearLayout>
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Scenario 3"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            android:text="@string/label_vehicle_ratio"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/text_vehicle_ratio_min"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:textSize="18sp"
+                tools:text="0" />
+
+            <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+                android:id="@+id/seek_bar_vehicle_ratio"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="12"
+                app:dsb_indicatorColor="@color/primaryLightColor"
+                app:dsb_indicatorElevation="0dp"
+                app:dsb_progressColor="@color/primaryLightColor"
+                app:dsb_rippleColor="@color/primaryLightColor"
+                app:dsb_thumbSize="20dp"
+                app:dsb_trackColor="@color/primaryLightColor" />
+
+            <TextView
+                android:id="@+id/text_vehicle_ratio_max"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                tools:text="2000" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            android:text="@string/label_car_capacity"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/text_car_capacity_min"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:textSize="18sp"
+                tools:text="0" />
+
+            <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+                android:id="@+id/seek_bar_car_capacity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="12"
+                app:dsb_indicatorColor="@color/primaryLightColor"
+                app:dsb_indicatorElevation="0dp"
+                app:dsb_progressColor="@color/primaryLightColor"
+                app:dsb_rippleColor="@color/primaryLightColor"
+                app:dsb_thumbSize="20dp"
+                app:dsb_trackColor="@color/primaryLightColor" />
+
+            <TextView
+                android:id="@+id/text_car_capacity_max"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                tools:text="2000" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            android:text="@string/label_close_roads"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="18sp" />
+
+        <RadioGroup
+            android:id="@+id/radio_group_road_scenarios"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:checkedButton="@id/radio_button_scenario_0"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/radio_button_scenario_0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onRoadScenarioRadioButtonClicked"
+                android:text="@string/radio_button_no_close_roads"
+                android:textSize="18sp" />
+
+            <RadioButton
+                android:id="@+id/radio_button_scenario_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onRoadScenarioRadioButtonClicked"
+                android:text="@string/radio_button_scenario_1"
+                android:textSize="18sp" />
+
+            <RadioButton
+                android:id="@+id/radio_button_scenario_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onRoadScenarioRadioButtonClicked"
+                android:text="@string/radio_button_scenario_2"
+                android:textSize="18sp" />
+        </RadioGroup>
+
+        <View
+            style="@style/Divider"
+            android:layout_marginTop="15dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:text="@string/label_category_display"
+            android:textColor="@color/primaryColor"
             android:textSize="18sp"
-            android:onClick="onRoadScenarioRadioButtonClicked"/>
-    </RadioGroup>
+            android:textStyle="bold" />
 
-    <View style="@style/Divider"
-        android:layout_marginTop="15dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/label_display_mode"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="18sp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:textSize="18sp"
-        android:text="@string/label_category_display"
-        android:textColor="@color/primaryColor"
-        android:textStyle="bold"/>
+        <info.hoang8f.android.segmented.SegmentedGroup xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:checkedButton="@id/radio_button_traffic"
+            android:orientation="horizontal"
+            segmentedgroup:sc_border_width="2dp"
+            segmentedgroup:sc_corner_radius="5dp"
+            segmentedgroup:sc_tint_color="@color/primaryLightColor">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:textColor="@color/primaryTextColor"
-        android:textSize="18sp"
-        android:text="@string/label_display_mode"/>
+            <RadioButton
+                android:id="@+id/radio_button_traffic"
+                style="@style/RadioButton"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:onClick="onDisplayModeRadioButtonClicked"
+                android:text="@string/radio_button_traffic"
+                android:textAllCaps="true"
+                android:textSize="20sp" />
 
-    <info.hoang8f.android.segmented.SegmentedGroup
-        xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:orientation="horizontal"
-        segmentedgroup:sc_border_width="2dp"
-        segmentedgroup:sc_corner_radius="5dp"
-        segmentedgroup:sc_tint_color="@color/primaryLightColor"
-        android:checkedButton="@id/radio_button_traffic">
+            <RadioButton
+                android:id="@+id/radio_button_pollution"
+                style="@style/RadioButton"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:onClick="onDisplayModeRadioButtonClicked"
+                android:text="@string/radio_button_pollution"
+                android:textAllCaps="true"
+                android:textSize="20sp" />
+        </info.hoang8f.android.segmented.SegmentedGroup>
 
-        <RadioButton
-            android:id="@+id/radio_button_traffic"
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:layout_weight="1"
-            android:text="@string/radio_button_traffic"
-            android:textSize="20sp"
-            android:textAllCaps="true"
-            android:onClick="onDisplayModeRadioButtonClicked"
-            style="@style/RadioButton" />
-
-        <RadioButton
-            android:id="@+id/radio_button_pollution"
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:layout_weight="1"
-            android:text="@string/radio_button_pollution"
-            android:textSize="20sp"
-            android:textAllCaps="true"
-            android:onClick="onDisplayModeRadioButtonClicked"
-            style="@style/RadioButton" />
-    </info.hoang8f.android.segmented.SegmentedGroup>
-
-</LinearLayout>
+    </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

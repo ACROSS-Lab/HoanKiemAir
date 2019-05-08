@@ -12,8 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.ConnectActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".ui.ConnectActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

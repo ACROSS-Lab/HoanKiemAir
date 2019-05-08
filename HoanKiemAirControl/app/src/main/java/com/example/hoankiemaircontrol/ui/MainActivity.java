@@ -19,7 +19,7 @@ import java.lang.ref.WeakReference;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private static final int N_PEOPLE_MIN = 0;
     private static final int N_PEOPLE_MAX = 2000;
     private static final int VEHICLE_RATIO_MIN = 0;
@@ -40,8 +40,6 @@ public class MainActivity extends AppCompatActivity {
     private DiscreteSeekBar mSeekBarNumPeople;
     private DiscreteSeekBar mSeekBarVehicleRatio;
     private DiscreteSeekBar mSeekBarCarCapacity;
-    private Switch mSwitchCloseRoads;
-    private RadioGroup mRadioGroupRoadScenario;
 
     private MQTTConnector mConnector;
 
@@ -137,25 +135,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(DiscreteSeekBar seekBar) {
 
-            }
-        });
-
-        mRadioGroupRoadScenario = findViewById(R.id.radio_group_road_scenarios);
-        mSwitchCloseRoads = findViewById(R.id.switch_close_roads);
-        mSwitchCloseRoads.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Bundle bundle = new Bundle();
-                bundle.putCharSequence("topic", "close_roads");
-                bundle.putBoolean("booleanData", isChecked);
-                new SendMessageTask(MainActivity.this).execute(bundle);
-
-                // Show the road scenarios RadioGroup when checked
-                if (isChecked) {
-                    mRadioGroupRoadScenario.setVisibility(View.VISIBLE);
-                } else {
-                    mRadioGroupRoadScenario.setVisibility(View.GONE);
-                }
             }
         });
     }
