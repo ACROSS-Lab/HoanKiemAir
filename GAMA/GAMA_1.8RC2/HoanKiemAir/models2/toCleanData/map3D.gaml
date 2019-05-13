@@ -8,22 +8,23 @@
 model map3D
 
 global {
-	shape_file boundaries_shape_file <- shape_file("../../includes/map3D_190508/boundaries.shp");
+	shape_file boundaries_shape_file <- shape_file("../../includes/map3D_final/boundaries.shp");
 	
-	shape_file bound_without_roads_shape_file <- shape_file("../../includes/map3D_190508/g_ground_pluri.shp");
-	shape_file buildings_shape_file <- shape_file("../../includes/map3D_190508/buildings.shp");
+	shape_file buildings_admin_shape_file <- shape_file("../../includes/map3D_final/buildings_admin.shp");
+	shape_file buildings_shape_file <- shape_file("../../includes/map3D_final/buildings.shp");
 	
-	shape_file buildings_admin_shape_file <- shape_file("../../includes/map3D_190508/buildings_admin.shp");
-	shape_file natural_shape_file <- shape_file("../../includes/map3D_190508/naturals.shp");
-	shape_file enlarged_road_shape_file <- shape_file("../../includes/map3D_190508/roads_buffer.shp");
+	shape_file bound_without_roads_shape_file <- shape_file("../../includes/map3D_final/g_ground_pluri.shp");
+	shape_file natural_shape_file <- shape_file("../../includes/map3D_final/naturals.shp");
+	
+	shape_file enlarged_road_shape_file <- shape_file("../../includes/map3D_final/roads_buffer.shp");
 
 	geometry shape <- envelope(boundaries_shape_file); 
 
 	init {		
-		create dummy {
-			shape <- rectangle(5292,3024) at_location {2646,1512};
-		}
-		save dummy type: shp to: "../../includes/map3D_190508/resize_rectangle.shp" ;	
+//		create dummy {
+//			shape <- rectangle(5292,3024) at_location {2646,1512};
+//		}
+//		save dummy type: shp to: "../../includes/map3D_190508/resize_rectangle.shp" ;	
 		
 		
 		create cut_ground from: bound_without_roads_shape_file with: [height::float(read("height"))];
@@ -35,23 +36,30 @@ global {
 //			height <- 1.3 + rnd(-0.3,0.3);
 //			error <- (length(shape.points) != length(remove_duplicates(shape.points)) + 1);
 //		}
-//		save building type: shp to: "../../includes/map3D_190508/buildings.shp" attributes: ["height"::height];	
 		
 		create building_admin from: buildings_admin_shape_file with:[height::float(read("height"))] ;
 //		{
-//			height <- 0.7 ;
+//			height <- 0.8 ;
 //		}
+		save building_admin type: shp to: "../../includes/map3D_final/buildings_admin.shp" attributes: ["height"::height];	
+		
+		create natural from: natural_shape_file with:[height::float(read("height"))];
+//		{
+//			height <- 0.3;
+//		}	
+		
+		
+//		save natural type: shp to: "../../includes/map3D_190503/h_natural.shp" attributes: ["height"::height];
+//		save building type: shp to: "../../includes/map3D_190508/buildings.shp" attributes: ["height"::height];	
 
 //		save building_admin type: shp to: "../../includes/map3D_190508/buildings_admin.shp" attributes: ["height"::height];	
-		
-		create natural from: natural_shape_file with:[height::float(read("height"))]{
-//			height <- 0.3;
-		}	
-//		save natural type: shp to: "../../includes/map3D_190503/h_natural.shp" attributes: ["height"::height];
 
-		save (agents of_generic_species to_print) type: shp to: "../../includes/map3D_190508/map3D.shp" attributes: ["height"::height];
+
+//		save (agents of_generic_species to_print) type: shp to: "../../includes/map3D_final/map3D.shp" attributes: ["height"::height];
 	
 //		save (agents of_generic_species to_print) type: shp to: "../../includes/map3D_190503/result.shp" attributes: ["height"::height, "type"::type];
+
+
 	}
 }
 
