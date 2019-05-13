@@ -74,7 +74,7 @@ global {
 				}
 			}
 		}
-		create building from: buildings_shape_file;	
+		create building from: buildings_shape_file;
 		create lake from: lakes_shape_file;	
 		create river from: rivers_shape_file;
 
