@@ -8,16 +8,26 @@
 model AddHeight
 
 global {
-	shape_file t_ground_cut_roads_naturals0_shape_file <- shape_file("../../includes/map3D_190503/t_ground_cut_roads_naturals.shp");
 
-	geometry shape <- envelope(t_ground_cut_roads_naturals0_shape_file);
+	shape_file boundaries0_shape_file <- shape_file("../../includes/map3D_final/boundaries.shp");
+//	shape_file roads_buffer0_shape_file <- shape_file("../../includes/map3D_190508/roads_buffer.shp");
+//	shape_file g_h_ground0_shape_file <- shape_file("../../includes/map3D_190508/g_h_ground.shp");
+
+//	shape_file buildings_admin0_shape_file <- shape_file("../../includes/map3D_final/buildings_admin.shp");
+
+	shape_file buildings_admin0_shape_file <- shape_file("../../includes/map3D_190503/buildings_admin.shp");
+
+	geometry shape <- envelope(boundaries0_shape_file);
 	
 	init {
-		create to_print from: t_ground_cut_roads_naturals0_shape_file {
-			height <- 0.5;
+	//	geometry g <- first(buildings_admin0_shape_file.contents);
+		list<geometry> geoms <- buildings_admin0_shape_file.contents;//g.geometries;
+		
+		create to_print from: geoms {
+			height <- 0.85;
 		}
 		
-		save to_print to: "../../includes/map3D_190503/g_h_ground.shp" type: "shp" attributes: ["height"::height]; 
+		save to_print to: "../../includes/map3D_final/buildings_admin.shp" type: "shp" attributes: ["height"::height]; 
 	}
 
 }
