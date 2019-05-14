@@ -7,16 +7,14 @@ global {
 		"motorbike"::["CO"::3.62, "NOx"::0.3, "SO2"::0.03, "PM"::0.1],  // g/km
 		"car"::["CO"::3.62, "NOx"::1.5, "SO2"::0.17, "PM"::0.1]
 	];
-	float cell_width <- 2798 / 50;
-	float cell_height <- 3050 / 50;
 	
 	// Misc params
 	bool connect_to_tablet <- false;
 	int display_mode;
-	bool recompute_shortest_paths;
 	
 	// Simulation params
-	float step <- 5 #mn;
+	float step <- 5#mn;
+	int pollutant_cell_size <- 64;
 	float pollutant_decay_rate <- 0.9;
 	// Changeable params
 	int nb_cars;
@@ -28,7 +26,9 @@ global {
 	int close_roads_prev <- close_roads;
 	
 	// Other values
-	float aqi -> max(pollutant_cell accumulate each.aqi_hourly);
+	bool refresh_info <- every_cycle(1 #hour);
+
+	float aqi;
 	
 	// Load shapefiles
 	string resources_dir <- "../includes/bigger_map/";
@@ -38,6 +38,9 @@ global {
 	shape_file bound_shape_file <- shape_file(resources_dir + "bound.shp");
 	
 	geometry shape <- envelope(buildings_shape_file);
+	float cell_width <- shape.width / 50;
+	float cell_height <- shape.height / 50;
+	float cell_volume <- cell_width * cell_height * 10; // in cubic meters	
 	
 	graph road_graph;
 	
@@ -88,7 +91,7 @@ global {
 		
 		create progress_bar;
 		create line_graph_aqi;
-		create aqi_health_concern;
+		create indicator_health_concern_level;
 	}
 	
 	reflex update_nb_cars when: nb_cars != nb_cars_prev {
@@ -131,11 +134,31 @@ global {
 		map<road, float> road_weights <- roads as_map (each::each.shape.perimeter); 
 		road_graph <- as_edge_graph(roads) with_weights road_weights;
 		close_roads_prev <- close_roads;
-		recompute_shortest_paths <- true;
+		ask vehicle {
+			recompute_path <- true;
+		}
 	}
 	
-	reflex stop_computing_shortest_paths when: recompute_shortest_paths and every(3) {
-		recompute_shortest_paths <- false;
+	matrix<float> mat_diff <- matrix([
+			[1/20,1/20,1/20],
+			[1/20, 3/5 * pollutant_decay_rate,1/20],
+			[1/20,1/20,1/20]]);
+			
+	reflex diffuse_pollutant {
+		diffuse var: co on: pollutant_cell matrix: mat_diff;
+		diffuse var: nox on: pollutant_cell matrix: mat_diff;
+		diffuse var: so2 on: pollutant_cell matrix: mat_diff;
+		diffuse var: pm on: pollutant_cell matrix: mat_diff;
+	}
+	
+	reflex calculate_aqi when: every(1 #hour) {
+//		 aqi <- max(pollutant_cell accumulate each.aqi_hourly);
+		 ask line_graph_aqi {
+		 	do update;
+		 }
+		 ask indicator_health_concern_level {
+		 	do update;
+		 }
 	}
 }
 
@@ -145,11 +168,18 @@ species road {
 	bool s1_close;
 	bool s2_close;
 	
+	float capacity <- 1 + shape.perimeter/30;
+	int nb_cars_on_road -> length(car at_distance 1);
+	int nb_motorbikes_on_road -> length(motorbike at_distance 1);
+	int nb_vehicles_on_road -> nb_cars_on_road + nb_motorbikes_on_road;
+	
+	float speed_coeff <- 1.0 update: (nb_vehicles_on_road <= capacity) ? 1 : exp(-(nb_motorbikes_on_road+ 4 * nb_cars_on_road)/capacity) min: 0.1;
+	
 	aspect default {
 		if (s1_close and close_roads = 1) or (s2_close and close_roads = 2) {
 			draw shape + 5 color: #orange;
 		} else {
-			draw shape + 2 color: #grey end_arrow: 10;
+			draw shape+1/speed_coeff color: (speed_coeff=1.0)?#white : #red end_arrow: 10;
 		}
 	}
 }
@@ -157,9 +187,10 @@ species road {
 species vehicle skills: [moving] {
 	point target;
 	float time_to_go;
+	bool recompute_path;
 	
 	init {
-		speed <- 20 + rnd(20) #km / #h;
+		speed <- 30 + rnd(20) #km / #h;
 		location <- one_of(building).location;
 	}
 	
@@ -168,20 +199,20 @@ species vehicle skills: [moving] {
 	}
 	
 	reflex move when: target != nil {
-		if recompute_shortest_paths {
-			write "hiii";
-		}
-		do goto target: target on: road_graph recompute_path: recompute_shortest_paths;
+		do goto target: target on: road_graph recompute_path: recompute_path;
 		if location = target {
 			target <- nil;
-			time_to_go <- time + rnd(15);
+			time_to_go <- time; //+ rnd(15)#mn;
+		}
+		if (recompute_path) {
+			recompute_path <- false;
 		}
 	}
 }
 
 species car parent: vehicle {
 	aspect default {
-		draw rectangle(10, 5) rotate: heading color: #orange depth: 2;
+		draw rectangle(10, 5) rotate: heading color: #orange depth: 3;
 	}
 }
 
@@ -191,46 +222,42 @@ species motorbike parent: vehicle {
 	}
 }
 
-grid pollutant_cell width: 50 height: 50 neighbors: 8 {
-	rgb color <- #black update: rgb(255* sum(pollutant_val)/100,0,0);
-	
-	bool active;
-	map<string, float> pollutant_val;
-	int aqi_hourly;
+grid pollutant_cell width: pollutant_cell_size height: pollutant_cell_size neighbors: 8 {
+	// Pollutant values
+	float co <- 0.0;
+	float nox <- 0.0;
+	float so2 <- 0.0;
+	float pm <- 0.0;
 
-	init {
-		pollutant_val <- ["CO"::0.0, "NOx"::0.0, "SO2"::0.0, "PM"::0.0];
-	}
+	bool active;
+	int aqi_hourly;
+	float norm_pollution_level -> (co / ALLOWED_AMOUNT["CO"] + nox / ALLOWED_AMOUNT["NOx"] + 
+																		so2 / ALLOWED_AMOUNT["SO2"] + pm / ALLOWED_AMOUNT["PM"]) / cell_volume / 4;
+	
+	rgb color <- #black update: rgb(255 * norm_pollution_level * 10, 0,0);
 	
 	reflex absorb_pollutant when: active {
 		list<vehicle> vehicles_on_cell <- union(car overlapping self, motorbike overlapping self);
 		
 		loop v over: vehicles_on_cell {
-			float dist_traveled <- v.real_speed * step / #km;
-			string vehicle_type <- string(type_of(v));
-			loop p_type over: pollutant_val.keys {
-				pollutant_val[p_type] <- pollutant_val[p_type] + dist_traveled * EMISSION_FACTOR[vehicle_type][p_type] with_precision 6;
-			}
-		}
-	}
+			if (is_number(v.real_speed)) {
+				float dist_traveled <- v.real_speed * step / #km;
+				string vehicle_type <- string(type_of(v));
 
-	reflex diffuse when: sum(pollutant_val) > 0 {
-		loop p_type over: pollutant_val.keys {
-			ask neighbors {
-				self.pollutant_val[p_type] <- self.pollutant_val[p_type] + myself.pollutant_val[p_type] * 0.05 with_precision 6;
+				co <- co + dist_traveled * EMISSION_FACTOR[vehicle_type]["CO"];
+				nox <- nox + dist_traveled * EMISSION_FACTOR[vehicle_type]["NOx"];
+				so2 <- so2 + dist_traveled * EMISSION_FACTOR[vehicle_type]["SO2"];
+			    pm <- pm + dist_traveled * EMISSION_FACTOR[vehicle_type]["PM"];
 			}
-			pollutant_val[p_type] <- (1 - length(neighbors) * 0.05) * pollutant_val[p_type] with_precision 6;
-			pollutant_val[p_type] <- pollutant_decay_rate * pollutant_val[p_type] with_precision 6;
 		}
 	}
 	
 	reflex calculate_aqi when: time mod 1#hour = 0 {
-		map<string, float> aqi;
-		
-		loop p_type over: pollutant_val.keys {
-			aqi[p_type] <- (pollutant_val[p_type] / (cell_width * cell_height * 10)) / ALLOWED_AMOUNT[p_type] * 100;
-		}
-		aqi_hourly <- max(aqi);
+		float aqi_co <- (co / cell_volume) / ALLOWED_AMOUNT["CO"] * 100;
+		float aqi_nox <- (nox / cell_volume) / ALLOWED_AMOUNT["NOx"] * 100;
+		float aqi_so2 <- (so2 / cell_volume) / ALLOWED_AMOUNT["SO2"] * 100;
+		float aqi_pm <- (pm / cell_volume) / ALLOWED_AMOUNT["PM"] * 100;
+		aqi_hourly <- max(aqi_co, aqi_nox, aqi_so2, aqi_pm);
 	}
 }
 
@@ -272,7 +299,7 @@ species dummy_road {
 			float angle <- acos(dot_prod / (sqrt(u.x ^ 2 + u.y ^ 2) + sqrt(v.x ^ 2 + v.y ^ 2)));
 			angle <- (u.x * -v.y + u.y * v.x > 0) ? angle : 360 - angle;
 			
-		 	loop j from:0 to: lights_number-1{
+		 	loop j from:0 to: lights_number-1 {
  				new_point <- {shape.points[i].x + segments_x[i] * (j + mod(cycle, movement_time)/movement_time)/lights_number, 
  											shape.points[i].y + segments_y[i] * (j + mod(cycle, movement_time)/movement_time)/lights_number};
 				draw rectangle(10, 4) at: new_point color: #yellow rotate: angle depth: 3;
@@ -282,18 +309,6 @@ species dummy_road {
 }
 
 species progress_bar {
-//	float x;
-//	float y;
-//	float width;
-//	float height;
-//	
-//	float tracked_val;
-//	float tracked_val_max;
-//	
-//	string bar_name;
-//	string left_label;
-//	string right_label;
-	
 	geometry rect(float x, float y, float width, float height) {
 		return polygon([{x, y}, {x + width, y}, {x + width, y + height}, {x, y + height}, {x, y}]);
 	}
@@ -326,7 +341,6 @@ species line_graph_aqi parent: line_graph {
 	float width <- 1300;
 	float height <- 1000;
 	string label <- "Hourly AQI";
-	bool refresh -> time mod 1#hour = 0;
 }
 
 species line_graph schedules: [] {
@@ -338,7 +352,6 @@ species line_graph schedules: [] {
 	float height;
 	string label <- "";
 	string unit <- "";
-	bool refresh <- true;
 
 	list<float> val_list <- list_with(20, -1.0);
 	
@@ -350,11 +363,12 @@ species line_graph schedules: [] {
 		draw line([a, b]) + thickness at: midpoint(a, b) color: color end_arrow: end_arrow;
 	}
 	
+	action update {
+		remove index: 0 from: val_list;
+		add item: tracked_val to: val_list at: length(val_list);
+	}
+	
 	aspect default {
-		if (refresh) {
-			remove index: 0 from: val_list;
-			add item: tracked_val to: val_list at: length(val_list);	
-		}
 		point origin <- {x, y + height};
 		
 		// Draw axis
@@ -379,25 +393,27 @@ species line_graph schedules: [] {
 		}
 		// Draw current value indicator
 		do draw_line({x, prev_val_pos.y}, {x + width, prev_val_pos.y}, 2, #red);
-		draw label + " " + string(round(val_list[length(val_list) - 1])) + " " + unit at: {x,  prev_val_pos.y - 50} font: font(20) color: #orange;
+		draw label + " " + string(round(val_list[length(val_list) - 1])) + " " + unit at: {x + 50,  prev_val_pos.y - 50} font: font(20) color: #orange;
 	}
 }
 
-species aqi_health_concern {
+species indicator_health_concern_level {
 	float x <- 3000;
 	float y <- 1000;
 	float width <-600;
 	float height <- 200;
+	rgb color;
+	rgb text_color;
+	string text;
+	
+	point anchor <- #center;
 	
 	point midpoint(point a, point b) {
 		return (a + b) / 2;
 	}
 	
-	aspect default {
-		rgb color;
-		rgb text_color;
-		string text;
-		
+	action update {
+		anchor <- #center;
 		if (aqi < 51) {
 			color <- #seagreen;
 			text_color <- #white;
@@ -409,7 +425,8 @@ species aqi_health_concern {
 		} else if (aqi < 151) {
 			color <- #orange;
 			text_color <- #white;
-			text <- " Unhealthy forSensitive Groups";
+			text <- " Unhealthy for\nSensitive Groups";
+			anchor <- #bottom_center;
 		} else if (aqi < 201) {
 			color <- #crimson;
 			text_color <- #white;
@@ -423,9 +440,16 @@ species aqi_health_concern {
 			text_color <- #white;
 			text <- " Hazardous";
 		}
+	}
+	
+	aspect default {
+		if (refresh_info) {
+			do update;
+		}
+		
 		draw rectangle({x, y}, {x + width, y + height}) color: color;
 		point center <- midpoint({x, y}, {x + width, y + height});
-		draw text at: center color: text_color anchor: #center font: font(20);
+		draw text at: center color: text_color anchor: anchor font: font(20);
 		draw "Health concern" at: center - {600, 0} color: #yellow anchor: #center font: font(20);
 	}
 }
@@ -434,6 +458,7 @@ experiment exp {
 	parameter "Number of cars" var: nb_cars <- 0 min: 0 max: 500;
 	parameter "Number of motorbikes" var: nb_motorbikes <- 0 min: 0 max: 2000;
 	parameter "Close roads" var: close_roads <- 0 min: 0 max: 2;
+//	parameter "AQI"  var: aqi <- 0.0;
 	
 	output {
 		display main type: opengl background: #black {
@@ -445,9 +470,9 @@ experiment exp {
 			
 			species progress_bar;
 			species line_graph_aqi;
-			species aqi_health_concern;
+			species indicator_health_concern_level;
 			
-			grid pollutant_cell elevation: sum(pollutant_val) with_precision 3 transparency: 0.5 triangulation: true;
+			grid pollutant_cell transparency: 0.4 elevation: norm_pollution_level * 1000 triangulation: true;
 		}
 	}
 }

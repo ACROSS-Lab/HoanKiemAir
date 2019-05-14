@@ -2,7 +2,7 @@
 model NewModel
 
 global {
-	bool connect_to_mqtt_server <- false;
+	bool connect_to_mqtt_server <- true;
 	
 	int DISPLAY_MODE_TRAFFIC <- 0 const: true;
 	int DISPLAY_MODE_POLLUTION <- 1 const: true;
