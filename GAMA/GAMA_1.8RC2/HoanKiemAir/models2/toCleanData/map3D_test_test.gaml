@@ -8,15 +8,15 @@
 model map3D
 
 global {
-	shape_file boundaries_shape_file <- shape_file("../../includes/map3D_final/boundaries.shp");
+	shape_file boundaries_shape_file <- shape_file("../../includes/map3D_test/boundaries.shp");
 	
-	shape_file buildings_admin_shape_file <- shape_file("../../includes/map3D_final/buildings_admin.shp");
-	shape_file buildings_shape_file <- shape_file("../../includes/map3D_final/buildings.shp");
+	shape_file buildings_admin_shape_file <- shape_file("../../includes/map3D_test/buildings_admin.shp");
+	shape_file buildings_shape_file <- shape_file("../../includes/map3D_test/buildings.shp");
 	
-	shape_file bound_without_roads_shape_file <- shape_file("../../includes/map3D_final/g_ground_pluri.shp");
-	shape_file natural_shape_file <- shape_file("../../includes/map3D_final/naturals.shp");
+	shape_file bound_without_roads_shape_file <- shape_file("../../includes/map3D_test/g_ground_pluri.shp");
+	shape_file natural_shape_file <- shape_file("../../includes/map3D_test/naturals.shp");
 	
-	shape_file enlarged_road_shape_file <- shape_file("../../includes/map3D_final/roads_buffer.shp");
+	shape_file enlarged_road_shape_file <- shape_file("../../includes/map3D_test/roads_buffer.shp");
 
 	geometry shape <- envelope(boundaries_shape_file); 
 
@@ -36,14 +36,14 @@ global {
 			if(height < 0.1) {
 				height <- 1.3 + rnd(-0.3,0.3);		
 			}
-//			error <- (length(shape.points) != length(remove_duplicates(shape.points)) + 1);
+	//		error <- (length(shape.points) != length(remove_duplicates(shape.points)) + 1);
 		}
 		
 		create building_admin from: buildings_admin_shape_file with:[height::float(read("height"))] ;
 //		{
 //			height <- 0.8 ;
 //		}
-//		save building_admin type: shp to: "../../includes/map3D_final/buildings_admin.shp" attributes: ["height"::height];	
+		save building_admin type: shp to: "../../includes/map3D_final/buildings_admin.shp" attributes: ["height"::height];	
 		
 		create natural from: natural_shape_file with:[height::float(read("height"))];
 //		{
@@ -57,7 +57,7 @@ global {
 //		save building_admin type: shp to: "../../includes/map3D_190508/buildings_admin.shp" attributes: ["height"::height];	
 
 
-		save (agents of_generic_species to_print) type: shp to: "../../includes/map3D_final/map3D.shp" attributes: ["height"::height];
+		save (agents of_generic_species to_print) type: shp to: "../../includes/map3D_test/map3D_test.shp" attributes: ["height"::height];
 	
 //		save (agents of_generic_species to_print) type: shp to: "../../includes/map3D_190503/result.shp" attributes: ["height"::height, "type"::type];
 
