@@ -39,11 +39,9 @@ global {
 	//		error <- (length(shape.points) != length(remove_duplicates(shape.points)) + 1);
 		}
 		
-		create building_admin from: buildings_admin_shape_file with:[height::float(read("height"))] ;
-//		{
-//			height <- 0.8 ;
-//		}
-		save building_admin type: shp to: "../../includes/map3D_final/buildings_admin.shp" attributes: ["height"::height];	
+// BEN
+////////		create building_admin from: buildings_admin_shape_file with:[height::float(read("height"))] ;
+		
 		
 		create natural from: natural_shape_file with:[height::float(read("height"))];
 //		{
