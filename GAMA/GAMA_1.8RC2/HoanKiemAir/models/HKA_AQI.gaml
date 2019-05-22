@@ -13,7 +13,7 @@ global {
 	int display_mode;
 	
 	// Simulation params
-	float step <- 5#mn;
+	float step <- 10#s;
 	int pollutant_cell_size <- 64;
 	float pollutant_decay_rate <- 0.9;
 	// Changeable params
@@ -24,9 +24,6 @@ global {
 	int nb_cars_prev <- nb_cars;
 	int nb_motorbikes_prev <- nb_motorbikes;
 	int close_roads_prev <- close_roads;
-	
-	// Other values
-	bool refresh_info <- every_cycle(1 #hour);
 
 	float aqi;
 	
@@ -35,7 +32,6 @@ global {
 	shape_file roads_shape_file <- shape_file(resources_dir + "roads.shp");
 	shape_file dummy_roads_shape_file <- shape_file(resources_dir + "small_dummy_roads.shp");
 	shape_file buildings_shape_file <- shape_file(resources_dir + "buildings.shp");
-	shape_file bound_shape_file <- shape_file(resources_dir + "bound.shp");
 	
 	geometry shape <- envelope(buildings_shape_file);
 	float cell_width <- shape.width / 50;
@@ -152,7 +148,7 @@ global {
 	}
 	
 	reflex calculate_aqi when: every(1 #hour) {
-//		 aqi <- max(pollutant_cell accumulate each.aqi_hourly);
+		 aqi <- max(pollutant_cell accumulate each.aqi_hourly);
 		 ask line_graph_aqi {
 		 	do update;
 		 }
@@ -162,7 +158,7 @@ global {
 	}
 }
 
-species road {
+species road schedules: [] {
 	string type;
 	bool oneway;
 	bool s1_close;
@@ -222,7 +218,7 @@ species motorbike parent: vehicle {
 	}
 }
 
-grid pollutant_cell width: pollutant_cell_size height: pollutant_cell_size neighbors: 8 {
+grid pollutant_cell width: pollutant_cell_size height: pollutant_cell_size neighbors: 8 parallel: true {
 	// Pollutant values
 	float co <- 0.0;
 	float nox <- 0.0;
@@ -261,7 +257,7 @@ grid pollutant_cell width: pollutant_cell_size height: pollutant_cell_size neigh
 	}
 }
 
-species building {
+species building schedules: [] {
 	int height <- 10 + rnd(10);
 	
 	aspect default {
@@ -270,7 +266,7 @@ species building {
 }
 
 // Species to display additional info
-species dummy_road {
+species dummy_road schedules: [] {
 	int mid;
 	int oneway;
 	int linkToRoad;
@@ -308,7 +304,7 @@ species dummy_road {
 	}
 }
 
-species progress_bar {
+species progress_bar schedules: [] {
 	geometry rect(float x, float y, float width, float height) {
 		return polygon([{x, y}, {x + width, y}, {x + width, y + height}, {x, y + height}, {x, y}]);
 	}
@@ -397,7 +393,7 @@ species line_graph schedules: [] {
 	}
 }
 
-species indicator_health_concern_level {
+species indicator_health_concern_level schedules: [] {
 	float x <- 3000;
 	float y <- 1000;
 	float width <-600;
@@ -443,10 +439,6 @@ species indicator_health_concern_level {
 	}
 	
 	aspect default {
-		if (refresh_info) {
-			do update;
-		}
-		
 		draw rectangle({x, y}, {x + width, y + height}) color: color;
 		point center <- midpoint({x, y}, {x + width, y + height});
 		draw text at: center color: text_color anchor: anchor font: font(20);
@@ -455,8 +447,8 @@ species indicator_health_concern_level {
 }
 
 experiment exp {
-	parameter "Number of cars" var: nb_cars <- 0 min: 0 max: 500;
-	parameter "Number of motorbikes" var: nb_motorbikes <- 0 min: 0 max: 2000;
+	parameter "Number of cars" var: nb_cars <- 0 min: 0 max: 200;
+	parameter "Number of motorbikes" var: nb_motorbikes <- 0 min: 0 max: 1000;
 	parameter "Close roads" var: close_roads <- 0 min: 0 max: 2;
 //	parameter "AQI"  var: aqi <- 0.0;
 	

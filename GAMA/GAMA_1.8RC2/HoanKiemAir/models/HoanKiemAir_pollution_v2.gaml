@@ -2,7 +2,7 @@
 model NewModel
 
 global {
-	bool connect_to_mqtt_server <- true;
+	bool connect_to_mqtt_server <- false;
 	
 	int DISPLAY_MODE_TRAFFIC <- 0 const: true;
 	int DISPLAY_MODE_POLLUTION <- 1 const: true;
@@ -60,9 +60,8 @@ global {
 	shape_file buildings_shape_file <- shape_file("../includes/bigger_map/buildings.shp");
 	shape_file lakes_shape_file <- shape_file("../includes/bigger_map/lakes.shp");
 	shape_file pollutant_cells_shape_file <- shape_file("../includes/bigger_map/road_pollution_grid.shp");
-	shape_file bound_shape_file <- shape_file("../includes/bigger_map/bound.shp");
 
-	geometry shape <- envelope(bound_shape_file);
+	geometry shape <- envelope(buildings_shape_file);
 
 	map<string,rgb> col <- map(['footway'::#green,'residential'::#blue,'primary'::#orange,
 								'secondary'::#yellow,'tertiary'::#indigo,'primary_link'::#black,
