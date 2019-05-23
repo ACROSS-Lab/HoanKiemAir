@@ -177,6 +177,7 @@ global {
 	
 	reflex benchmark when: benchmark and every(10 #cycle) {
 		write "Vehicles move: " + time_vehicles_move;
+		write "Path recomputed: " + nb_recompute_path;
 		write "Create congestions: " + time_create_congestions;
 		write "Absorb pollutants: " + time_absorb_pollutants;
 		write "Diffuse pollutants: " + time_diffuse_pollutants;

@@ -9,6 +9,7 @@ model traffic
 
 global {
 	float time_vehicles_move;
+	int nb_recompute_path;
 }
 
 species road schedules: [] {
@@ -40,8 +41,10 @@ species vehicle skills: [moving] {
 	
 	point target;
 	float time_to_go;
-	bool recompute_path;
+	bool recompute_path <- false;
 	graph road_network;
+	
+	path my_path;
 	
 	init {
 		speed <- 30 + rnd(20) #km / #h;
@@ -49,12 +52,13 @@ species vehicle skills: [moving] {
 	}
 	
 	action update_road_network(graph new_road_network) {
+		write "HERE I AM";
 		road_network <- new_road_network;
 		recompute_path <- true;
 	}
 	
 	reflex choose_new_target when: target = nil and time >= time_to_go {
-		target <- one_of(building).location;
+		target <- road_network.vertices closest_to any(building);
 	}
 	
 	reflex move when: target != nil {
