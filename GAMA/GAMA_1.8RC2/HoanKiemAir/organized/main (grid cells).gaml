@@ -10,24 +10,17 @@ model main
 import "agents/traffic.gaml"
 import "agents/pollution.gaml"
 import "agents/visualization.gaml"
+import "agents/remotegui.gaml"
 
 global {
+	bool mqtt_connect <- true;
 	// Benchmark execution time
-	bool benchmark <- true;
+	bool benchmark <- false;
 	float time_absorb_pollutants;
 	float time_diffuse_pollutants;
 	float time_create_congestions;
 
 	float step <- 15#s;
-	float pollutant_decay_rate <- 0.9;
-	// Simulation parameters
-	int n_cars;
-	int n_motorbikes;
-	int road_scenario;
-	// Save params' old value to detect value changes
-	int n_cars_prev;
-	int n_motorbikes_prev;
-	int road_scenario_prev;
 	
 	// Load shapefiles
 	string resources_dir <- "../includes/bigger_map/";
@@ -36,7 +29,6 @@ global {
 	shape_file buildings_shape_file <- shape_file(resources_dir + "buildings.shp");
 	
 	geometry shape <- envelope(buildings_shape_file);
-	graph road_network;
 	list<road> open_roads;
 	list<pollutant_cell> active_cells;
 	
@@ -49,8 +41,8 @@ global {
 					shape <- polyline(reverse(myself.shape.points));
 					name <- myself.name;
 					type <- myself.type;
-					s1_close <- myself.s1_close;
-					s2_close <- myself.s2_close;
+					s1_closed <- myself.s1_closed;
+					s2_closed <- myself.s2_closed;
 				}
 			}
 		}
@@ -62,9 +54,12 @@ global {
 		
 		// Additional visualization
 		create dummy_road from: dummy_roads_shape_file;
-		create progress_bar with: [x::-700, y::1800, width::500, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"500"];
-		create progress_bar with: [x::-700, y::2000, width::500, height::100, max_val::1500, title::"Motorbikes", left_label::"0", right_label::"1500"];
+		create progress_bar with: [x::-700, y::2000, width::500, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"500"];
+		create progress_bar with: [x::-700, y::2400, width::500, height::100, max_val::1000, title::"Motorbikes", left_label::"0", right_label::"1500"];
 		create line_graph with: [x::2600, y::1400, width::1300, height::1000, label::"Hourly AQI"];
+		create indicator_health_concern_level with: [x::3300, y::1000, width::600, height::200];
+		// Connect to remote controller
+		create controller;
 	}
 	
 	action update_vehicle_population(string type, int delta) {
@@ -74,7 +69,7 @@ global {
 				do die;
 			}
 		} else {
-			create vehicle number: delta with: [type::type, road_network::road_network];
+			create vehicle number: delta with: [type::type];
 		}
 	}
 	
@@ -100,15 +95,26 @@ global {
 		switch road_scenario {
 			match 0 {
 				open_roads <- list(road);
+				break;
 			}
 			match 1 {
-				open_roads <- road where !each.s1_close;
+				open_roads <- road where !each.s1_closed;
+				break;
 			}
 			match 2 {
-				open_roads <- road where !each.s2_close;
+				open_roads <- road where !each.s2_closed;
+				break;
 			}
 		}
 		
+		// Recreate road network
+		map<road, float> road_weights <- open_roads as_map (each::each.shape.perimeter); 
+		road_network <- as_edge_graph(open_roads) with_weights road_weights;
+		ask vehicle {
+			recompute_path <- true;
+		}
+		
+		// Change the display of roads
 		list<road> closed_roads <- road - open_roads;
 		ask open_roads {
 			closed <- false;
@@ -116,17 +122,12 @@ global {
 		ask closed_roads {
 			closed <- true;
 		}
-		
-		map<road, float> road_weights <- open_roads as_map (each::each.shape.perimeter); 
-		graph new_road_network <- as_edge_graph(open_roads) with_weights road_weights;
-		ask vehicle {
-			do update_road_network(new_road_network);
-		}
-		road_network <- new_road_network;
-		road_scenario_prev <- road_scenario;
-		
+
+		// Choose the active cells again
 		geometry road_geometry <- union(open_roads accumulate each.shape);
 		active_cells <- pollutant_cell overlapping road_geometry;
+		
+		road_scenario_prev <- road_scenario;
 	}
 	
 	reflex create_congestions {
@@ -175,13 +176,22 @@ global {
 		time_diffuse_pollutants <- machine_time - start;
 	}
 	
+	reflex calculate_aqi when: every(1 #hour) {
+		 float aqi <- max(pollutant_cell accumulate each.aqi_hourly);
+		 ask line_graph {
+		 	do update(aqi);
+		 }
+		 ask indicator_health_concern_level {
+		 	do update(aqi);
+		 }
+	}
+	
 	reflex benchmark when: benchmark and every(10 #cycle) {
 		write "Vehicles move: " + time_vehicles_move;
 		write "Path recomputed: " + nb_recompute_path;
 		write "Create congestions: " + time_create_congestions;
 		write "Absorb pollutants: " + time_absorb_pollutants;
 		write "Diffuse pollutants: " + time_diffuse_pollutants;
-		
 		time_vehicles_move <- 0.0;
 	}
 }
@@ -190,17 +200,19 @@ experiment exp {
 	parameter "Number of cars" var: n_cars <- 500 min: 0 max: 500;
 	parameter "Number of motorbikes" var: n_motorbikes <- 1000 min: 0 max: 1000;
 	parameter "Close roads" var: road_scenario <- 0 min: 0 max: 2;
+	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
 	
 	output {
 		display main type: opengl background: #black {
 			species vehicle;
 			species road;
 			species building;
-			grid pollutant_cell transparency: 0.5 elevation: norm_pollution_level * 1000 triangulation: true;
-			
 			species dummy_road;
+			grid pollutant_cell transparency: (display_mode = 0) ? 1.0 : 0.4 elevation: norm_pollution_level * 1000 triangulation: true;
+			
 			species progress_bar;
 			species line_graph;
+			species indicator_health_concern_level;
 		}
 	}
 }

@@ -6,6 +6,7 @@
 ***/
 
 model pollution
+import "../global_vars.gaml"
 
 global {
 	// Constants
@@ -15,13 +16,8 @@ global {
 		"car"::["CO"::3.62, "NOx"::1.5, "SO2"::0.17, "PM"::0.1]
 	];
 	
-	string resources_dir <- "../includes/bigger_map/";
-	shape_file buildings_shape_file <- shape_file(resources_dir + "buildings.shp");
-	geometry shape <- envelope(buildings_shape_file);
-	
 	// Params
-	int grid_size <- 50;
-	float cell_volume <- (shape.width / grid_size) * (shape.height / grid_size) * 10;  // in cubic meters	
+	float cell_volume <- (shape.width / grid_size) * (shape.height / grid_size) * grid_depth;  // in cubic meters	
 }
 
 grid pollutant_cell width: grid_size height: grid_size neighbors: 8 parallel: true {

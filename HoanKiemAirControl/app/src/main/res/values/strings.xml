@@ -7,9 +7,8 @@
     <string name="label_category_simulation_params">Simulation parameters</string>
     <string name="label_category_display">Display</string>
 
-    <string name="label_num_people">Number of people</string>
-    <string name="label_vehicle_ratio">Car/motorbike ratio</string>
-    <string name="label_car_capacity">Number of people in each car</string>
+    <string name="label_num_cars">Number of cars</string>
+    <string name="label_num_motorbikes">Number of motorbikes</string>
     <string name="label_close_roads">Close roads</string>
 
     <string name="label_display_mode">Display mode</string>

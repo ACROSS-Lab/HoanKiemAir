@@ -20,13 +20,14 @@
         android:textSize="25sp"
         android:hint="@string/ip_text_hint"/>
 
-    <Button
+    <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
         android:id="@+id/button_connect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:backgroundTint="@color/primaryLightColor"
-        android:text="@string/button_connect" />
+        app:initialCornerAngle="45dp"
+        android:text="@string/button_connect"/>
 
     <View
         android:layout_width="match_parent"

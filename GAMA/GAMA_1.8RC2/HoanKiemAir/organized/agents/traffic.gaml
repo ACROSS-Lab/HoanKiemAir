@@ -6,6 +6,7 @@
 ***/
 
 model traffic
+import "../global_vars.gaml"
 
 global {
 	float time_vehicles_move;
@@ -15,23 +16,24 @@ global {
 species road schedules: [] {
 	string type;
 	bool oneway;
-	bool s1_close;
-	bool s2_close;
+	bool s1_closed;
+	bool s2_closed;
+	
 	bool closed;
-	
 	float capacity <- 1 + shape.perimeter/30;
-	
 	float speed_coeff <- 1.0 min: 0.1;
 	
-	action update_speed_coeff(int n_cars, int n_motorbikes) {
-		speed_coeff <- (n_cars + n_motorbikes <= capacity) ? 1 : exp(-(n_motorbikes + 4 * n_cars)/capacity);
+	action update_speed_coeff(int n_cars_on_road, int n_motorbikes_on_road) {
+		speed_coeff <- (n_cars_on_road + n_motorbikes_on_road <= capacity) ? 1 : exp(-(n_motorbikes_on_road + 4 * n_cars_on_road)/capacity);
 	}
 
 	aspect default {
 		if (closed) {
 			draw shape + 5 color: #orange;
+		} else if (display_mode = 0) {
+			draw shape+1/speed_coeff color: (speed_coeff=1.0) ? #white : #red end_arrow: 10;
 		} else {
-			draw shape+1/speed_coeff color: (speed_coeff=1.0)?#white : #red end_arrow: 10;
+			draw shape color: #white end_arrow: 10;
 		}
 	}
 }
@@ -42,7 +44,6 @@ species vehicle skills: [moving] {
 	point target;
 	float time_to_go;
 	bool recompute_path <- false;
-	graph road_network;
 	
 	path my_path;
 	
@@ -51,11 +52,6 @@ species vehicle skills: [moving] {
 		location <- one_of(building).location;
 	}
 	
-	action update_road_network(graph new_road_network) {
-		write "HERE I AM";
-		road_network <- new_road_network;
-		recompute_path <- true;
-	}
 	
 	reflex choose_new_target when: target = nil and time >= time_to_go {
 		target <- road_network.vertices closest_to any(building);

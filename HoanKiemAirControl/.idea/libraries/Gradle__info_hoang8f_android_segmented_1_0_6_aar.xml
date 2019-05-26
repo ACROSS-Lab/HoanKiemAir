@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: info.hoang8f:android-segmented:1.0.6@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/android-segmented-1.0.6.aar/aeaec66dc3ea85a4918e24faa97b87d8/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/android-segmented-1.0.6.aar/aeaec66dc3ea85a4918e24faa97b87d8/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1cb35afc5833dc7d2389fcf67c375c6c/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1cb35afc5833dc7d2389fcf67c375c6c/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

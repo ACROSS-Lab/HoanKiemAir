@@ -5,18 +5,12 @@ import android.content.DialogInterface;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.PopupMenu;
-import android.widget.Toast;
-
-import com.example.hoankiemaircontrol.R;
-import com.example.hoankiemaircontrol.utils.LocaleHelper;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.hoankiemaircontrol.R;
+import com.example.hoankiemaircontrol.utils.LocaleHelper;
 
 public abstract class BaseActivity extends AppCompatActivity {
     @Override

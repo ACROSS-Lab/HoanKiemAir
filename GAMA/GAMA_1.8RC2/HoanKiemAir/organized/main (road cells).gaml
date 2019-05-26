@@ -19,15 +19,6 @@ global {
 	float time_create_congestions;
 
 	float step <- 15#s;
-	float pollutant_decay_rate <- 0.9;
-	// Simulation parameters
-	int n_cars;
-	int n_motorbikes;
-	int road_scenario;
-	// Save params' old value to detect value changes
-	int n_cars_prev;
-	int n_motorbikes_prev;
-	int road_scenario_prev;
 	
 	// Load shapefiles
 	string resources_dir <- "../includes/bigger_map/";
@@ -37,7 +28,6 @@ global {
 	shape_file road_cells_shape_file <- shape_file(resources_dir + "road_pollution_grid.shp");
 	
 	geometry shape <- envelope(buildings_shape_file);
-	graph road_network;
 	list<road> open_roads;
 	
 	init {
@@ -49,8 +39,8 @@ global {
 					shape <- polyline(reverse(myself.shape.points));
 					name <- myself.name;
 					type <- myself.type;
-					s1_close <- myself.s1_close;
-					s2_close <- myself.s2_close;
+					s1_closed <- myself.s1_closed;
+					s2_closed <- myself.s2_closed;
 				}
 			}
 		}
@@ -79,7 +69,7 @@ global {
 				do die;
 			}
 		} else {
-			create vehicle number: delta with: [type::type, road_network::road_network];
+			create vehicle number: delta with: [type::type];
 		}
 	}
 	
@@ -107,10 +97,10 @@ global {
 				open_roads <- list(road);
 			}
 			match 1 {
-				open_roads <- road where !each.s1_close;
+				open_roads <- road where !each.s1_closed;
 			}
 			match 2 {
-				open_roads <- road where !each.s2_close;
+				open_roads <- road where !each.s2_closed;
 			}
 		}
 		
@@ -125,7 +115,7 @@ global {
 		map<road, float> road_weights <- open_roads as_map (each::each.shape.perimeter); 
 		graph new_road_network <- as_edge_graph(open_roads) with_weights road_weights;
 		ask vehicle {
-			do update_road_network(new_road_network);
+			recompute_path <- true;
 		}
 		road_network <- new_road_network;
 		road_scenario_prev <- road_scenario;

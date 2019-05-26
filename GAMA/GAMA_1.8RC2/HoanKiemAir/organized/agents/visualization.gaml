@@ -108,55 +108,55 @@ species line_graph schedules: [] {
 	}
 }
 
-//species indicator_health_concern_level schedules: [] {
-//	float x <- 3000;
-//	float y <- 1000;
-//	float width <-600;
-//	float height <- 200;
-//	rgb color;
-//	rgb text_color;
-//	string text;
-//	
-//	point anchor <- #center;
-//	
-//	point midpoint(point a, point b) {
-//		return (a + b) / 2;
-//	}
-//	
-//	action update {
-//		anchor <- #center;
-//		if (aqi < 51) {
-//			color <- #seagreen;
-//			text_color <- #white;
-//			text <- " Good";
-//		} else if (aqi < 101) {
-//			color <- #yellow;
-//			text_color <- #black;
-//			text <- " Moderate";
-//		} else if (aqi < 151) {
-//			color <- #orange;
-//			text_color <- #white;
-//			text <- " Unhealthy for\nSensitive Groups";
-//			anchor <- #bottom_center;
-//		} else if (aqi < 201) {
-//			color <- #crimson;
-//			text_color <- #white;
-//			text <- " Unhealthy";
-//		} else if (aqi < 301) {
-//			color <- #purple;
-//			text_color <- #white;
-//			text <- " Very unhealthy";
-//		} else {
-//			color <- #darkred;
-//			text_color <- #white;
-//			text <- " Hazardous";
-//		}
-//	}
-//	
-//	aspect default {
-//		draw rectangle({x, y}, {x + width, y + height}) color: color;
-//		point center <- midpoint({x, y}, {x + width, y + height});
-//		draw text at: center color: text_color anchor: anchor font: font(20);
-//		draw "Health concern" at: center - {600, 0} color: #yellow anchor: #center font: font(20);
-//	}
-//}
+species indicator_health_concern_level schedules: [] {
+	float x <- 3000;
+	float y <- 1000;
+	float width <-600;
+	float height <- 200;
+	rgb color;
+	rgb text_color;
+	string text;
+	
+	point anchor <- #center;
+	
+	point midpoint(point a, point b) {
+		return (a + b) / 2;
+	}
+	
+	action update(float aqi) {
+		anchor <- #center;
+		if (aqi < 51) {
+			color <- #seagreen;
+			text_color <- #white;
+			text <- " Good";
+		} else if (aqi < 101) {
+			color <- #yellow;
+			text_color <- #black;
+			text <- " Moderate";
+		} else if (aqi < 151) {
+			color <- #orange;
+			text_color <- #white;
+			text <- " Unhealthy for\nSensitive Groups";
+			anchor <- #bottom_center;
+		} else if (aqi < 201) {
+			color <- #crimson;
+			text_color <- #white;
+			text <- " Unhealthy";
+		} else if (aqi < 301) {
+			color <- #purple;
+			text_color <- #white;
+			text <- " Very unhealthy";
+		} else {
+			color <- #darkred;
+			text_color <- #white;
+			text <- " Hazardous";
+		}
+	}
+	
+	aspect default {
+		draw rectangle({x, y}, {x + width, y + height}) color: color;
+		point center <- midpoint({x, y}, {x + width, y + height});
+		draw text at: center color: text_color anchor: anchor font: font(20);
+		draw "Health concern \n level" at: center - {650, 0} color: #yellow anchor: #bottom_center font: font(20);
+	}
+}

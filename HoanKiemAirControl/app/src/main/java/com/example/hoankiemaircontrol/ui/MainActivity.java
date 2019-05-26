@@ -3,10 +3,7 @@ package com.example.hoankiemaircontrol.ui;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.hoankiemaircontrol.R;
@@ -17,29 +14,22 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.lang.ref.WeakReference;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 public class MainActivity extends BaseActivity {
-    private static final int N_PEOPLE_MIN = 0;
-    private static final int N_PEOPLE_MAX = 2000;
-    private static final int VEHICLE_RATIO_MIN = 0;
-    private static final int VEHICLE_RATIO_MAX = 100;
-    private static final int CAR_CAPACITY_MIN = 1;
-    private static final int CAR_CAPACITY_MAX = 7;
+    private static final int N_CARS_MIN = 0;
+    private static final int N_CARS_MAX = 500;
+    private static final int N_MOTORBIKES_MIN = 0;
+    private static final int N_MOTORBIKES_MAX = 1000;
 
     private static final int DISPLAY_MODE_TRAFFIC = 0;
     private static final int DISPLAY_MODE_POLLUTION = 1;
 
-    private TextView mTextNumPeopleMin;
-    private TextView mTextNumPeopleMax;
-    private TextView mTextVehicleRatioMin;
-    private TextView mTextVehicleRatioMax;
-    private TextView mTextCarCapacityMin;
-    private TextView mTextCarCapacityMax;
+    private TextView mTextNumCarsMin;
+    private TextView mTextNumCarsMax;
+    private TextView mTextNumMotorbikesMin;
+    private TextView mTextNumMotorbikesMax;
 
-    private DiscreteSeekBar mSeekBarNumPeople;
-    private DiscreteSeekBar mSeekBarVehicleRatio;
-    private DiscreteSeekBar mSeekBarCarCapacity;
+    private DiscreteSeekBar mSeekBarNumCars;
+    private DiscreteSeekBar mSeekBarNumMotorbikes;
 
     private MQTTConnector mConnector;
 
@@ -55,28 +45,26 @@ public class MainActivity extends BaseActivity {
             e.printStackTrace();
         }
 
-        mTextNumPeopleMin = findViewById(R.id.text_num_people_min);
-        mTextNumPeopleMax = findViewById(R.id.text_num_people_max);
-        mTextVehicleRatioMin = findViewById(R.id.text_vehicle_ratio_min);
-        mTextVehicleRatioMax = findViewById(R.id.text_vehicle_ratio_max);
-        mTextCarCapacityMin = findViewById(R.id.text_car_capacity_min);
-        mTextCarCapacityMax = findViewById(R.id.text_car_capacity_max);
+        mTextNumCarsMin = findViewById(R.id.text_num_cars_min);
+        mTextNumCarsMax = findViewById(R.id.text_num_cars_max);
+        mTextNumMotorbikesMin = findViewById(R.id.text_num_motorbikes_min);
+        mTextNumMotorbikesMax = findViewById(R.id.text_num_motorbikes_max);
 
-        mTextNumPeopleMin.setText(Integer.toString(N_PEOPLE_MIN));
-        mTextNumPeopleMax.setText((Integer.toString(N_PEOPLE_MAX)));
-        mTextVehicleRatioMin.setText(VEHICLE_RATIO_MIN + "%");
-        mTextVehicleRatioMax.setText(VEHICLE_RATIO_MAX + "%");
-        mTextCarCapacityMin.setText(Integer.toString(CAR_CAPACITY_MIN));
-        mTextCarCapacityMax.setText((Integer.toString(CAR_CAPACITY_MAX)));
 
-        mSeekBarNumPeople = findViewById(R.id.seek_bar_num_people);
-        mSeekBarNumPeople.setMin(N_PEOPLE_MIN);
-        mSeekBarNumPeople.setMax(N_PEOPLE_MAX);
-        mSeekBarNumPeople.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
+        mTextNumCarsMin.setText(Integer.toString(N_CARS_MIN));
+        mTextNumCarsMax.setText((Integer.toString(N_CARS_MAX)));
+        mTextNumMotorbikesMin.setText(Integer.toString(N_MOTORBIKES_MIN));
+        mTextNumMotorbikesMax.setText(Integer.toString(N_MOTORBIKES_MAX));
+
+
+        mSeekBarNumCars = findViewById(R.id.seek_bar_num_people);
+        mSeekBarNumCars.setMin(N_CARS_MIN);
+        mSeekBarNumCars.setMax(N_CARS_MAX);
+        mSeekBarNumCars.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
             @Override
             public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
                 Bundle bundle = new Bundle();
-                bundle.putCharSequence("topic", "nb_people");
+                bundle.putCharSequence("topic", "n_cars");
                 bundle.putInt("intData", value);
                 new SendMessageTask(MainActivity.this).execute(bundle);
             }
@@ -92,37 +80,14 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        mSeekBarVehicleRatio = findViewById(R.id.seek_bar_vehicle_ratio);
-        mSeekBarVehicleRatio.setMin(VEHICLE_RATIO_MIN);
-        mSeekBarVehicleRatio.setMax(VEHICLE_RATIO_MAX);
-        mSeekBarVehicleRatio.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
+        mSeekBarNumMotorbikes = findViewById(R.id.seek_bar_vehicle_ratio);
+        mSeekBarNumMotorbikes.setMin(N_MOTORBIKES_MIN);
+        mSeekBarNumMotorbikes.setMax(N_MOTORBIKES_MAX);
+        mSeekBarNumMotorbikes.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
             @Override
             public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
                 Bundle bundle = new Bundle();
-                bundle.putCharSequence("topic", "nb_moto");
-                bundle.putInt("intData", value);
-                new SendMessageTask(MainActivity.this).execute(bundle);
-            }
-
-            @Override
-            public void onStartTrackingTouch(DiscreteSeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(DiscreteSeekBar seekBar) {
-
-            }
-        });
-
-        mSeekBarCarCapacity = findViewById(R.id.seek_bar_car_capacity);
-        mSeekBarCarCapacity.setMin(CAR_CAPACITY_MIN);
-        mSeekBarCarCapacity.setMax(CAR_CAPACITY_MAX);
-        mSeekBarCarCapacity.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
-            @Override
-            public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
-                Bundle bundle = new Bundle();
-                bundle.putCharSequence("topic", "nb_people_car");
+                bundle.putCharSequence("topic", "n_motorbikes");
                 bundle.putInt("intData", value);
                 new SendMessageTask(MainActivity.this).execute(bundle);
             }

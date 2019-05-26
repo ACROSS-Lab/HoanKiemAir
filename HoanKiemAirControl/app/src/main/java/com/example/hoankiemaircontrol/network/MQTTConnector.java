@@ -1,9 +1,7 @@
 package com.example.hoankiemaircontrol.network;
 
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -13,8 +11,9 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class MQTTConnector {
     public final static String SERVER_URL = "SERVER_URL";
@@ -31,9 +30,11 @@ public final class MQTTConnector {
 
     protected MqttClient sendConnection = null;
     Map<String, Object> receivedData;
+    public String serverIp;
 
     public MQTTConnector(final String server, final String userName, final String password) throws MqttException {
         this.connectToServer(server, null, userName, password);
+        serverIp = server;
         receivedData = new HashMap<String, Object>();
     }
 
