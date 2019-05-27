@@ -27,7 +27,7 @@ grid pollutant_cell width: grid_size height: grid_size neighbors: 8 parallel: tr
 	float so2 <- 0.0;
 	float pm <- 0.0;
 
-	int aqi_hourly;
+	float aqi_hourly;
 	float norm_pollution_level -> (co / ALLOWED_AMOUNT["CO"] + nox / ALLOWED_AMOUNT["NOx"] + 
 																		so2 / ALLOWED_AMOUNT["SO2"] + pm / ALLOWED_AMOUNT["PM"]) / cell_volume / 4;
 	
@@ -52,7 +52,7 @@ species road_cell {
 	float so2 <- 0.0;
 	float pm <- 0.0;
 
-	int aqi_hourly;
+	float aqi_hourly;
 	float norm_pollution_level -> (co / ALLOWED_AMOUNT["CO"] + nox / ALLOWED_AMOUNT["NOx"] + 
 																		so2 / ALLOWED_AMOUNT["SO2"] + pm / ALLOWED_AMOUNT["PM"]) / cell_volume / 4;
 	

@@ -118,6 +118,12 @@ species decoration_building schedules: [] {
 	}
 }
 
+species natural schedules: [] {
+	aspect default {
+		draw shape color: #darkblue border: #darkblue;
+	}	
+}
+
 species dummy_road schedules: [] {
 	int mid;
 	int oneway;
@@ -157,23 +163,23 @@ species dummy_road schedules: [] {
 
 	aspect default {
 		point new_point;
-		int lights_number <- shape.perimeter / 50;
+		int lights_number <- int(shape.perimeter / 50);
 		
 		draw shape color: #grey end_arrow: 10;
 
-		loop i from: 0 to: segments_number-1 {
-			// Calculate rotation angle
-			point u <- {segments_x[i] , segments_y[i]};
-			point v <- {1, 0};
-			float dot_prod <- u.x * v.x + u.y * v.y;
-			float angle <- acos(dot_prod / (sqrt(u.x ^ 2 + u.y ^ 2) + sqrt(v.x ^ 2 + v.y ^ 2)));
-			angle <- (u.x * -v.y + u.y * v.x > 0) ? angle : 360 - angle;
-			
-		 	loop j from:0 to: lights_number-1 {
- 				new_point <- {shape.points[i].x + segments_x[i] * (j + mod(cycle, movement_time)/movement_time)/lights_number, 
- 											shape.points[i].y + segments_y[i] * (j + mod(cycle, movement_time)/movement_time)/lights_number};
-				draw rectangle(10, 4) at: new_point color: #yellow rotate: angle depth: 3;
-			}
-		}	
+//		loop i from: 0 to: segments_number-1 {
+//			// Calculate rotation angle
+//			point u <- {segments_x[i] , segments_y[i]};
+//			point v <- {1, 0};
+//			float dot_prod <- u.x * v.x + u.y * v.y;
+//			float angle <- acos(dot_prod / (sqrt(u.x ^ 2 + u.y ^ 2) + sqrt(v.x ^ 2 + v.y ^ 2)));
+//			angle <- (u.x * -v.y + u.y * v.x > 0) ? angle : 360 - angle;
+//			
+//		 	loop j from:0 to: lights_number-1 {
+// 				new_point <- {shape.points[i].x + segments_x[i] * (j + mod(cycle, movement_time)/movement_time)/lights_number, 
+// 											shape.points[i].y + segments_y[i] * (j + mod(cycle, movement_time)/movement_time)/lights_number};
+//				draw rectangle(10, 4) at: new_point color: #yellow rotate: angle depth: 3;
+//			}
+//		}	
 	}
 }

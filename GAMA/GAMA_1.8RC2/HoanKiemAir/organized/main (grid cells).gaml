@@ -15,7 +15,7 @@ import "agents/remotegui.gaml"
 global {
 	bool mqtt_connect <- true;
 	// Benchmark execution time
-	bool benchmark <- false;
+	bool benchmark <- true;
 	float time_absorb_pollutants;
 	float time_diffuse_pollutants;
 	float time_create_congestions;
@@ -28,6 +28,7 @@ global {
 	shape_file dummy_roads_shape_file <- shape_file(resources_dir + "small_dummy_roads.shp");
 	shape_file buildings_shape_file <- shape_file(resources_dir + "buildings.shp");
 	shape_file buildings_admin_shape_file <- shape_file(resources_dir + "buildings_admin.shp");
+	shape_file naturals_shape_file <- shape_file(resources_dir + "naturals.shp");
 	
 	geometry shape <- envelope(buildings_shape_file);
 	list<road> open_roads;
@@ -56,12 +57,17 @@ global {
 		create building from: buildings_shape_file;
 		create decoration_building from: buildings_admin_shape_file;
 		create dummy_road from: dummy_roads_shape_file;
+		create natural from: naturals_shape_file;
+		
 		create progress_bar with: [x::-700, y::2000, width::500, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"500"];
 		create progress_bar with: [x::-700, y::2400, width::500, height::100, max_val::1000, title::"Motorbikes", left_label::"0", right_label::"1500"];
 		create line_graph with: [x::2600, y::1400, width::1300, height::1000, label::"Hourly AQI"];
 		create indicator_health_concern_level with: [x::3300, y::1000, width::600, height::200];
+		
 		// Connect to remote controller
-		create controller;
+		if(mqtt_connect) {
+			create controller;
+		}
 	}
 	
 	action update_vehicle_population(string type, int delta) {
@@ -79,7 +85,7 @@ global {
 		int delta_cars <- n_cars - n_cars_prev;
 		do update_vehicle_population("car", delta_cars);
 		ask first(progress_bar where (each.title = "Cars")) {
-			do update(n_cars);
+			do update(float(n_cars));
 		}
 		n_cars_prev <- n_cars;
 	}
@@ -88,7 +94,7 @@ global {
 		int delta_motorbikes <- n_motorbikes - n_motorbikes_prev;
 		do update_vehicle_population("motorbike", delta_motorbikes);
 		ask first(progress_bar where (each.title = "Motorbikes")) {
-			do update(n_motorbikes);
+			do update(float(n_motorbikes));
 		}
 		n_motorbikes_prev <- n_motorbikes;
 	}
@@ -205,9 +211,10 @@ experiment exp {
 	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
 	
 	output {
-		display main type: opengl background: #black {
+		display main type: opengl fullscreen: true toolbar: false background: #black keystone: [{-0.009483433676409914,0.007214643912913932,0.0},{0.008128657436922815,1.0036073219564567,0.0},{1.0162573148738456,0.9909816951088575,0.0},{1.0081286574369224,-0.02525125369519876,0.0}] {
 			species vehicle;
 			species road;
+			species natural;
 			species building;
 			species decoration_building;
 			species dummy_road;

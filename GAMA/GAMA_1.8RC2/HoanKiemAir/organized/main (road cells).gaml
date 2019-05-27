@@ -26,6 +26,7 @@ global {
 	shape_file dummy_roads_shape_file <- shape_file(resources_dir + "small_dummy_roads.shp");
 	shape_file buildings_shape_file <- shape_file(resources_dir + "buildings.shp");
 	shape_file road_cells_shape_file <- shape_file(resources_dir + "road_cells.shp");
+	shape_file naturals_shape_file <- shape_file(resources_dir + "naturals.shp");
 	shape_file buildings_admin_shape_file <- shape_file(resources_dir + "buildings_admin.shp");
 	
 	geometry shape <- envelope(buildings_shape_file);
@@ -59,6 +60,7 @@ global {
 		create building from: buildings_shape_file;
 		create decoration_building from: buildings_admin_shape_file;
 		create dummy_road from: dummy_roads_shape_file;
+		create natural from: naturals_shape_file;
 		create progress_bar with: [x::-700, y::1800, width::500, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"500"];
 		create progress_bar with: [x::-700, y::2000, width::500, height::100, max_val::1500, title::"Motorbikes", left_label::"0", right_label::"1500"];
 		create line_graph with: [x::2600, y::1400, width::1300, height::1000, label::"Hourly AQI"];
@@ -79,7 +81,7 @@ global {
 		int delta_cars <- n_cars - n_cars_prev;
 		do update_vehicle_population("car", delta_cars);
 		ask first(progress_bar where (each.title = "Cars")) {
-			do update(n_cars);
+			do update(float(n_cars));
 		}
 		n_cars_prev <- n_cars;
 	}
@@ -88,7 +90,7 @@ global {
 		int delta_motorbikes <- n_motorbikes - n_motorbikes_prev;
 		do update_vehicle_population("motorbike", delta_motorbikes);
 		ask first(progress_bar where (each.title = "Motorbikes")) {
-			do update(n_motorbikes);
+			do update(float(n_motorbikes));
 		}
 		n_motorbikes_prev <- n_motorbikes;
 	}
@@ -202,6 +204,7 @@ experiment exp {
 		display main type: opengl background: #black {
 			species vehicle;
 			species road;
+			species natural;
 			species building aspect: colorful;
 			species decoration_building;
 			

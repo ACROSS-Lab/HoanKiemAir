@@ -70,8 +70,8 @@ species line_graph schedules: [] {
 		return (a + b) / 2;
 	}
 	
-	action draw_line(point a, point b, int thickness <- 1, rgb color <- #yellow, int end_arrow <- 0) {
-		draw line([a, b]) + thickness at: midpoint(a, b) color: color end_arrow: end_arrow;
+	action draw_line(point a, point b, int thickness <- 1, rgb col <- #yellow, int end_arrow <- 0) {
+		draw line([a, b]) + thickness at: midpoint(a, b) color: col end_arrow: end_arrow;
 	}
 	
 	action update(float new_val) {
@@ -109,10 +109,10 @@ species line_graph schedules: [] {
 }
 
 species indicator_health_concern_level schedules: [] {
-	float x <- 3000;
-	float y <- 1000;
-	float width <-600;
-	float height <- 200;
+	float x <- 3000.0;
+	float y <- 1000.0;
+	float width <- 600.0;
+	float height <- 200.0;
 	rgb color;
 	rgb text_color;
 	string text;
