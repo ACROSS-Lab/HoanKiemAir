@@ -13,7 +13,8 @@ import "agents/visualization.gaml"
 import "agents/remotegui.gaml"
 
 global {
-	bool mqtt_connect <- true;
+	bool mqtt_connect <- false;
+	
 	// Benchmark execution time
 	bool benchmark <- true;
 	float time_absorb_pollutants;
