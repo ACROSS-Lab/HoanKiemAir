@@ -99,14 +99,22 @@ species building schedules: [] {
 	}
 	
 	aspect colorful {
-		if (norm_pollution_level < 0.05) 	{
+		if (norm_pollution_level < 1) 	{
 			color <- #green;
-		} else if (norm_pollution_level < 2) {
+		} else if (norm_pollution_level < 2.5) {
 			color <- #orange;
 		} else {
 			color <- # red;
 		}
 		draw shape color: color border: #darkgrey depth: height * 10;
+	}
+}
+
+species decoration_building schedules: [] {
+	float height;
+	
+	aspect default {
+		draw shape color: #grey border: #darkgrey depth: height * 10;
 	}
 }
 

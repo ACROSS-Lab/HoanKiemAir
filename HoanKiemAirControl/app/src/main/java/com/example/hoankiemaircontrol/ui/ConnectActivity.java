@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,7 +20,7 @@ import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
 
 public class ConnectActivity extends BaseActivity {
     private EditText mEditTextIpAddress;
-    private CircularProgressButton connectButton;
+    private CircularProgressButton mConnectButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +28,28 @@ public class ConnectActivity extends BaseActivity {
         setContentView(R.layout.activity_connect);
 
         mEditTextIpAddress = findViewById(R.id.edit_text_ip_address);
+        mEditTextIpAddress.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event)
+            {
+                if (event.getAction() == KeyEvent.ACTION_DOWN)
+                {
+                    switch (keyCode)
+                    {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            mConnectButton.performClick();
+                            return true;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
 
-        connectButton = findViewById(R.id.button_connect);
-        connectButton.setOnClickListener(new View.OnClickListener() {
+        mConnectButton = findViewById(R.id.button_connect);
+        mConnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String ip = mEditTextIpAddress.getText().toString();
@@ -65,7 +85,7 @@ public class ConnectActivity extends BaseActivity {
         @Override
         protected void onPreExecute() {
             ConnectActivity connectActivity = mActivityWeakReference.get();
-            connectActivity.connectButton.startAnimation(() -> null);
+            connectActivity.mConnectButton.startAnimation(() -> null);
         }
 
         @Override
@@ -80,7 +100,7 @@ public class ConnectActivity extends BaseActivity {
             } else {
                 Toast.makeText(connectActivity, connectActivity.getResources().getString(R.string.toast_connection_failed), Toast.LENGTH_SHORT).show();
             }
-            connectActivity.connectButton.revertAnimation(() -> null);
+            connectActivity.mConnectButton.revertAnimation(() -> null);
         }
     }
 }

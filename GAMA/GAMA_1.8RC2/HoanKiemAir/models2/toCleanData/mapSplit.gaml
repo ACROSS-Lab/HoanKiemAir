@@ -8,15 +8,27 @@
 model mapSplit
 
 global {
-	string mynetwork <- "../../includes/roads.shp";
+	string mynetwork <- "../../includes/bigger_map/roads.shp";
 	file mshape_file <- shape_file(mynetwork);
 	geometry shape <- envelope(mshape_file);
 	init
 	{
-		create road from:mshape_file;
+		create road from:mshape_file {
+			// Remove duplicate points
+			int i <- 0;
+			list<point> filtered_points <- shape.points;
+			loop while: i < length(filtered_points) - 1 {
+				if filtered_points[i] = filtered_points[i + 1] {
+					remove from: filtered_points index: i;
+				} else {
+					i <- i + 1;	
+				}
+			}
+			shape <- polyline(filtered_points);
+		}
 		ask road
 		{
-			do buildPolyline(20#m, 2#m);
+			do buildPolyline(30#m, 2#m);
 			write(self.shape);
 		}
 		write length(road accumulate(each.my_geoms));
@@ -37,7 +49,7 @@ global {
 		}
 		
 	//	create cell from:road accumulate(each.my_geoms);
-		save cell type:'shp' to:"../../includes/road_pollution_grid.shp" with:[id_cell_in_road::"num_cell"];
+		save cell type:'shp' to:"../../includes/road_cells.shp" with:[id_cell_in_road::"num_cell"];
 	}
 	
 }

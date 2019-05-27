@@ -25,13 +25,13 @@ global {
 	shape_file roads_shape_file <- shape_file(resources_dir + "roads.shp");
 	shape_file dummy_roads_shape_file <- shape_file(resources_dir + "small_dummy_roads.shp");
 	shape_file buildings_shape_file <- shape_file(resources_dir + "buildings.shp");
-	shape_file road_cells_shape_file <- shape_file(resources_dir + "road_pollution_grid.shp");
+	shape_file road_cells_shape_file <- shape_file(resources_dir + "road_cells.shp");
+	shape_file buildings_admin_shape_file <- shape_file(resources_dir + "buildings_admin.shp");
 	
 	geometry shape <- envelope(buildings_shape_file);
 	list<road> open_roads;
 	
 	init {
-		create building from: buildings_shape_file;
 		create road from: roads_shape_file {
 			// Create a reverse road if the road is not oneway
 			if (!oneway) {
@@ -56,6 +56,8 @@ global {
 		}
 		
 		// Additional visualization
+		create building from: buildings_shape_file;
+		create decoration_building from: buildings_admin_shape_file;
 		create dummy_road from: dummy_roads_shape_file;
 		create progress_bar with: [x::-700, y::1800, width::500, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"500"];
 		create progress_bar with: [x::-700, y::2000, width::500, height::100, max_val::1500, title::"Motorbikes", left_label::"0", right_label::"1500"];
@@ -174,7 +176,7 @@ global {
 			time_diffuse_pollutants <- time_diffuse_pollutants + (machine_time - start);
 			list<building> buildings <- list<building>(self.affected_buildings);
 			ask buildings {
-				self.norm_pollution_level <- myself.norm_pollution_level; 
+				self.norm_pollution_level <- self.norm_pollution_level + myself.norm_pollution_level; 
 			}
 		}
 	}
@@ -201,6 +203,7 @@ experiment exp {
 			species vehicle;
 			species road;
 			species building aspect: colorful;
+			species decoration_building;
 			
 			species dummy_road;
 			species progress_bar;

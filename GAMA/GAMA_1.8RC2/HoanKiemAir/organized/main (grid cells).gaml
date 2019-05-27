@@ -27,13 +27,13 @@ global {
 	shape_file roads_shape_file <- shape_file(resources_dir + "roads.shp");
 	shape_file dummy_roads_shape_file <- shape_file(resources_dir + "small_dummy_roads.shp");
 	shape_file buildings_shape_file <- shape_file(resources_dir + "buildings.shp");
+	shape_file buildings_admin_shape_file <- shape_file(resources_dir + "buildings_admin.shp");
 	
 	geometry shape <- envelope(buildings_shape_file);
 	list<road> open_roads;
 	list<pollutant_cell> active_cells;
 	
 	init {
-		create building from: buildings_shape_file;
 		create road from: roads_shape_file {
 			// Create a reverse road if the road is not oneway
 			if (!oneway) {
@@ -53,6 +53,8 @@ global {
 		active_cells <- pollutant_cell overlapping road_geometry;
 		
 		// Additional visualization
+		create building from: buildings_shape_file;
+		create decoration_building from: buildings_admin_shape_file;
 		create dummy_road from: dummy_roads_shape_file;
 		create progress_bar with: [x::-700, y::2000, width::500, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"500"];
 		create progress_bar with: [x::-700, y::2400, width::500, height::100, max_val::1000, title::"Motorbikes", left_label::"0", right_label::"1500"];
@@ -207,6 +209,7 @@ experiment exp {
 			species vehicle;
 			species road;
 			species building;
+			species decoration_building;
 			species dummy_road;
 			grid pollutant_cell transparency: (display_mode = 0) ? 1.0 : 0.4 elevation: norm_pollution_level * 1000 triangulation: true;
 			
