@@ -34,7 +34,7 @@ species controller skills: [remoteGUI] {
 		road_scenario <- road_scenario_selected;
 	}
 	
-	reflex update_display_mode when: display_mode_selected != display_mode {
+	reflex update_display_mode when: display_mode_selected != display_mode_prev {
 		display_mode <- display_mode_selected;
 	}
 }

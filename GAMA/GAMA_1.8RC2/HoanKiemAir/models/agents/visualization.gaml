@@ -39,21 +39,24 @@ species progress_bar schedules: [] {
 		draw(title + ": ") at: {x, y - 50} font: font(20);
 		draw(left_label) at: {x - 20, y + 200} font: font(18);
 		draw(right_label) at: {x + width - 20, y + 200} font: font(18);
-//		do draw_bar tracked_val: nb_cars tracked_val_max: 500 x: -700 y: 1800 width: 500 height: 100 
-//								title: "Cars" left_label: "0" right_label: "500";
-//		do draw_bar tracked_val: nb_motorbikes tracked_val_max: 2000 x: -700 y: 2200 width: 500 height: 100 
-//								title: "Motorbikes" left_label: "0" right_label: "2000";
 	}
 }
 
-//species line_graph_aqi parent: line_graph {
-//	float tracked_val -> aqi;
-//	float x <- 2400;
-//	float y <- 1400;
-//	float width <- 1300;
-//	float height <- 1000;
-//	string label <- "Hourly AQI";
-//}
+species param_indicator {
+	float x;
+	float y;
+	float size;
+	string name;
+	string value;
+	
+	action update(string new_val) {
+		value <- new_val;
+	}
+	
+	aspect default {
+		draw(name + ": " + value) font: font(size) at: {x, y};
+	}
+}
 
 species line_graph schedules: [] {
 	// Params
@@ -81,7 +84,7 @@ species line_graph schedules: [] {
 	
 	aspect default {
 		point origin <- {x, y + height};
-		
+
 		// Draw axis
 		do draw_line a: origin b: {x, y} thickness: 5;
 		do draw_line a: origin b: {x + width, y + height} thickness: 5;
@@ -94,7 +97,8 @@ species line_graph schedules: [] {
 				float val_y_pos <- origin.y - (val_list[i] / max_val * height);
 				point val_pos <- {val_x_pos, val_y_pos};
 				// Graph the value
-				draw circle(10, val_pos);		float current_val <- val_list[length(val_list) - 1];
+				draw circle(10, val_pos);		
+				float current_val <- val_list[length(val_list) - 1];
 				float current_val_height <- current_val / max_val * height;
 				if (prev_val_pos != nil) {
 					do draw_line a: val_pos b: prev_val_pos thickness: 3;	
@@ -158,5 +162,17 @@ species indicator_health_concern_level schedules: [] {
 		point center <- midpoint({x, y}, {x + width, y + height});
 		draw text at: center color: text_color anchor: anchor font: font(20);
 		draw "Health concern \n level" at: center - {650, 0} color: #yellow anchor: #bottom_center font: font(20);
+	}
+}
+
+species background schedules: [] {
+	float x;
+	float y;
+	float width;
+	float height;
+	float alpha <- 0.1;
+	
+	aspect default {
+		draw rectangle({x, y}, {x + width, y + height}) color: rgb(#black, alpha);
 	}
 }

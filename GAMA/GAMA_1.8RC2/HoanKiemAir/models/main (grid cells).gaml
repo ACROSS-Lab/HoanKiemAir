@@ -60,13 +60,19 @@ global {
 		create dummy_road from: dummy_roads_shape_file;
 		create natural from: naturals_shape_file;
 		
-		create progress_bar with: [x::-700, y::2000, width::500, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"500"];
-		create progress_bar with: [x::-700, y::2400, width::500, height::100, max_val::1000, title::"Motorbikes", left_label::"0", right_label::"1500"];
-		create line_graph with: [x::2600, y::1400, width::1300, height::1000, label::"Hourly AQI"];
-		create indicator_health_concern_level with: [x::3300, y::1000, width::600, height::200];
+		create background with: [x::-1350, y::850, width::1300, height::1050, alpha::0.6];
+		create param_indicator with: [x::-1300, y::900, size::20, name::"Time", value::"00:00:00"];
+		create progress_bar with: [x::-1300, y::1100, width::500, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"500"];
+		create progress_bar with: [x::-1300, y::1450, width::500, height::100, max_val::1000, title::"Motorbikes", left_label::"0", right_label::"1500"];
+		create param_indicator with: [x::-1300, y::1750, size::20, name::"Road scenario", value::"no blocked roads"];
+		create param_indicator with: [x::-1300, y::1850, size::20, name::"Display mode", value::"traffic"];
+		
+		create background with: [x::2450, y::1000, width::1500, height::1500, alpha::0.6];
+		create indicator_health_concern_level with: [x::3150, y::1000, width::600, height::200];
+		create line_graph with: [x::2500, y::1400, width::1350, height::1000, label::"Hourly AQI"];
 		
 		// Connect to remote controller
-		if(mqtt_connect) {
+		if (mqtt_connect) {
 			create controller;
 		}
 	}
@@ -101,17 +107,21 @@ global {
 	}
 
 	reflex update_road_scenario when: road_scenario != road_scenario_prev {
+		string param_val;
 		switch road_scenario {
 			match 0 {
 				open_roads <- list(road);
+				param_val <- "No closed roads";
 				break;
 			}
 			match 1 {
 				open_roads <- road where !each.s1_closed;
+				param_val <- string(1);
 				break;
 			}
 			match 2 {
 				open_roads <- road where !each.s2_closed;
+				param_val <- string(2);
 				break;
 			}
 		}
@@ -136,7 +146,42 @@ global {
 		geometry road_geometry <- union(open_roads accumulate each.shape);
 		active_cells <- pollutant_cell overlapping road_geometry;
 		
+		ask first(param_indicator where (each.name = "Road scenario")) {
+			do update(param_val);
+		}
 		road_scenario_prev <- road_scenario;
+	}
+	
+	reflex update_display_mode when: display_mode_prev != display_mode {
+		string param_val;
+		switch (display_mode) {
+			match 0 {
+				param_val <- "Traffic";
+				break;	
+			}
+			match 1 {
+				param_val <- "Pollution";
+				break;	
+			}
+		}
+		
+		ask first(param_indicator where (each.name = "Display mode")) {
+			do update(param_val);
+		}
+		display_mode_prev <- display_mode;
+	}
+	
+	reflex update_time {
+		int h <- int(time / #hour);
+		int m <- int((time - h * #hour) / #minute);
+		int s <- int((time - h * #hour - m * #minute) / #s);
+		string hh <- ((h < 10) ? "0" : "") + string(h);
+		string mm <- ((m < 10) ? "0" : "") + string(m);
+		string ss <- ((s < 10) ? "0" : "") + string(s);
+		string t <- hh + ":" + mm + ":" + ss;
+		ask first(param_indicator where (each.name = "Time")) {
+			do update(t);
+		}
 	}
 	
 	reflex create_congestions {
@@ -186,7 +231,7 @@ global {
 	}
 	
 	reflex calculate_aqi when: every(1 #hour) {
-		 float aqi <- max(pollutant_cell accumulate each.aqi_hourly);
+		 float aqi <- max(pollutant_cell accumulate each.aqi);
 		 ask line_graph {
 		 	do update(aqi);
 		 }
@@ -212,16 +257,18 @@ experiment exp {
 	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
 	
 	output {
-		display main type: opengl fullscreen: true toolbar: false background: #black keystone: [{-0.009483433676409914,0.007214643912913932,0.0},{0.008128657436922815,1.0036073219564567,0.0},{1.0162573148738456,0.9909816951088575,0.0},{1.0081286574369224,-0.02525125369519876,0.0}] {
+		display main type: opengl fullscreen: false	 toolbar: false background: #black {//keystone: [{-0.009483433676409914,0.007214643912913932,0.0},{0.008128657436922815,1.0036073219564567,0.0},{1.0162573148738456,0.9909816951088575,0.0},{1.0081286574369224,-0.02525125369519876,0.0}] {
 			species vehicle;
 			species road;
 			species natural;
 			species building;
 			species decoration_building;
 			species dummy_road;
-			grid pollutant_cell transparency: (display_mode = 0) ? 1.0 : 0.4 elevation: norm_pollution_level * 1000 triangulation: true;
+			grid pollutant_cell transparency: (display_mode = 0) ? 1.0 : 0.4 elevation: norm_pollution_level * 100 triangulation: true;
 			
+			species background;
 			species progress_bar;
+			species param_indicator;
 			species line_graph;
 			species indicator_health_concern_level;
 		}
