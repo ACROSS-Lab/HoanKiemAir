@@ -16,7 +16,7 @@ global {
 	bool mqtt_connect <- false;
 	
 	// Benchmark execution time
-	bool benchmark <- true;
+	bool benchmark <- false;
 	float time_absorb_pollutants;
 	float time_diffuse_pollutants;
 	float time_create_congestions;
@@ -253,13 +253,20 @@ global {
 	rgb day_time_color <- #black;
 	date starting_date <- date("14 00 00","HH mm ss");
 	reflex general_color_brew when:day_time_color_blender{
-		if(day_time_colors.keys one_matches (each.hour = current_date.hour)){
+		if(day_time_colors.keys one_matches (each.hour = current_date.hour 
+			and each.minute = current_date.minute and each.second = current_date.second
+		)){
 			day_time_color <- day_time_colors[day_time_colors.keys first_with (each.hour = current_date.hour)]; 
 		} else {
-			date fd <- day_time_colors.keys where (each.hour > current_date.hour) with_min_of (each.hour - current_date.hour);
-			date pd <- day_time_colors.keys where (each.hour < current_date.hour) with_min_of (current_date.hour - each.hour);
+			date fd <- (day_time_colors.keys where (each.hour > current_date.hour)) with_min_of (each.hour - current_date.hour);
+			if(fd = nil){ fd <- first(day_time_colors.keys); }
+			date pd <- (day_time_colors.keys where (each.hour <= current_date.hour)) with_min_of (current_date.hour - each.hour);
 			
-			day_time_color <- blend(day_time_colors[fd],day_time_colors[pd],(fd - current_date) / (fd - pd));
+			float time_to_go_next <- ((fd.hour#h+fd.minute#mn) - (current_date.hour#h+current_date.minute#mn));
+			float dist_between_time <- ((fd.hour#h+fd.minute#mn) - (pd.hour#h+pd.minute#mn));
+			float blend_factor <- time_to_go_next / dist_between_time;
+			
+			day_time_color <- blend(day_time_colors[fd],day_time_colors[pd],1-blend_factor);
 		}
 		day_time_color <- blend(#black,day_time_color,1-day_time_color_blend_factor);
 	}

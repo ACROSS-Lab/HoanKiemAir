@@ -33,13 +33,13 @@ global {
 	// Daytime color blender
 	bool day_time_color_blender <- true;
 	map<date,rgb> day_time_colors <- 
-		[date("06 00 00","HH mm ss")::#deepskyblue,
+		[date("00 00 00", "HH mm ss")::#midnightblue,
+			date("06 00 00","HH mm ss")::#deepskyblue,
 			date("14 00 00","HH mm ss")::#gold,
 			date("18 00 00","HH mm ss")::#darkorange,
-			date("19 00 00","HH mm ss")::#blue,
-			date("00 00 00", "HH mm ss")::#midnightblue
+			date("19 00 00","HH mm ss")::#blue
 		];
-	float day_time_color_blend_factor <- 1.0;
+	float day_time_color_blend_factor <- 0.3;
 
 }
 
