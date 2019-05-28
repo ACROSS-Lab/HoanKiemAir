@@ -9,6 +9,12 @@ model visualization
 
 import "../global_vars.gaml"
 
+global {
+	point midpoint(point a, point b) {
+		return (a + b) / 2;
+	}	
+}
+
 species progress_bar schedules: [] {
 	float val;
 	float max_val;
@@ -21,6 +27,8 @@ species progress_bar schedules: [] {
 	string title;
 	string left_label;
 	string right_label;
+	int size_title <- 20;
+	int size_labels <- 16; 
 	
 	geometry rect(float rect_x, float rect_y, float rect_width, float rect_height) {
 		return polygon([{rect_x, rect_y}, {rect_x + rect_width, rect_y}, {rect_x + rect_width, rect_y + rect_height}, 
@@ -35,28 +43,39 @@ species progress_bar schedules: [] {
 		float length_filled<- width * val / max_val;
 		float length_unfilled <- width - length_filled;
 		
-		draw rect(x, y, length_filled, height) color: #orange at: {x+ length_filled / 2, y + height / 2, 0.2};
-		draw rect(x + length_filled, y, length_unfilled, height) color: #white at: {(x+ length_filled) + length_unfilled / 2, y + height / 2, 0.2};
+		draw rect(x, y, length_filled, height) color: #orange at: {x+ length_filled / 2, y + height / 2, Z_LVL2};
+		draw rect(x + length_filled, y, length_unfilled, height) color: #white at: {(x+ length_filled) + length_unfilled / 2, y + height / 2, Z_LVL2};
 		
-		draw(title + ": ") at: {x, y - 50, 0.2} font: font(20);
-		draw(left_label) at: {x - 20, y + 200, 0.2} font: font(18);
-		draw(right_label) at: {x + width - 20, y + 200, 0.2} font: font(18);
+		draw(title + ": ") at: {x, y - 50, Z_LVL2} font: font(size_title) color: palet[TEXT_COLOR];
+		draw(left_label) at: {x - 20, y + 160, Z_LVL2} font: font(size_labels) color: palet[TEXT_COLOR];
+		draw(right_label) at: {x + width - 20, y + 160, Z_LVL2} font: font(size_labels) color: palet[TEXT_COLOR];
 	}
 }
 
 species param_indicator {
 	float x;
 	float y;
+	float width;
+	float height;
 	float size;
 	string name;
 	string value;
+	rgb col <- palet[TEXT_COLOR];
+	bool with_RT <- false;
+	bool with_box <- false;
 	
 	action update(string new_val) {
 		value <- new_val;
 	}
 	
-	aspect default {
-		draw(name + ": " + value) font: font(size) at: {x, y, 0.2};
+	aspect default {		
+		if(with_box) {
+			draw rectangle(width, height) color: rgb(#black,0.5) at: {x + width/2, y + height/2, Z_LVL1};
+			point center <- world.midpoint({x, y, Z_LVL3}, {x + width, y + height, Z_LVL2});
+			draw (name + ": " + (with_RT?"\n":"") + value) at: center color: col anchor: #center font: font(size);
+		} else {
+			draw(name + ": " + (with_RT?"\n":"") + value) font: font(size) at: {x, y, Z_LVL2} color: col;			
+		}
 	}
 }
 
@@ -94,15 +113,15 @@ species line_graph_aqi parent: line_graph {
 		// Draw axis
 		do draw_zones;
 		
-		do draw_line a: origin b: {x, y, 0.2} thickness: 5;
-		do draw_line a: origin b: {x + width, y + height, 0.2} thickness: 5;
+		do draw_line a: origin b: {x, y, Z_LVL2} thickness: 5;
+		do draw_line a: origin b: {x + width, y + height, Z_LVL2} thickness: 5;
 		
 		point prev_val_pos <- origin;
 		loop i from: 0 to: length(val_list) - 1 {
 			if (val_list[i] >= 0) {
 				float val_x_pos <- origin.x + width / length(val_list) * i;
 				float val_y_pos <- origin.y - (val_list[i] / max_val * height);
-				point val_pos <- {val_x_pos, val_y_pos, 0.3};
+				point val_pos <- {val_x_pos, val_y_pos, Z_LVL3};
 				// Graph the value
 				draw circle(10, val_pos) color: #white;		
 
@@ -123,16 +142,12 @@ species line_graph schedules: [] {
 	string label <- "";
 	string unit <- "";
 
-	point origin <- {x, y + height, 0.2};
+	point origin <- {x, y + height, Z_LVL2};
 	list<float> val_list <- list_with(20, -1.0);
 	float max_val -> max(max(val_list), 50.0);
-	
-	point midpoint(point a, point b) {
-		return (a + b) / 2;
-	}
-	
+
 	action draw_line(point a, point b, int thickness <- 1, rgb col <- #white, int end_arrow <- 0) {
-		draw line([a, b]) + thickness at: midpoint(a, b) color: col end_arrow: end_arrow;
+		draw line([a, b]) + thickness at: world.midpoint(a, b) color: col end_arrow: end_arrow;
 	}
 	
 	action update(float new_val) {
@@ -142,15 +157,15 @@ species line_graph schedules: [] {
 	
 	aspect default {
 		// Draw axis
-		do draw_line a: origin b: {x, y, 0.2} thickness: 5;
-		do draw_line a: origin b: {x + width, y + height, 0.2} thickness: 5;
+		do draw_line a: origin b: {x, y, Z_LVL2} thickness: 5;
+		do draw_line a: origin b: {x + width, y + height, Z_LVL2} thickness: 5;
 		
 		point prev_val_pos <- nil;
 		loop i from: 0 to: length(val_list) - 1 {
 			if (val_list[i] >= 0) {
 				float val_x_pos <- origin.x + width / length(val_list) * i;
 				float val_y_pos <- origin.y - (val_list[i] / max_val * height);
-				point val_pos <- {val_x_pos, val_y_pos, 0.2};
+				point val_pos <- {val_x_pos, val_y_pos, Z_LVL2};
 				// Graph the value
 				draw circle(10, val_pos) color: #white;		
 				if (prev_val_pos != nil) {
@@ -188,10 +203,10 @@ species indicator_health_concern_level schedules: [] {
 	}
 	
 	aspect default {
-		draw rectangle(width, height) color: color at: {x + width / 2, y + height / 2, 0.2};
-		point center <- midpoint({x, y, 0.3}, {x + width, y + height, 0.3});
+		draw rectangle(width, height) color: color at: {x + width / 2, y + height / 2, Z_LVL2};
+		point center <- midpoint({x, y, 0.3}, {x + width, y + height, Z_LVL3});
 		draw text at: center color: text_color anchor: anchor font: font(20);
-		draw "Health concern \n level" at: center - {650, 0, 0} color: #yellow anchor: #bottom_center font: font(20);
+	//	draw "Health concern \n level" at: center - {650, 0, 0} color: #yellow anchor: #bottom_center font: font(20);
 	}
 }
 
@@ -214,6 +229,6 @@ species background schedules: [] {
 	float alpha <- 0.1;
 	
 	aspect default {
-		draw rectangle(width, height) color: rgb(#black, alpha) at: {x + width / 2, y + height / 2, 0.1};
+		draw rectangle(width, height) color: rgb(#black, alpha) at: {x + width / 2, y + height / 2, Z_LVL1};
 	}
 }

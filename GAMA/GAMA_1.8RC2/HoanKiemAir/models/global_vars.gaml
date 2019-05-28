@@ -19,8 +19,14 @@ global {
 	int road_scenario_prev;
 	int display_mode_prev;
 	
+	// Parameter of visualization to avoid z fighting
+	float Z_LVL1 <- 0.1;
+	float Z_LVL2 <- 0.2;
+	float Z_LVL3 <- 0.3;
+	
+	
 	// Pollution diffusion
-	float pollutant_decay_rate <-  0.999999; //0.99;
+	float pollutant_decay_rate <-  0.99; //0.99;
 	float pollutant_diffusion <- 0.05;
 	int grid_size <- 50;
 	int grid_depth <- 10; // cubic meters
@@ -82,6 +88,7 @@ global {
 	string NOT_CONGESTED_ROAD <- "not congested roads";
 	string CONGESTED_ROAD <- " congested_roads";
 	string ROAD_POLLUTION_DISPLAY <- "road pollution";
+	string TEXT_COLOR <- "Text color";
 	
 	map<string,rgb> palet <- [
 		BUILDING_BASE::#white,
@@ -94,7 +101,8 @@ global {
 		CLOSED_ROAD:: #darkblue,
 		NOT_CONGESTED_ROAD:: #white,
 		CONGESTED_ROAD::#red,
-		ROAD_POLLUTION_DISPLAY:: #white
+		ROAD_POLLUTION_DISPLAY:: #white,
+		TEXT_COLOR::#white
 	];
 
 

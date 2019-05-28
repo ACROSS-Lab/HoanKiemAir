@@ -64,17 +64,23 @@ global {
 		create dummy_road from: dummy_roads_shape_file;
 		create natural from: naturals_shape_file;
 		
-		create background with: [x::-1350, y::1000, width::1300, height::1100, alpha::0.6];
-		create param_indicator with: [x::-1300, y::1100, size::20, name::"Time", value::"00:00:00"];
-		create progress_bar with: [x::-1300, y::1300, width::500, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"500"];
-		create progress_bar with: [x::-1300, y::1650, width::500, height::100, max_val::1000, title::"Motorbikes", left_label::"0", right_label::"1500"];
-		create param_indicator with: [x::-1300, y::1950, size::20, name::"Road scenario", value::"no blocked roads"];
-		create param_indicator with: [x::-1300, y::2050, size::20, name::"Display mode", value::"traffic"];
+//		create background with: [x::-1350, y::1000, width::1300, height::1100, alpha::0.6];
+//		create param_indicator with: [x::-1300, y::1100, size::20, name::"Time", value::"00:00:00"];
+//		create progress_bar with: [x::-1300, y::1300, width::500, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"500"];
+//		create progress_bar with: [x::-1300, y::1650, width::500, height::100, max_val::1000, title::"Motorbikes", left_label::"0", right_label::"1500"];
+//		create param_indicator with: [x::-1300, y::1950, size::20, name::"Road scenario", value::"no blocked roads"];
+//		create param_indicator with: [x::-1300, y::2050, size::20, name::"Display mode", value::"traffic"];
+
+		create progress_bar    with: [x::3100, y::1200, width::350, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"Max"];
+		create progress_bar    with: [x::3100, y::1550, width::500, height::100, max_val::1000, title::"Motorbikes", left_label::"0", right_label::"Max"];
+		create param_indicator with: [x::3100, y::1850, size::22, name::"Road scenario", value::"no blocked roads", with_RT::true];
+		create param_indicator with: [x::3100, y::2050, size::22, name::"Display mode", value::"traffic"];
 		
-		create background with: [x::2450, y::1000, width::1250, height::1500, alpha::0.6];
-		create indicator_health_concern_level with: [x::3100, y::1000, width::600, height::200];
+//		create background with: [x::2450, y::1000, width::1250, height::1500, alpha::0.6];
 //		create line_graph with: [x::2500, y::1400, width::1200, height::1000, label::"Hourly AQI"];
-		create line_graph_aqi with: [x::2800, y::1500, width::500, height::500, label::"Hourly AQI"];
+		create line_graph_aqi with: [x::2800, y::2300, width::800, height::500, label::"Hourly AQI"];
+//		create indicator_health_concern_level with: [x::2800, y::2803, width::800, height::200];
+		create param_indicator with: [x::2800, y::2803, size::30, name::"Time", value::"00:00:00", with_box::true, width::800, height::200];		
 		
 		// Connect to remote controller
 		if (mqtt_connect) {
@@ -121,12 +127,12 @@ global {
 			}
 			match 1 {
 				open_roads <- road where !each.s1_closed;
-				param_val <- string(1);
+				param_val <- "Current scenario"; // string(1);
 				break;
 			}
 			match 2 {
 				open_roads <- road where !each.s2_closed;
-				param_val <- string(2);
+				param_val <- "Extension scenario"; //string(2);
 				break;
 			}
 		}
@@ -184,7 +190,7 @@ global {
 		string mm <- ((m < 10) ? "0" : "") + string(m);
 		string ss <- ((s < 10) ? "0" : "") + string(s);
 		string t <- hh + ":" + mm + ":" + ss;
-		ask first(param_indicator where (each.name = "Time")) {
+		ask (param_indicator where (each.name = "Time")) {
 			do update(t);
 		}
 	}
