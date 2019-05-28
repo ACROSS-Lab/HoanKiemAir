@@ -213,6 +213,12 @@ global {
 		[1/20,1/20,1/20],
 		[1/20, 3/5 * pollutant_decay_rate,1/20],
 		[1/20,1/20,1/20]]);
+
+//	matrix<float> mat_diff <- matrix([
+//		[pollutant_diffusion,pollutant_diffusion,pollutant_diffusion],
+//		[pollutant_diffusion, 8 * pollutant_diffusion * pollutant_decay_rate,1 * pollutant_diffusion],
+//		[pollutant_diffusion,pollutant_diffusion,pollutant_diffusion]]);
+
 		
 	reflex produce_pollutant {
 		float start <- machine_time;
@@ -292,7 +298,7 @@ experiment exp {
 		display main type: opengl fullscreen: true toolbar: false background: day_time_color 
 		// draw_env: true
 		camera_pos: {1055.5934,1521.1361,3673.6199} camera_look_pos: {1055.5934,1521.0706,-0.0027} camera_up_vector: {0.0,1.0,0.0} 
-//		keystone: [{-0.012307035907790373,-0.010174922123093566,0.0},{-0.002718485409631932,1.0083260530999232,0.0},{0.9972723971132761,1.0083271699173144,0.0},{1.0082138080822864,-0.016638704391143788,0.0}]
+		keystone: [{-0.012307035907790373,-0.010174922123093566,0.0},{-0.002718485409631932,1.0083260530999232,0.0},{0.9972723971132761,1.0083271699173144,0.0},{1.0082138080822864,-0.016638704391143788,0.0}]
 		
 		// Config fullscreen  - résolution optimisée
 		//camera_pos: {2649.9132,1496.4156,3913.1789} camera_look_pos: {2649.9132,1496.3473,3.0E-4} camera_up_vector: {0.0,1.0,0.0}
@@ -307,7 +313,7 @@ experiment exp {
 			species dummy_road;
 			//grid pollutant_cell transparency: (display_mode = 0) ? 1.0 : 0.4 elevation: norm_pollution_level * 10 triangulation: true;
 			
-			species background;
+		//	species background;
 			species progress_bar;
 			species param_indicator;
 			species line_graph;

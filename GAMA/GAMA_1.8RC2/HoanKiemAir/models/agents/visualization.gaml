@@ -7,6 +7,8 @@
 
 model visualization
 
+import "../global_vars.gaml"
+
 species progress_bar schedules: [] {
 	float val;
 	float max_val;
@@ -64,12 +66,11 @@ species line_graph_aqi parent: line_graph {
 	float moderate <- 100;
 	float unhealthy_sensitive <- 150;
 	
-	list<rgb> zone_colors <- [#seagreen, #yellow, #orange];
 
 	action draw_zones {
 		loop i from: 0 to: length(thresholds) - 2 {
 			float h <- thresholds[i + 1] - thresholds[i];
-			draw rectangle(width, h) at: {x + width / 2, thresholds[i] + h / 2, 0.4} color: rgb(zone_colors[length(thresholds) - 2 - i], 0.5);
+			draw rectangle(width, h) at: {x + width / 2, thresholds[i] + h / 2, 0.4} color: rgb(zone_colors[length(thresholds) - 2 - i]/*, 0.5*/);
 		}
 	}
 	
@@ -130,7 +131,7 @@ species line_graph schedules: [] {
 		return (a + b) / 2;
 	}
 	
-	action draw_line(point a, point b, int thickness <- 1, rgb col <- #yellow, int end_arrow <- 0) {
+	action draw_line(point a, point b, int thickness <- 1, rgb col <- #white, int end_arrow <- 0) {
 		draw line([a, b]) + thickness at: midpoint(a, b) color: col end_arrow: end_arrow;
 	}
 	

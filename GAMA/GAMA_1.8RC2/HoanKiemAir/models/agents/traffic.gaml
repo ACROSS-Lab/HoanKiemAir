@@ -29,11 +29,11 @@ species road schedules: [] {
 
 	aspect default {
 		if (closed) {
-			draw shape + 5 color: #darkblue;
+			draw shape + 5 color: palet[CLOSED_ROAD];
 		} else if (display_mode = 0) {
-			draw shape+1/speed_coeff color: (speed_coeff=1.0) ? #white : #red /*end_arrow: 10*/;
+			draw shape+1/speed_coeff color: (speed_coeff=1.0) ? palet[NOT_CONGESTED_ROAD] : palet[CONGESTED_ROAD] /*end_arrow: 10*/;
 		} else {
-			draw shape color: #white /*end_arrow: 10*/;
+			draw shape color: palet[ROAD_POLLUTION_DISPLAY] /*end_arrow: 10*/;
 		}
 	}
 }
@@ -74,10 +74,10 @@ species vehicle skills: [moving] {
 	aspect default {
 		switch type {
 			match "car" {
-				draw rectangle(10, 5) rotate: heading color: #orange depth: 2;
+				draw rectangle(10, 5) rotate: heading color: palet[CAR] depth: 2;
 			}
 			match "motorbike" {
-				draw rectangle(5, 2) rotate: heading color: #cyan depth: 3;
+				draw rectangle(5, 2) rotate: heading color: palet[MOTOBYKE] depth: 3;
 			}
 		}
 	}
@@ -99,7 +99,7 @@ species building schedules: [] {
 	
 	aspect default {
 		if (display_mode = 0) {
-			draw shape color: (type = type_outArea)?#saddlebrown:#white /*border: #darkgrey*/ /*depth: height * 10*/;
+			draw shape color: (type = type_outArea)?palet[BUILDING_OUTAREA]:palet[BUILDING_BASE] /*border: #darkgrey*/ /*depth: height * 10*/;
 		} else {
 			if (aqi < 51) 	{
 				color <- #green;
@@ -108,7 +108,7 @@ species building schedules: [] {
 			} else {
 				color <- # red;
 			}
-			draw shape color: (type = type_outArea)?#saddlebrown:color /*border: #darkgrey*/ depth: height * 10;
+			draw shape color: (type = type_outArea)?palet[BUILDING_OUTAREA]:color /*border: #darkgrey*/ depth: height * 10;
 		}
 	}
 }
@@ -117,13 +117,13 @@ species decoration_building schedules: [] {
 	float height;
 	
 	aspect default {
-		draw shape color: #darkgrey border: #darkgrey depth: height * 10;
+		draw shape color: palet[DECO_BUILDING] border: #darkgrey depth: height * 10;
 	}
 }
 
 species natural schedules: [] {
 	aspect default {
-		draw shape color: #lightblue border: #darkblue;
+		draw shape color: palet[NATURAL] ;/*#lightblue*/ //border: #darkblue;
 	}	
 }
 
@@ -168,7 +168,7 @@ species dummy_road schedules: [] {
 		point new_point;
 		int lights_number <- int(shape.perimeter / 50);
 		
-		draw shape color: #grey end_arrow: 10;
+		draw shape color: palet[DUMMY_ROAD] /*end_arrow: 10*/;
 
 //		loop i from: 0 to: segments_number-1 {
 //			// Calculate rotation angle
