@@ -55,7 +55,9 @@ global {
 		active_cells <- pollutant_cell overlapping road_geometry;
 		
 		// Additional visualization
-		create building from: buildings_shape_file;
+		create building from: buildings_shape_file {
+			p_cell <- pollutant_cell closest_to self;
+		}
 		create decoration_building from: buildings_admin_shape_file;
 		create dummy_road from: dummy_roads_shape_file;
 		create natural from: naturals_shape_file;
@@ -184,6 +186,12 @@ global {
 		}
 	}
 	
+	reflex update_building_aqi {
+		ask building parallel: true {
+			aqi <- pollutant_cell(p_cell).aqi;
+		}
+	}
+	
 	reflex create_congestions {
 		float start <- machine_time;
 		ask open_roads {
@@ -257,14 +265,14 @@ experiment exp {
 	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
 	
 	output {
-		display main type: opengl fullscreen: false	 toolbar: false background: #black {//keystone: [{-0.009483433676409914,0.007214643912913932,0.0},{0.008128657436922815,1.0036073219564567,0.0},{1.0162573148738456,0.9909816951088575,0.0},{1.0081286574369224,-0.02525125369519876,0.0}] {
+		display main type: opengl fullscreen: false toolbar: false background: #black keystone: [{-0.009483433676409914,0.007214643912913932,0.0},{0.008128657436922815,1.0036073219564567,0.0},{1.0162573148738456,0.9909816951088575,0.0},{1.0081286574369224,-0.02525125369519876,0.0}] {
 			species vehicle;
 			species road;
 			species natural;
 			species building;
 			species decoration_building;
 			species dummy_road;
-			grid pollutant_cell transparency: (display_mode = 0) ? 1.0 : 0.4 elevation: norm_pollution_level * 100 triangulation: true;
+			//grid pollutant_cell transparency: (display_mode = 0) ? 1.0 : 0.4 elevation: norm_pollution_level * 10 triangulation: true;
 			
 			species background;
 			species progress_bar;

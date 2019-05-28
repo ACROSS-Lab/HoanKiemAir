@@ -85,8 +85,10 @@ species vehicle skills: [moving] {
 
 species building schedules: [] {
 	float height;
-	float norm_pollution_level;
+	float aqi;
 	rgb color;
+	
+	agent p_cell;
 	
 	init {
 		if height < 0.1 {
@@ -95,18 +97,18 @@ species building schedules: [] {
 	}
 	
 	aspect default {
-		draw shape color: #grey border: #darkgrey depth: height * 10;
-	}
-	
-	aspect colorful {
-		if (norm_pollution_level < 1) 	{
-			color <- #green;
-		} else if (norm_pollution_level < 2.5) {
-			color <- #orange;
+		if (display_mode = 0) {
+			draw shape color: #grey border: #darkgrey depth: height * 10;
 		} else {
-			color <- # red;
+			if (aqi < 51) 	{
+				color <- #green;
+			} else if (aqi < 151) {
+				color <- #orange;
+			} else {
+				color <- # red;
+			}
+			draw shape color: color border: #darkgrey depth: height * 10;
 		}
-		draw shape color: color border: #darkgrey depth: height * 10;
 	}
 }
 

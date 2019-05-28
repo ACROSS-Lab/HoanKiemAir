@@ -147,7 +147,7 @@ global {
 	reflex produce_pollutant {
 		// Absorb pollutants emitted by vehicles
 		ask building parallel: true {
-			norm_pollution_level <- 0.0;
+			aqi <- 0.0;
 		}
 		ask road_cell {
 			float start <- machine_time;
@@ -178,7 +178,7 @@ global {
 			time_diffuse_pollutants <- time_diffuse_pollutants + (machine_time - start);
 			list<building> buildings <- list<building>(self.affected_buildings);
 			ask buildings {
-				self.norm_pollution_level <- self.norm_pollution_level + myself.norm_pollution_level; 
+				self.aqi <- self.aqi + myself.aqi; 
 			}
 		}
 	}
@@ -205,7 +205,7 @@ experiment exp {
 			species vehicle;
 			species road;
 			species natural;
-			species building aspect: colorful;
+			species building;
 			species decoration_building;
 			
 			species dummy_road;
