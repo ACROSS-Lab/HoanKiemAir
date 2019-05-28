@@ -113,8 +113,8 @@ species line_graph_aqi parent: line_graph {
 		// Draw axis
 		do draw_zones;
 		
-		do draw_line a: origin b: {x, y, Z_LVL2} thickness: 5;
-		do draw_line a: origin b: {x + width, y + height, Z_LVL2} thickness: 5;
+		do draw_line a: origin b: {x, y, Z_LVL2} thickness: 5 col: palet[AQI_CHART];
+		do draw_line a: origin b: {x + width, y + height, Z_LVL2} thickness: 5 col: palet[AQI_CHART];
 		
 		point prev_val_pos <- origin;
 		loop i from: 0 to: length(val_list) - 1 {
@@ -123,9 +123,9 @@ species line_graph_aqi parent: line_graph {
 				float val_y_pos <- origin.y - (val_list[i] / max_val * height);
 				point val_pos <- {val_x_pos, val_y_pos, Z_LVL3};
 				// Graph the value
-				draw circle(10, val_pos) color: #white;		
+				draw circle(10, val_pos) color: palet[AQI_CHART];		
 
-				do draw_line a: val_pos b: prev_val_pos thickness: 3;	
+				do draw_line a: val_pos b: prev_val_pos thickness: 3 col: palet[AQI_CHART];	
 				
 				prev_val_pos <- val_pos;
 			}

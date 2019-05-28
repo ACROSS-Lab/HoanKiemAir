@@ -89,6 +89,7 @@ global {
 	string CONGESTED_ROAD <- " congested_roads";
 	string ROAD_POLLUTION_DISPLAY <- "road pollution";
 	string TEXT_COLOR <- "Text color";
+	string AQI_CHART <- "AQI Charts";
 	
 	map<string,rgb> palet <- [
 		BUILDING_BASE::#white,
@@ -102,7 +103,8 @@ global {
 		NOT_CONGESTED_ROAD:: #white,
 		CONGESTED_ROAD::#red,
 		ROAD_POLLUTION_DISPLAY:: #white,
-		TEXT_COLOR::#white
+		TEXT_COLOR::#white,
+		AQI_CHART::#black
 	];
 
 
