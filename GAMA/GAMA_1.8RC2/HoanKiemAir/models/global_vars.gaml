@@ -39,7 +39,7 @@ global {
 			date("18 00 00","HH mm ss")::#darkorange,
 			date("19 00 00","HH mm ss")::#blue
 		];
-	float day_time_color_blend_factor <- 0.3;
+	float day_time_color_blend_factor <- 0.1;
 
 }
 
