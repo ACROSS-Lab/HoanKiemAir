@@ -64,16 +64,16 @@ global {
 		create dummy_road from: dummy_roads_shape_file;
 		create natural from: naturals_shape_file;
 		
-		create background with: [x::-1350, y::800, width::1300, height::1100, alpha::0.6];
-		create param_indicator with: [x::-1300, y::900, size::20, name::"Time", value::"00:00:00"];
-		create progress_bar with: [x::-1300, y::1100, width::500, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"500"];
-		create progress_bar with: [x::-1300, y::1450, width::500, height::100, max_val::1000, title::"Motorbikes", left_label::"0", right_label::"1500"];
-		create param_indicator with: [x::-1300, y::1750, size::20, name::"Road scenario", value::"no blocked roads"];
-		create param_indicator with: [x::-1300, y::1850, size::20, name::"Display mode", value::"traffic"];
+		create background with: [x::-1350, y::1000, width::1300, height::1100, alpha::0.6];
+		create param_indicator with: [x::-1300, y::1100, size::20, name::"Time", value::"00:00:00"];
+		create progress_bar with: [x::-1300, y::1300, width::500, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"500"];
+		create progress_bar with: [x::-1300, y::1650, width::500, height::100, max_val::1000, title::"Motorbikes", left_label::"0", right_label::"1500"];
+		create param_indicator with: [x::-1300, y::1950, size::20, name::"Road scenario", value::"no blocked roads"];
+		create param_indicator with: [x::-1300, y::2050, size::20, name::"Display mode", value::"traffic"];
 		
-		create background with: [x::2450, y::1000, width::1500, height::1500, alpha::0.6];
-		create indicator_health_concern_level with: [x::3150, y::1000, width::600, height::200];
-		create line_graph with: [x::2500, y::1400, width::1350, height::1000, label::"Hourly AQI"];
+		create background with: [x::2450, y::1000, width::1250, height::1500, alpha::0.6];
+		create indicator_health_concern_level with: [x::3100, y::1000, width::600, height::200];
+		create line_graph with: [x::2500, y::1400, width::1200, height::1000, label::"Hourly AQI"];
 		
 		// Connect to remote controller
 		if (mqtt_connect) {
@@ -267,15 +267,14 @@ experiment exp {
 	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
 	
 	output {
-		display main type: opengl fullscreen: false toolbar: false background: #black {//keystone: [{-0.009483433676409914,0.007214643912913932,0.0},{0.008128657436922815,1.0036073219564567,0.0},{1.0162573148738456,0.9909816951088575,0.0},{1.0081286574369224,-0.02525125369519876,0.0}] {
 		display main type: opengl fullscreen: true toolbar: false background: #black 
 		// draw_env: true
-camera_pos: {1055.5934,1521.1361,3673.6199} camera_look_pos: {1055.5934,1521.0706,-0.0027} camera_up_vector: {0.0,1.0,0.0} 
-keystone: [{-0.012307035907790373,-0.010174922123093566,0.0},{-0.002718485409631932,1.0083260530999232,0.0},{0.9972723971132761,1.0083271699173144,0.0},{1.0082138080822864,-0.016638704391143788,0.0}]
-
-// Config fullscreen  - résolution optimisée
-//camera_pos: {2649.9132,1496.4156,3913.1789} camera_look_pos: {2649.9132,1496.3473,3.0E-4} camera_up_vector: {0.0,1.0,0.0}
-//keystone: [{0.03872976704465195,-0.0037780075228106558,0.0},{0.039449285113880926,0.9431466070331477,0.0},{0.9667664101488327,0.9612354373001951,0.0},{0.9868345759281302,0.014214971982789648,0.0}]
+		camera_pos: {1055.5934,1521.1361,3673.6199} camera_look_pos: {1055.5934,1521.0706,-0.0027} camera_up_vector: {0.0,1.0,0.0} 
+		keystone: [{-0.012307035907790373,-0.010174922123093566,0.0},{-0.002718485409631932,1.0083260530999232,0.0},{0.9972723971132761,1.0083271699173144,0.0},{1.0082138080822864,-0.016638704391143788,0.0}]
+		
+		// Config fullscreen  - résolution optimisée
+		//camera_pos: {2649.9132,1496.4156,3913.1789} camera_look_pos: {2649.9132,1496.3473,3.0E-4} camera_up_vector: {0.0,1.0,0.0}
+		//keystone: [{0.03872976704465195,-0.0037780075228106558,0.0},{0.039449285113880926,0.9431466070331477,0.0},{0.9667664101488327,0.9612354373001951,0.0},{0.9868345759281302,0.014214971982789648,0.0}]
 		{
 			species boundary;			
 			species vehicle;
