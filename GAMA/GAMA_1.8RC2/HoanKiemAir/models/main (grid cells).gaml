@@ -25,6 +25,7 @@ global {
 	
 	// Load shapefiles
 	string resources_dir <- "../includes/bigger_map/";
+	shape_file map_boundary_rectangle_shape_file <- shape_file(resources_dir + "resize_rectangle.shp");	
 	shape_file roads_shape_file <- shape_file(resources_dir + "roads.shp");
 	shape_file dummy_roads_shape_file <- shape_file(resources_dir + "small_dummy_roads.shp");
 	shape_file buildings_shape_file <- shape_file(resources_dir + "buildings.shp");
@@ -36,6 +37,7 @@ global {
 	list<pollutant_cell> active_cells;
 	
 	init {
+		create boundary from: map_boundary_rectangle_shape_file;		
 		create road from: roads_shape_file {
 			// Create a reverse road if the road is not oneway
 			if (!oneway) {
@@ -257,7 +259,16 @@ experiment exp {
 	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
 	
 	output {
-		display main type: opengl fullscreen: false	 toolbar: false background: #black {//keystone: [{-0.009483433676409914,0.007214643912913932,0.0},{0.008128657436922815,1.0036073219564567,0.0},{1.0162573148738456,0.9909816951088575,0.0},{1.0081286574369224,-0.02525125369519876,0.0}] {
+		display main type: opengl fullscreen: true toolbar: false background: #black 
+		// draw_env: true
+camera_pos: {1055.5934,1521.1361,3673.6199} camera_look_pos: {1055.5934,1521.0706,-0.0027} camera_up_vector: {0.0,1.0,0.0} 
+keystone: [{-0.012307035907790373,-0.010174922123093566,0.0},{-0.002718485409631932,1.0083260530999232,0.0},{0.9972723971132761,1.0083271699173144,0.0},{1.0082138080822864,-0.016638704391143788,0.0}]
+
+// Config fullscreen  - résolution optimisée
+//camera_pos: {2649.9132,1496.4156,3913.1789} camera_look_pos: {2649.9132,1496.3473,3.0E-4} camera_up_vector: {0.0,1.0,0.0}
+//keystone: [{0.03872976704465195,-0.0037780075228106558,0.0},{0.039449285113880926,0.9431466070331477,0.0},{0.9667664101488327,0.9612354373001951,0.0},{0.9868345759281302,0.014214971982789648,0.0}]
+		{
+			species boundary;			
 			species vehicle;
 			species road;
 			species natural;

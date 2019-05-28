@@ -165,6 +165,17 @@ species indicator_health_concern_level schedules: [] {
 	}
 }
 
+species boundary {
+	
+	reflex disappear when: (cycle > 1) {
+		do die;
+	}
+	
+	aspect {
+		draw (shape + 100) - shape empty:false color: #pink;
+	}
+}
+
 species background schedules: [] {
 	float x;
 	float y;
