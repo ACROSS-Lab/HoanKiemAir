@@ -58,6 +58,61 @@ species param_indicator {
 	}
 }
 
+species line_graph_aqi parent: line_graph {
+	list<float> thresholds;
+	float good <- 50;
+	float moderate <- 100;
+	float unhealthy_sensitive <- 150;
+	
+	list<rgb> zone_colors <- [#seagreen, #yellow, #orange];
+
+	action draw_zones {
+		loop i from: 0 to: length(thresholds) - 2 {
+			float h <- thresholds[i + 1] - thresholds[i];
+			draw rectangle(width, h) at: {x + width / 2, thresholds[i] + h / 2, 0.4} color: rgb(zone_colors[length(thresholds) - 2 - i], 0.5);
+		}
+	}
+	
+	float calculate_val_y_pos(float value) {
+		return origin.y - (value / max_val * height);
+	}
+	
+	reflex update_thresholds {
+		thresholds <- [origin.y];
+		if (good < max_val) {
+			add calculate_val_y_pos(good) to: thresholds at: 0;
+		}
+		if (moderate < max_val) {
+			add calculate_val_y_pos(moderate) to: thresholds at: 0;
+		}
+		add calculate_val_y_pos(max_val) to: thresholds at: 0;
+	}
+	
+	aspect default {
+		// Draw axis
+		do draw_line a: origin b: {x, y, 0.2} thickness: 5;
+		do draw_line a: origin b: {x + width, y + height, 0.2} thickness: 5;
+		
+		point prev_val_pos <- nil;
+		loop i from: 0 to: length(val_list) - 1 {
+			if (val_list[i] >= 0) {
+				float val_x_pos <- origin.x + width / length(val_list) * i;
+				float val_y_pos <- origin.y - (val_list[i] / max_val * height);
+				point val_pos <- {val_x_pos, val_y_pos, 0.2};
+				// Graph the value
+				draw circle(10, val_pos) ;		
+				float current_val <- val_list[length(val_list) - 1];
+				float current_val_height <- current_val / max_val * height;
+				if (prev_val_pos != nil) {
+					do draw_line a: val_pos b: prev_val_pos thickness: 3;	
+				} 
+				prev_val_pos <- val_pos;
+			}
+		}
+		do draw_zones;
+	}
+}
+
 species line_graph schedules: [] {
 	// Params
 	float x;
@@ -67,7 +122,9 @@ species line_graph schedules: [] {
 	string label <- "";
 	string unit <- "";
 
+	point origin <- {x, y + height, 0.2};
 	list<float> val_list <- list_with(20, -1.0);
+	float max_val -> max(max(val_list), 50.0);
 	
 	point midpoint(point a, point b) {
 		return (a + b) / 2;
@@ -83,14 +140,11 @@ species line_graph schedules: [] {
 	}
 	
 	aspect default {
-		point origin <- {x, y + height, 0.2};
-
 		// Draw axis
 		do draw_line a: origin b: {x, y, 0.2} thickness: 5;
 		do draw_line a: origin b: {x + width, y + height, 0.2} thickness: 5;
 		
 		point prev_val_pos <- nil;
-		float max_val <- max(val_list) = 0 ? 1 : max(val_list);
 		loop i from: 0 to: length(val_list) - 1 {
 			if (val_list[i] >= 0) {
 				float val_x_pos <- origin.x + width / length(val_list) * i;
@@ -107,8 +161,8 @@ species line_graph schedules: [] {
 			}
 		}
 		// Draw current value indicator
-		do draw_line({x, prev_val_pos.y}, {x + width, prev_val_pos.y}, 2, #red);
-		draw label + " " + string(round(val_list[length(val_list) - 1])) + " " + unit at: {x + 50,  prev_val_pos.y - 50, 0.2} font: font(20) color: #orange;
+//		do draw_line({x, prev_val_pos.y}, {x + width, prev_val_pos.y}, 2, #red);
+//		draw label + " " + string(round(val_list[length(val_list) - 1])) + " " + unit at: {x + 50,  prev_val_pos.y - 50, 0.2} font: font(20) color: #orange;
 	}
 }
 

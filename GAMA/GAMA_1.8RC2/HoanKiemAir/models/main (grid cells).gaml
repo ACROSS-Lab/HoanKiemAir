@@ -16,7 +16,7 @@ global {
 	bool mqtt_connect <- false;
 	
 	// Benchmark execution time
-	bool benchmark <- true;
+	bool benchmark <- false;
 	float time_absorb_pollutants;
 	float time_diffuse_pollutants;
 	float time_create_congestions;
@@ -73,7 +73,8 @@ global {
 		
 		create background with: [x::2450, y::1000, width::1250, height::1500, alpha::0.6];
 		create indicator_health_concern_level with: [x::3100, y::1000, width::600, height::200];
-		create line_graph with: [x::2500, y::1400, width::1200, height::1000, label::"Hourly AQI"];
+//		create line_graph with: [x::2500, y::1400, width::1200, height::1000, label::"Hourly AQI"];
+		create line_graph_aqi with: [x::2800, y::1500, width::500, height::500, label::"Hourly AQI"];
 		
 		// Connect to remote controller
 		if (mqtt_connect) {
@@ -240,9 +241,9 @@ global {
 		time_diffuse_pollutants <- machine_time - start;
 	}
 	
-	reflex calculate_aqi when: every(1 #hour) {
+	reflex calculate_aqi when: every(1 #minute) {
 		 float aqi <- max(pollutant_cell accumulate each.aqi);
-		 ask line_graph {
+		 ask line_graph_aqi {
 		 	do update(aqi);
 		 }
 		 ask indicator_health_concern_level {
@@ -267,10 +268,10 @@ experiment exp {
 	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
 	
 	output {
-		display main type: opengl fullscreen: true toolbar: false background: #black 
+		display main type: opengl fullscreen: false toolbar: false background: #black 
 		// draw_env: true
 		camera_pos: {1055.5934,1521.1361,3673.6199} camera_look_pos: {1055.5934,1521.0706,-0.0027} camera_up_vector: {0.0,1.0,0.0} 
-		keystone: [{-0.012307035907790373,-0.010174922123093566,0.0},{-0.002718485409631932,1.0083260530999232,0.0},{0.9972723971132761,1.0083271699173144,0.0},{1.0082138080822864,-0.016638704391143788,0.0}]
+//		keystone: [{-0.012307035907790373,-0.010174922123093566,0.0},{-0.002718485409631932,1.0083260530999232,0.0},{0.9972723971132761,1.0083271699173144,0.0},{1.0082138080822864,-0.016638704391143788,0.0}]
 		
 		// Config fullscreen  - résolution optimisée
 		//camera_pos: {2649.9132,1496.4156,3913.1789} camera_look_pos: {2649.9132,1496.3473,3.0E-4} camera_up_vector: {0.0,1.0,0.0}
@@ -289,6 +290,7 @@ experiment exp {
 			species progress_bar;
 			species param_indicator;
 			species line_graph;
+			species line_graph_aqi;
 			species indicator_health_concern_level;
 		}
 	}
