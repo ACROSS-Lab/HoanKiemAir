@@ -176,9 +176,9 @@ global {
 	}
 	
 	reflex update_time {
-		int h <- int(time / #hour);
-		int m <- int((time - h * #hour) / #minute);
-		int s <- int((time - h * #hour - m * #minute) / #s);
+		int h <- current_date.hour;
+		int m <- current_date.minute;
+		int s <- current_date.second;
 		string hh <- ((h < 10) ? "0" : "") + string(h);
 		string mm <- ((m < 10) ? "0" : "") + string(m);
 		string ss <- ((s < 10) ? "0" : "") + string(s);
@@ -250,6 +250,20 @@ global {
 		 }
 	}
 	
+	rgb day_time_color <- #black;
+	date starting_date <- date("14 00 00","HH mm ss");
+	reflex general_color_brew when:day_time_color_blender{
+		if(day_time_colors.keys one_matches (each.hour = current_date.hour)){
+			day_time_color <- day_time_colors[day_time_colors.keys first_with (each.hour = current_date.hour)]; 
+		} else {
+			date fd <- day_time_colors.keys where (each.hour > current_date.hour) with_min_of (each.hour - current_date.hour);
+			date pd <- day_time_colors.keys where (each.hour < current_date.hour) with_min_of (current_date.hour - each.hour);
+			
+			day_time_color <- blend(day_time_colors[fd],day_time_colors[pd],(fd - current_date) / (fd - pd));
+		}
+		day_time_color <- blend(#black,day_time_color,1-day_time_color_blend_factor);
+	}
+	
 	reflex benchmark when: benchmark and every(10 #cycle) {
 		write "Vehicles move: " + time_vehicles_move;
 		write "Path recomputed: " + nb_recompute_path;
@@ -267,7 +281,7 @@ experiment exp {
 	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
 	
 	output {
-		display main type: opengl fullscreen: true toolbar: false background: #black 
+		display main type: opengl fullscreen: true toolbar: false background: day_time_color 
 		// draw_env: true
 		camera_pos: {1055.5934,1521.1361,3673.6199} camera_look_pos: {1055.5934,1521.0706,-0.0027} camera_up_vector: {0.0,1.0,0.0} 
 		keystone: [{-0.012307035907790373,-0.010174922123093566,0.0},{-0.002718485409631932,1.0083260530999232,0.0},{0.9972723971132761,1.0083271699173144,0.0},{1.0082138080822864,-0.016638704391143788,0.0}]
