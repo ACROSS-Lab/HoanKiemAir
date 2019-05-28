@@ -19,7 +19,7 @@ global {
 		int road_scenario_prev;
 		int display_mode_prev;
 		
-		float pollutant_decay_rate <- 0.99;
+		float pollutant_decay_rate <- 0.999999;
 		int grid_size <- 50;
 		int grid_depth <- 10; // cubic meters
 		

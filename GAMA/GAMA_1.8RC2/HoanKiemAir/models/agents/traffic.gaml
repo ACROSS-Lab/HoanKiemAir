@@ -85,6 +85,7 @@ species vehicle skills: [moving] {
 
 species building schedules: [] {
 	float height;
+	string type;
 	float aqi;
 	rgb color;
 	
@@ -98,7 +99,7 @@ species building schedules: [] {
 	
 	aspect default {
 		if (display_mode = 0) {
-			draw shape color: #grey border: #darkgrey depth: height * 10;
+			draw shape color: (type = "outArea")?#darkgrey:#white /*border: #darkgrey*/ depth: height * 10;
 		} else {
 			if (aqi < 51) 	{
 				color <- #green;
@@ -107,7 +108,7 @@ species building schedules: [] {
 			} else {
 				color <- # red;
 			}
-			draw shape color: color border: #darkgrey depth: height * 10;
+			draw shape color: (type = "outArea")?#darkgrey:color /*border: #darkgrey*/ depth: height * 10;
 		}
 	}
 }
