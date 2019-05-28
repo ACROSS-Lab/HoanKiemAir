@@ -62,7 +62,7 @@ global {
 		create dummy_road from: dummy_roads_shape_file;
 		create natural from: naturals_shape_file;
 		
-		create background with: [x::-1350, y::850, width::1300, height::1050, alpha::0.6];
+		create background with: [x::-1350, y::800, width::1300, height::1100, alpha::0.6];
 		create param_indicator with: [x::-1300, y::900, size::20, name::"Time", value::"00:00:00"];
 		create progress_bar with: [x::-1300, y::1100, width::500, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"500"];
 		create progress_bar with: [x::-1300, y::1450, width::500, height::100, max_val::1000, title::"Motorbikes", left_label::"0", right_label::"1500"];
@@ -265,7 +265,7 @@ experiment exp {
 	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
 	
 	output {
-		display main type: opengl fullscreen: false toolbar: false background: #black keystone: [{-0.009483433676409914,0.007214643912913932,0.0},{0.008128657436922815,1.0036073219564567,0.0},{1.0162573148738456,0.9909816951088575,0.0},{1.0081286574369224,-0.02525125369519876,0.0}] {
+		display main type: opengl fullscreen: false toolbar: false background: #black {//keystone: [{-0.009483433676409914,0.007214643912913932,0.0},{0.008128657436922815,1.0036073219564567,0.0},{1.0162573148738456,0.9909816951088575,0.0},{1.0081286574369224,-0.02525125369519876,0.0}] {
 			species vehicle;
 			species road;
 			species natural;
