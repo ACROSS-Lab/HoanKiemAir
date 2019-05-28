@@ -31,9 +31,9 @@ species road schedules: [] {
 		if (closed) {
 			draw shape + 5 color: #orange;
 		} else if (display_mode = 0) {
-			draw shape+1/speed_coeff color: (speed_coeff=1.0) ? #white : #red end_arrow: 10;
+			draw shape+1/speed_coeff color: (speed_coeff=1.0) ? #white : #red /*end_arrow: 10*/;
 		} else {
-			draw shape color: #white end_arrow: 10;
+			draw shape color: #white /*end_arrow: 10*/;
 		}
 	}
 }
@@ -92,14 +92,14 @@ species building schedules: [] {
 	agent p_cell;
 	
 	init {
-		if height < 0.1 {
-			height <- 1.3 + rnd(0.3, 0.3);
+		if height < min_height {
+			height <- mean_height + rnd(0.3, 0.3);
 		}
 	}
 	
 	aspect default {
 		if (display_mode = 0) {
-			draw shape color: (type = "outArea")?#darkgrey:#white /*border: #darkgrey*/ depth: height * 10;
+			draw shape color: (type = type_outArea)?#darkgrey:#white /*border: #darkgrey*/ /*depth: height * 10*/;
 		} else {
 			if (aqi < 51) 	{
 				color <- #green;
@@ -108,7 +108,7 @@ species building schedules: [] {
 			} else {
 				color <- # red;
 			}
-			draw shape color: (type = "outArea")?#darkgrey:color /*border: #darkgrey*/ depth: height * 10;
+			draw shape color: (type = type_outArea)?#darkgrey:color /*border: #darkgrey*/ depth: height * 10;
 		}
 	}
 }
