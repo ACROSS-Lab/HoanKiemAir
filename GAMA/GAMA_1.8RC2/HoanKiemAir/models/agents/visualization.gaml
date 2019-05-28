@@ -62,55 +62,55 @@ species param_indicator {
 
 species line_graph_aqi parent: line_graph {
 	list<float> thresholds;
-	float good <- 50;
-	float moderate <- 100;
-	float unhealthy_sensitive <- 150;
-	
 
 	action draw_zones {
 		loop i from: 0 to: length(thresholds) - 2 {
 			float h <- thresholds[i + 1] - thresholds[i];
-			draw rectangle(width, h) at: {x + width / 2, thresholds[i] + h / 2, 0.4} color: rgb(zone_colors[length(thresholds) - 2 - i]/*, 0.5*/);
+			draw rectangle(width, h) at: {x + width / 2, thresholds[i] + h / 2, 0.1} color: zone_colors.values[length(thresholds) - 3 - i]/*, 0.5*/;
 		}
 	}
 	
-	float calculate_val_y_pos(float value) {
+	action update(float new_val) {
+		invoke update(new_val);
+	}
+	
+	float calculate_val_y_pos(float value) {		
 		return origin.y - (value / max_val * height);
 	}
 	
 	reflex update_thresholds {
 		thresholds <- [origin.y];
-		if (good < max_val) {
-			add calculate_val_y_pos(good) to: thresholds at: 0;
+		
+		loop thr over: thresholds_pollution.keys {
+			if(thr < max_val) {
+				add calculate_val_y_pos(float(thr)) to: thresholds at: 0;
+			}
 		}
-		if (moderate < max_val) {
-			add calculate_val_y_pos(moderate) to: thresholds at: 0;
-		}
+		
 		add calculate_val_y_pos(max_val) to: thresholds at: 0;
 	}
 	
 	aspect default {
 		// Draw axis
+		do draw_zones;
+		
 		do draw_line a: origin b: {x, y, 0.2} thickness: 5;
 		do draw_line a: origin b: {x + width, y + height, 0.2} thickness: 5;
 		
-		point prev_val_pos <- nil;
+		point prev_val_pos <- origin;
 		loop i from: 0 to: length(val_list) - 1 {
 			if (val_list[i] >= 0) {
 				float val_x_pos <- origin.x + width / length(val_list) * i;
 				float val_y_pos <- origin.y - (val_list[i] / max_val * height);
-				point val_pos <- {val_x_pos, val_y_pos, 0.2};
+				point val_pos <- {val_x_pos, val_y_pos, 0.3};
 				// Graph the value
-				draw circle(10, val_pos) ;		
-				float current_val <- val_list[length(val_list) - 1];
-				float current_val_height <- current_val / max_val * height;
-				if (prev_val_pos != nil) {
-					do draw_line a: val_pos b: prev_val_pos thickness: 3;	
-				} 
+				draw circle(10, val_pos) color: #white;		
+
+				do draw_line a: val_pos b: prev_val_pos thickness: 3;	
+				
 				prev_val_pos <- val_pos;
 			}
 		}
-		do draw_zones;
 	}
 }
 
@@ -152,9 +152,7 @@ species line_graph schedules: [] {
 				float val_y_pos <- origin.y - (val_list[i] / max_val * height);
 				point val_pos <- {val_x_pos, val_y_pos, 0.2};
 				// Graph the value
-				draw circle(10, val_pos) ;		
-				float current_val <- val_list[length(val_list) - 1];
-				float current_val_height <- current_val / max_val * height;
+				draw circle(10, val_pos) color: #white;		
 				if (prev_val_pos != nil) {
 					do draw_line a: val_pos b: prev_val_pos thickness: 3;	
 				} 
@@ -181,35 +179,12 @@ species indicator_health_concern_level schedules: [] {
 	point midpoint(point a, point b) {
 		return (a + b) / 2;
 	}
-	
-	action update(float aqi) {
-		anchor <- #center;
-		if (aqi < 51) {
-			color <- #seagreen;
-			text_color <- #white;
-			text <- " Good";
-		} else if (aqi < 101) {
-			color <- #yellow;
-			text_color <- #black;
-			text <- " Moderate";
-		} else if (aqi < 151) {
-			color <- #orange;
-			text_color <- #white;
-			text <- " Unhealthy for\nSensitive Groups";
-			anchor <- #bottom_center;
-		} else if (aqi < 201) {
-			color <- #crimson;
-			text_color <- #white;
-			text <- " Unhealthy";
-		} else if (aqi < 301) {
-			color <- #purple;
-			text_color <- #white;
-			text <- " Very unhealthy";
-		} else {
-			color <- #darkred;
-			text_color <- #white;
-			text <- " Hazardous";
-		}
+
+	action update(float aqi) {		
+		color <- world.get_pollution_color(aqi);
+		text <- world.get_pollution_state(aqi);
+		text_color <-(text = THRESHOLD_MODERATE)?#black:#white;
+		anchor <- (text = THRESHOLD_UNHEALTHY_SENSITIVE)?#bottom_center : #center;
 	}
 	
 	aspect default {

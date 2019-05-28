@@ -101,14 +101,7 @@ species building schedules: [] {
 		if (display_mode = 0) {
 			draw shape color: (type = type_outArea)?palet[BUILDING_OUTAREA]:palet[BUILDING_BASE] /*border: #darkgrey*/ /*depth: height * 10*/;
 		} else {
-			if (aqi < 51) 	{
-				color <- #green;
-			} else if (aqi < 151) {
-				color <- #orange;
-			} else {
-				color <- # red;
-			}
-			draw shape color: (type = type_outArea)?palet[BUILDING_OUTAREA]:color /*border: #darkgrey*/ depth: height * 10;
+			draw shape color: (type = type_outArea)?palet[BUILDING_OUTAREA]:world.get_pollution_color(aqi) /*border: #darkgrey*/ depth: height * 10;
 		}
 	}
 }
@@ -123,7 +116,7 @@ species decoration_building schedules: [] {
 
 species natural schedules: [] {
 	aspect default {
-		draw shape color: palet[NATURAL] ;/*#lightblue*/ //border: #darkblue;
+		draw shape color: palet[NATURAL] ; //border: #darkblue;
 	}	
 }
 

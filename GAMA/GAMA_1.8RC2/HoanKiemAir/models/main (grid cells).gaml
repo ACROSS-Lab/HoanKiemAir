@@ -210,14 +210,9 @@ global {
 	}
 	
 	matrix<float> mat_diff <- matrix([
-		[1/20,1/20,1/20],
-		[1/20, 3/5 * pollutant_decay_rate,1/20],
-		[1/20,1/20,1/20]]);
-
-//	matrix<float> mat_diff <- matrix([
-//		[pollutant_diffusion,pollutant_diffusion,pollutant_diffusion],
-//		[pollutant_diffusion, 8 * pollutant_diffusion * pollutant_decay_rate,1 * pollutant_diffusion],
-//		[pollutant_diffusion,pollutant_diffusion,pollutant_diffusion]]);
+		[pollutant_diffusion,pollutant_diffusion,pollutant_diffusion],
+		[pollutant_diffusion, (1 - 8 * pollutant_diffusion) * pollutant_decay_rate, 1 * pollutant_diffusion],
+		[pollutant_diffusion,pollutant_diffusion,pollutant_diffusion]]);
 
 		
 	reflex produce_pollutant {
@@ -316,7 +311,7 @@ experiment exp {
 		//	species background;
 			species progress_bar;
 			species param_indicator;
-			species line_graph;
+	//		species line_graph;
 			species line_graph_aqi;
 			species indicator_health_concern_level;
 		}
