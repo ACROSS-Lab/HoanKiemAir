@@ -21,7 +21,7 @@ global {
 	float time_diffuse_pollutants;
 	float time_create_congestions;
 
-	float step <- 15#s;
+	float step <- 1#mn;//10#s;
 	
 	// Load shapefiles
 	string resources_dir <- "../includes/bigger_map/";
@@ -97,6 +97,12 @@ global {
 		} else {
 			create vehicle number: delta with: [type::type];
 		}
+	}
+	
+	reflex update_vehicle_population_according_to_daytime when:day_time_traffic {
+		float t_rate <- general_traffic_daytime();
+		n_cars <- int(max_number_of_cars * t_rate);
+		n_motorbikes <- int(max_number_of_motorbikes * t_rate);
 	}
 	
 	reflex update_car_population when: n_cars != n_cars_prev {
@@ -217,7 +223,7 @@ global {
 	
 	matrix<float> mat_diff <- matrix([
 		[pollutant_diffusion,pollutant_diffusion,pollutant_diffusion],
-		[pollutant_diffusion, (1 - 8 * pollutant_diffusion) * pollutant_decay_rate, 1 * pollutant_diffusion],
+		[pollutant_diffusion, (1 - 8 * pollutant_diffusion) * pollutant_decay_rate, pollutant_diffusion],
 		[pollutant_diffusion,pollutant_diffusion,pollutant_diffusion]]);
 
 		
@@ -258,8 +264,11 @@ global {
 		 }
 	}
 	
+	/*
+	 * Compute a background color according to day time
+	 */
 	rgb day_time_color <- #black;
-	date starting_date <- date("14 00 00","HH mm ss");
+	date starting_date <- date("23 50 00","HH mm ss");
 	reflex general_color_brew when:day_time_color_blender{
 		if(day_time_colors.keys one_matches (each.hour = current_date.hour 
 			and each.minute = current_date.minute and each.second = current_date.second
@@ -269,6 +278,7 @@ global {
 			date fd <- (day_time_colors.keys where (each.hour > current_date.hour)) with_min_of (each.hour - current_date.hour);
 			if(fd = nil){ fd <- first(day_time_colors.keys); }
 			date pd <- (day_time_colors.keys where (each.hour <= current_date.hour)) with_min_of (current_date.hour - each.hour);
+			if(pd = nil){ pd <- last(day_time_colors.keys); }
 			
 			float time_to_go_next <- ((fd.hour#h+fd.minute#mn) - (current_date.hour#h+current_date.minute#mn));
 			float dist_between_time <- ((fd.hour#h+fd.minute#mn) - (pd.hour#h+pd.minute#mn));
@@ -277,6 +287,30 @@ global {
 			day_time_color <- blend(day_time_colors[fd],day_time_colors[pd],1-blend_factor);
 		}
 		day_time_color <- blend(#black,day_time_color,1-day_time_color_blend_factor);
+	}
+	
+	/*
+	 * TODO: factorize code with general_color_brew
+	 * 
+	 * Compute a traffic rate according to day time
+	 */
+	float general_traffic_daytime {
+		if(daytime_trafic_peak.keys one_matches (each.hour = current_date.hour 
+			and each.minute = current_date.minute and each.second = current_date.second)){
+			// Only work when only one peak per hour
+			return daytime_trafic_peak[daytime_trafic_peak.keys first_with (each.hour = current_date.hour)];	
+		} else {
+			date fd <- (daytime_trafic_peak.keys where (each.hour > current_date.hour)) with_min_of (each.hour - current_date.hour);
+			if(fd = nil){ fd <- first(daytime_trafic_peak.keys); }
+			date pd <- (daytime_trafic_peak.keys where (each.hour <= current_date.hour)) with_min_of (current_date.hour - each.hour);
+			if(pd = nil){ pd <- last(daytime_trafic_peak.keys); }
+			
+			float time_to_go_next <- ((fd.hour#h+fd.minute#mn) - (current_date.hour#h+current_date.minute#mn));
+			float dist_between_time <- ((fd.hour#h+fd.minute#mn) - (pd.hour#h+pd.minute#mn));
+			float blend_factor <- time_to_go_next / dist_between_time;
+			
+			return daytime_trafic_peak[fd] * (1-blend_factor) + daytime_trafic_peak[pd] * blend_factor;
+		}	
 	}
 	
 	reflex benchmark when: benchmark and every(10 #cycle) {
@@ -290,8 +324,8 @@ global {
 }
 
 experiment exp {
-	parameter "Number of cars" var: n_cars <- 500 min: 0 max: 500;
-	parameter "Number of motorbikes" var: n_motorbikes <- 1000 min: 0 max: 1000;
+	parameter "Number of cars" var: n_cars <- 500 min: 0 max: max_number_of_cars;
+	parameter "Number of motorbikes" var: n_motorbikes <- 1000 min: 0 max: max_number_of_motorbikes;
 	parameter "Close roads" var: road_scenario <- 0 min: 0 max: 2;
 	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
 	

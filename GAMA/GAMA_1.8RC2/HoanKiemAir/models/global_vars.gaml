@@ -48,6 +48,28 @@ global {
 		date("19 00 00","HH mm ss")::#blue
 	];
 	float day_time_color_blend_factor <- 0.1;
+	
+	// Daytime traffic demand
+	int max_number_of_cars <- 500 const:true;
+	int max_number_of_motorbikes <- 1000 const:true;
+	bool day_time_traffic <- true;
+	map<date,float> daytime_trafic_peak <- [
+		date("01 00 00", "HH mm ss")::0.2,
+		date("04 00 00", "HH mm ss")::0.2,
+		date("07 00 00", "HH mm ss")::1.0,
+		date("08 00 00", "HH mm ss")::1.0,
+		date("09 00 00", "HH mm ss")::0.6,
+		date("10 00 00", "HH mm ss")::0.5,
+		date("11 30 00", "HH mm ss")::1.0,
+		date("13 00 00", "HH mm ss")::0.8,
+		date("16 00 00", "HH mm ss")::0.4,
+		date("17 00 00", "HH mm ss")::1.0,
+		date("18 00 00", "HH mm ss")::1.0,
+		date("19 00 00", "HH mm ss")::0.9,
+		date("20 00 00", "HH mm ss")::0.8,
+		date("22 30 00", "HH mm ss")::0.6,
+		date("23 30 00", "HH mm ss")::0.5
+	];
 
 
 	// Pollution threshold 
