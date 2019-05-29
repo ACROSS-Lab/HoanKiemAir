@@ -21,7 +21,7 @@ global {
 	float time_diffuse_pollutants;
 	float time_create_congestions;
 
-	float step <- 10#s;
+	float step <- 16#s;
 	date starting_date <- date(starting_date_string,"HH mm ss");
 	
 	// Load shapefiles
