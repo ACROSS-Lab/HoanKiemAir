@@ -83,9 +83,19 @@ species line_graph_aqi parent: line_graph {
 	list<float> thresholds;
 
 	action draw_zones {
+		// Calculate threshold lines' y-pos 
+		thresholds <- [];
+		loop thr over: thresholds_pollution.keys {
+			if(thr < max_val) {
+				add calculate_val_y_pos(float(thr)) to: thresholds at: 0;
+			}
+		}
+		add calculate_val_y_pos(max_val) to: thresholds at: 0;
+		
+		// Draw the AQI level zones
 		loop i from: 0 to: length(thresholds) - 2 {
 			float h <- thresholds[i + 1] - thresholds[i];
-			draw rectangle(width, h) at: {x + width / 2, thresholds[i] + h / 2, 0.1} color: zone_colors.values[length(thresholds) - 3 - i]/*, 0.5*/;
+			draw rectangle(width, h) at: {x + width / 2, thresholds[i] + h / 2, 0.1} color: zone_colors.values[length(thresholds) - 2 - i]/*, 0.5*/;
 		}
 	}
 	
@@ -97,22 +107,9 @@ species line_graph_aqi parent: line_graph {
 		return origin.y - (value / max_val * height);
 	}
 	
-	reflex update_thresholds {
-		thresholds <- [origin.y];
-		
-		loop thr over: thresholds_pollution.keys {
-			if(thr < max_val) {
-				add calculate_val_y_pos(float(thr)) to: thresholds at: 0;
-			}
-		}
-		
-		add calculate_val_y_pos(max_val) to: thresholds at: 0;
-	}
-	
 	aspect default {
-		// Draw axis
 		do draw_zones;
-		
+		// Draw axis
 		do draw_line a: origin b: {x, y, Z_LVL2} thickness: 5 col: palet[AQI_CHART];
 		do draw_line a: origin b: {x + width, y + height, Z_LVL2} thickness: 5 col: palet[AQI_CHART];
 		
