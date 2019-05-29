@@ -171,6 +171,8 @@ public class MainActivity extends BaseActivity {
                         mSeekBarNumMotorbikes.setProgress(0);
                         mRadioGroupRoadScenario.check(R.id.radio_button_scenario_0);
                         mRadioGroupDisplayMode.check(R.id.radio_button_traffic);
+                        onRoadScenarioRadioButtonClicked(findViewById(R.id.radio_button_scenario_0));
+                        onDisplayModeRadioButtonClicked(findViewById(R.id.radio_button_traffic));
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
