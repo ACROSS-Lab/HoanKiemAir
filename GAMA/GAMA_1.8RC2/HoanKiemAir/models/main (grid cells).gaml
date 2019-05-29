@@ -21,7 +21,8 @@ global {
 	float time_diffuse_pollutants;
 	float time_create_congestions;
 
-	float step <- 1#mn;//10#s;
+	float step <- 10#s;
+	date starting_date <- date(starting_date_string,"HH mm ss");
 	
 	// Load shapefiles
 	string resources_dir <- "../includes/bigger_map/";
@@ -264,11 +265,12 @@ global {
 		 }
 	}
 	
+	// ---------- DAYTIME CYCLES ---------- //
+	
 	/*
 	 * Compute a background color according to day time
 	 */
 	rgb day_time_color <- #black;
-	date starting_date <- date("23 50 00","HH mm ss");
 	reflex general_color_brew when:day_time_color_blender{
 		if(day_time_colors.keys one_matches (each.hour = current_date.hour 
 			and each.minute = current_date.minute and each.second = current_date.second
@@ -312,6 +314,8 @@ global {
 			return daytime_trafic_peak[fd] * (1-blend_factor) + daytime_trafic_peak[pd] * blend_factor;
 		}	
 	}
+
+	// ---------- BENCHMARK ---------- //
 	
 	reflex benchmark when: benchmark and every(10 #cycle) {
 		write "Vehicles move: " + time_vehicles_move;
@@ -356,4 +360,10 @@ experiment exp {
 			species indicator_health_concern_level;
 		}
 	}
+}
+
+experiment daytime parent:exp {
+	parameter "Daytime traffic" var:day_time_traffic init:true;
+	parameter "Time step" var:step init:1#mn min:1#mn max:30#mn;
+	parameter "Starting time" var:starting_date_string init:"05 00 00";
 }

@@ -38,8 +38,11 @@ global {
 	float mean_height <- 1.3;
 	string type_outArea <- "outArea";	
 	
+	// Daytime management
+	string starting_date_string <- "00 00 00";
+	
 	// Daytime color blender
-	bool day_time_color_blender <- true;
+	bool day_time_color_blender <- false;
 	map<date,rgb> day_time_colors <- [
 		date("00 00 00", "HH mm ss")::#midnightblue,
 		date("06 00 00","HH mm ss")::#deepskyblue,
@@ -47,12 +50,12 @@ global {
 		date("18 00 00","HH mm ss")::#darkorange,
 		date("19 00 00","HH mm ss")::#blue
 	];
-	float day_time_color_blend_factor <- 0.1;
+	float day_time_color_blend_factor <- 0.2;
 	
 	// Daytime traffic demand
 	int max_number_of_cars <- 500 const:true;
 	int max_number_of_motorbikes <- 1000 const:true;
-	bool day_time_traffic <- true;
+	bool day_time_traffic <- false;
 	map<date,float> daytime_trafic_peak <- [
 		date("01 00 00", "HH mm ss")::0.2,
 		date("04 00 00", "HH mm ss")::0.2,
@@ -65,8 +68,8 @@ global {
 		date("16 00 00", "HH mm ss")::0.4,
 		date("17 00 00", "HH mm ss")::1.0,
 		date("18 00 00", "HH mm ss")::1.0,
-		date("19 00 00", "HH mm ss")::0.9,
-		date("20 00 00", "HH mm ss")::0.8,
+		date("19 00 00", "HH mm ss")::0.85,
+		date("20 00 00", "HH mm ss")::0.75,
 		date("22 30 00", "HH mm ss")::0.6,
 		date("23 30 00", "HH mm ss")::0.5
 	];
