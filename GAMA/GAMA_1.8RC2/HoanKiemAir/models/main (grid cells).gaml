@@ -13,7 +13,7 @@ import "agents/visualization.gaml"
 import "agents/remotegui.gaml"
 
 global {
-	bool mqtt_connect <- false;
+	bool mqtt_connect <- true;
 	
 	// Benchmark execution time
 	bool benchmark <- false;
@@ -32,6 +32,8 @@ global {
 	shape_file buildings_shape_file <- shape_file(resources_dir + "buildings.shp");
 	shape_file buildings_admin_shape_file <- shape_file(resources_dir + "buildings_admin.shp");
 	shape_file naturals_shape_file <- shape_file(resources_dir + "naturals.shp");
+
+//	shape_file buildings_shape_file <- shape_file("../includes/_old_dataset/map3D/HKA_maquette - buildings.shp");
 	
 	geometry shape <- envelope(buildings_shape_file);
 	list<road> open_roads;
@@ -255,7 +257,7 @@ global {
 		time_diffuse_pollutants <- machine_time - start;
 	}
 	
-	reflex calculate_aqi when: every(1 #minute) {
+	reflex calculate_aqi when: every(refreshing_rate_plot) { //every(1 #minute) {
 		 float aqi <- max(pollutant_cell accumulate each.aqi);
 		 ask line_graph_aqi {
 		 	do update(aqi);
@@ -327,11 +329,12 @@ global {
 	}
 }
 
-experiment exp {
+experiment exp autorun: true {
 	parameter "Number of cars" var: n_cars <- 500 min: 0 max: max_number_of_cars;
 	parameter "Number of motorbikes" var: n_motorbikes <- 1000 min: 0 max: max_number_of_motorbikes;
 	parameter "Close roads" var: road_scenario <- 0 min: 0 max: 2;
 	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
+	parameter "Refreshing time plot" var: refreshing_rate_plot init: 2#mn min:1#mn max: 1#h;
 	
 	output {
 		display main type: opengl fullscreen: true toolbar: false background: day_time_color 
@@ -361,8 +364,11 @@ keystone: [{-0.018485313545820788,0.0020196332525379557,0.0},{-0.015132426738951
 	}
 }
 
-experiment daytime parent:exp {
+experiment daytime parent:exp autorun:true {
 	parameter "Daytime traffic" var:day_time_traffic init:true;
-	parameter "Time step" var:step init:1#mn min:1#mn max:30#mn;
+	parameter "Time step" var:step init:5#mn min:1#mn max:30#mn;
+	parameter "Refreshing time plot" var: refreshing_rate_plot init: 1#h min:1#mn max: 1#h;
 	parameter "Starting time" var:starting_date_string init:"05 00 00";
+	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
+	
 }

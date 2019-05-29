@@ -28,13 +28,26 @@ species road schedules: [] {
 	}
 
 	aspect default {
-		if (closed) {
-			draw shape + 5 color: palet[CLOSED_ROAD];
-		} else if (display_mode = 0) {
-			draw shape+2/(speed_coeff) color: (speed_coeff=1.0) ? palet[NOT_CONGESTED_ROAD] : palet[CONGESTED_ROAD] /*end_arrow: 10*/;
+		if(display_mode = 0)  {
+			if (closed) {
+				draw shape + 5 color: palet[CLOSED_ROAD_TRAFFIC];
+			} else {
+				draw shape+2/(speed_coeff) color: (speed_coeff=1.0) ? palet[NOT_CONGESTED_ROAD] : palet[CONGESTED_ROAD] /*end_arrow: 10*/;		
+			}		
 		} else {
-//			draw shape color: palet[ROAD_POLLUTION_DISPLAY] /*end_arrow: 10*/;
+			if (closed) {
+				draw shape + 5 color: palet[CLOSED_ROAD_POLLUTION];
+			}			
 		}
+		
+		
+//		if (closed) {
+//			draw shape + 5 color: palet[CLOSED_ROAD];
+//		} else if (display_mode = 0) {
+//			draw shape+2/(speed_coeff) color: (speed_coeff=1.0) ? palet[NOT_CONGESTED_ROAD] : palet[CONGESTED_ROAD] /*end_arrow: 10*/;
+//		} else {
+//			draw shape color: palet[ROAD_POLLUTION_DISPLAY] /*end_arrow: 10*/;
+//		}
 	}
 }
 
