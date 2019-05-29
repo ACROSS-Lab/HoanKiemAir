@@ -15,8 +15,8 @@
     <string name="radio_button_traffic">Traffic</string>
     <string name="radio_button_pollution">Pollution</string>
     <string name="radio_button_no_close_roads">None</string>
-    <string name="radio_button_scenario_1">Scenario 1</string>
-    <string name="radio_button_scenario_2">Scenario 2</string>
+    <string name="radio_button_scenario_1">Lake border</string>
+    <string name="radio_button_scenario_2">Lake border with extra roads</string>
     <string name="language_setting">Language</string>
     <string name="toast_blank_ip">Fill in the IP address</string>
     <string name="toast_connection_established">Connection established</string>

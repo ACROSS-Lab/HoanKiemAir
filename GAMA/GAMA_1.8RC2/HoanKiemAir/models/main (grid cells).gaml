@@ -74,8 +74,8 @@ global {
 
 		create progress_bar    with: [x::3100, y::1200, width::350, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"Max"];
 		create progress_bar    with: [x::3100, y::1550, width::500, height::100, max_val::1000, title::"Motorbikes", left_label::"0", right_label::"Max"];
-		create param_indicator with: [x::3100, y::1850, size::22, name::"Road scenario", value::"no blocked roads", with_RT::true];
-		create param_indicator with: [x::3100, y::2050, size::22, name::"Display mode", value::"traffic"];
+		create param_indicator with: [x::3100, y::1850, size::22, name::"Road scenario", value::"No blocked roads", with_RT::true];
+		create param_indicator with: [x::3100, y::2050, size::22, name::"Display mode", value::"Traffic"];
 		
 //		create background with: [x::2450, y::1000, width::1250, height::1500, alpha::0.6];
 //		create line_graph with: [x::2500, y::1400, width::1200, height::1000, label::"Hourly AQI"];
@@ -134,12 +134,12 @@ global {
 			}
 			match 1 {
 				open_roads <- road where !each.s1_closed;
-				param_val <- "Current scenario"; // string(1);
+				param_val <- "Lake border closed";
 				break;
 			}
 			match 2 {
 				open_roads <- road where !each.s2_closed;
-				param_val <- "Extension scenario"; //string(2);
+				param_val <- "Lake border with extra roads closed";
 				break;
 			}
 		}
