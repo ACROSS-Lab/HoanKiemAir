@@ -21,7 +21,8 @@ global {
 	float time_diffuse_pollutants;
 	float time_create_congestions;
 
-	float step <- 1#mn;//10#s;
+	float step <- 16#s;
+	date starting_date <- date(starting_date_string,"HH mm ss");
 	
 	// Load shapefiles
 	string resources_dir <- "../includes/bigger_map/";
@@ -78,9 +79,9 @@ global {
 		
 //		create background with: [x::2450, y::1000, width::1250, height::1500, alpha::0.6];
 //		create line_graph with: [x::2500, y::1400, width::1200, height::1000, label::"Hourly AQI"];
-		create line_graph_aqi with: [x::2800, y::2300, width::800, height::500, label::"Hourly AQI"];
+		create line_graph_aqi with: [x::2500, y::2300, width::1100, height::500, label::"Hourly AQI"];
 //		create indicator_health_concern_level with: [x::2800, y::2803, width::800, height::200];
-		create param_indicator with: [x::2800, y::2803, size::30, name::"Time", value::"00:00:00", with_box::true, width::800, height::200];		
+		create param_indicator with: [x::2500, y::2803, size::30, name::"Time", value::"00:00:00", with_box::true, width::1100, height::200];		
 		
 		// Connect to remote controller
 		if (mqtt_connect) {
@@ -128,7 +129,7 @@ global {
 		switch road_scenario {
 			match 0 {
 				open_roads <- list(road);
-				param_val <- "No closed roads";
+				param_val <- "No closed road";
 				break;
 			}
 			match 1 {
@@ -138,7 +139,7 @@ global {
 			}
 			match 2 {
 				open_roads <- road where !each.s2_closed;
-				param_val <- "Lake border with extra roads closed";
+				param_val <- "Lake border with \n extra roads closed";
 				break;
 			}
 		}
@@ -264,11 +265,12 @@ global {
 		 }
 	}
 	
+	// ---------- DAYTIME CYCLES ---------- //
+	
 	/*
 	 * Compute a background color according to day time
 	 */
 	rgb day_time_color <- #black;
-	date starting_date <- date("23 50 00","HH mm ss");
 	reflex general_color_brew when:day_time_color_blender{
 		if(day_time_colors.keys one_matches (each.hour = current_date.hour 
 			and each.minute = current_date.minute and each.second = current_date.second
@@ -312,6 +314,8 @@ global {
 			return daytime_trafic_peak[fd] * (1-blend_factor) + daytime_trafic_peak[pd] * blend_factor;
 		}	
 	}
+
+	// ---------- BENCHMARK ---------- //
 	
 	reflex benchmark when: benchmark and every(10 #cycle) {
 		write "Vehicles move: " + time_vehicles_move;
@@ -332,9 +336,8 @@ experiment exp {
 	output {
 		display main type: opengl fullscreen: true toolbar: false background: day_time_color 
 		// draw_env: true
-		camera_pos: {1055.5934,1521.1361,3673.6199} camera_look_pos: {1055.5934,1521.0706,-0.0027} camera_up_vector: {0.0,1.0,0.0} 
-		keystone: [{-0.012307035907790373,-0.010174922123093566,0.0},{-0.002718485409631932,1.0083260530999232,0.0},{0.9972723971132761,1.0083271699173144,0.0},{1.0082138080822864,-0.016638704391143788,0.0}]
-		
+camera_pos: {1062.8406,1476.4027,3723.6208} camera_look_pos: {1062.8406,1476.3372,-0.0018} camera_up_vector: {0.0,1.0,0.0}
+keystone: [{-0.018485313545820788,0.0020196332525379557,0.0},{-0.01513242673895121,1.022468470725567,0.0},{0.9958943214642538,1.018656522605922,0.0},{1.0027211943485277,0.002915416408466376,0.0}]		
 		// Config fullscreen  - résolution optimisée
 		//camera_pos: {2649.9132,1496.4156,3913.1789} camera_look_pos: {2649.9132,1496.3473,3.0E-4} camera_up_vector: {0.0,1.0,0.0}
 		//keystone: [{0.03872976704465195,-0.0037780075228106558,0.0},{0.039449285113880926,0.9431466070331477,0.0},{0.9667664101488327,0.9612354373001951,0.0},{0.9868345759281302,0.014214971982789648,0.0}]
@@ -356,4 +359,10 @@ experiment exp {
 			species indicator_health_concern_level;
 		}
 	}
+}
+
+experiment daytime parent:exp {
+	parameter "Daytime traffic" var:day_time_traffic init:true;
+	parameter "Time step" var:step init:1#mn min:1#mn max:30#mn;
+	parameter "Starting time" var:starting_date_string init:"05 00 00";
 }
