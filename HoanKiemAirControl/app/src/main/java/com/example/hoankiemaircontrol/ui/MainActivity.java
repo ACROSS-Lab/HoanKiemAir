@@ -1,7 +1,11 @@
 package com.example.hoankiemaircontrol.ui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -13,6 +17,8 @@ import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.lang.ref.WeakReference;
+
+import info.hoang8f.android.segmented.SegmentedGroup;
 
 public class MainActivity extends BaseActivity {
     private static final int N_CARS_MIN = 0;
@@ -30,6 +36,8 @@ public class MainActivity extends BaseActivity {
 
     private DiscreteSeekBar mSeekBarNumCars;
     private DiscreteSeekBar mSeekBarNumMotorbikes;
+    private SegmentedGroup mRadioGroupRoadScenario;
+    private SegmentedGroup mRadioGroupDisplayMode;
 
     private MQTTConnector mConnector;
 
@@ -102,6 +110,9 @@ public class MainActivity extends BaseActivity {
 
             }
         });
+
+        mRadioGroupRoadScenario = findViewById(R.id.radio_group_road_scenario);
+        mRadioGroupDisplayMode = findViewById(R.id.radio_group_display_mode);
     }
 
     public void onRoadScenarioRadioButtonClicked(View v) {
@@ -144,6 +155,39 @@ public class MainActivity extends BaseActivity {
                     break;
         }
         new SendMessageTask(MainActivity.this).execute(bundle);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.reset_params:
+                Log.d("MainActivity", "reset pressed!");
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setMessage(R.string.reset_params_prompt);
+                // Add the buttons
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        mSeekBarNumCars.setProgress(0);
+                        mSeekBarNumMotorbikes.setProgress(0);
+                        mRadioGroupRoadScenario.check(R.id.radio_button_scenario_0);
+                        mRadioGroupDisplayMode.check(R.id.radio_button_traffic);
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+                // Create the AlertDialog
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return true;
+            case R.id.language_setting:
+                showLanguageOptions();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private static class SendMessageTask extends AsyncTask<Bundle, Void, Void> {

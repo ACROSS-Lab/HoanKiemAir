@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -53,7 +54,6 @@ public class ConnectActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 String ip = mEditTextIpAddress.getText().toString();
-                Log.d("ConnectActivity", ip);
                 if (ip.length() == 0) {
                     Toast.makeText(ConnectActivity.this, getResources().getString(R.string.toast_blank_ip), Toast.LENGTH_SHORT).show();
                 } else {
@@ -102,5 +102,12 @@ public class ConnectActivity extends BaseActivity {
             }
             connectActivity.mConnectButton.revertAnimation(() -> null);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        menu.findItem(R.id.reset_params).setVisible(false);
+        return true;
     }
 }

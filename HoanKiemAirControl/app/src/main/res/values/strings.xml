@@ -21,4 +21,7 @@
     <string name="toast_blank_ip">Fill in the IP address</string>
     <string name="toast_connection_established">Connection established</string>
     <string name="toast_connection_failed">Connection failed</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="reset_params_prompt">Do you want to reset all parameters to default?</string>
 </resources>

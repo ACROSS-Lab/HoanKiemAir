@@ -33,6 +33,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="25dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:orientation="horizontal">
@@ -42,7 +44,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="end"
+                android:gravity="right"
                 android:textSize="18sp"
                 tools:text="0" />
 
@@ -50,19 +52,21 @@
                 android:id="@+id/seek_bar_num_people"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="12"
-                app:dsb_indicatorColor="@color/primaryLightColor"
+                android:layout_weight="10"
+                app:dsb_indicatorColor="@color/primaryColor"
                 app:dsb_indicatorElevation="0dp"
-                app:dsb_progressColor="@color/primaryLightColor"
-                app:dsb_rippleColor="@color/primaryLightColor"
-                app:dsb_thumbSize="20dp"
-                app:dsb_trackColor="@color/primaryLightColor" />
+                app:dsb_progressColor="@color/primaryColor"
+                app:dsb_rippleColor="@color/primaryColor"
+                app:dsb_thumbSize="25dp"
+                app:dsb_trackColor="@color/primaryColor"
+                app:dsb_indicatorPopupEnabled="false"/>
 
             <TextView
                 android:id="@+id/text_num_cars_max"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="4"
+                android:gravity="left"
                 android:textSize="18sp"
                 tools:text="2000" />
 
@@ -72,7 +76,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
             android:text="@string/label_num_motorbikes"
             android:textColor="@color/primaryTextColor"
             android:textSize="18sp" />
@@ -82,6 +85,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="25dp"
             android:orientation="horizontal">
 
             <TextView
@@ -89,7 +94,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="end"
+                android:gravity="right"
                 android:textSize="18sp"
                 tools:text="0" />
 
@@ -98,18 +103,20 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="12"
-                app:dsb_indicatorColor="@color/primaryLightColor"
+                app:dsb_indicatorColor="@color/primaryColor"
                 app:dsb_indicatorElevation="0dp"
-                app:dsb_progressColor="@color/primaryLightColor"
-                app:dsb_rippleColor="@color/primaryLightColor"
-                app:dsb_thumbSize="20dp"
-                app:dsb_trackColor="@color/primaryLightColor" />
+                app:dsb_progressColor="@color/primaryColor"
+                app:dsb_rippleColor="@color/primaryColor"
+                app:dsb_thumbSize="25dp"
+                app:dsb_trackColor="@color/primaryColor"
+                app:dsb_indicatorPopupEnabled="false"/>
 
             <TextView
                 android:id="@+id/text_num_motorbikes_max"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
+                android:gravity="left"
                 android:textSize="18sp"
                 tools:text="2000" />
 
@@ -119,43 +126,51 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
             android:text="@string/label_close_roads"
             android:textColor="@color/primaryTextColor"
             android:textSize="18sp" />
 
-        <RadioGroup
-            android:id="@+id/radio_group_road_scenarios"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+        <info.hoang8f.android.segmented.SegmentedGroup xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/radio_group_road_scenario"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:layout_margin="10dp"
             android:checkedButton="@id/radio_button_scenario_0"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            segmentedgroup:sc_border_width="2dp"
+            segmentedgroup:sc_corner_radius="5dp"
+            segmentedgroup:sc_tint_color="@color/primaryColor">
 
             <RadioButton
                 android:id="@+id/radio_button_scenario_0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/RadioButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:onClick="onRoadScenarioRadioButtonClicked"
                 android:text="@string/radio_button_no_close_roads"
-                android:textSize="18sp" />
+                android:textSize="20sp" />
 
             <RadioButton
                 android:id="@+id/radio_button_scenario_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/RadioButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:onClick="onRoadScenarioRadioButtonClicked"
                 android:text="@string/radio_button_scenario_1"
-                android:textSize="18sp" />
+                android:textSize="20sp"/>
 
             <RadioButton
                 android:id="@+id/radio_button_scenario_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/RadioButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:onClick="onRoadScenarioRadioButtonClicked"
                 android:text="@string/radio_button_scenario_2"
-                android:textSize="18sp" />
-        </RadioGroup>
+                android:textSize="20sp" />
+        </info.hoang8f.android.segmented.SegmentedGroup>
 
         <View
             style="@style/Divider"
@@ -181,35 +196,34 @@
             android:textSize="18sp" />
 
         <info.hoang8f.android.segmented.SegmentedGroup xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/radio_group_display_mode"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="75dp"
             android:layout_margin="10dp"
             android:checkedButton="@id/radio_button_traffic"
             android:orientation="horizontal"
             segmentedgroup:sc_border_width="2dp"
             segmentedgroup:sc_corner_radius="5dp"
-            segmentedgroup:sc_tint_color="@color/primaryLightColor">
+            segmentedgroup:sc_tint_color="@color/primaryColor">
 
             <RadioButton
                 android:id="@+id/radio_button_traffic"
                 style="@style/RadioButton"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:onClick="onDisplayModeRadioButtonClicked"
                 android:text="@string/radio_button_traffic"
-                android:textAllCaps="true"
                 android:textSize="20sp" />
 
             <RadioButton
                 android:id="@+id/radio_button_pollution"
                 style="@style/RadioButton"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:onClick="onDisplayModeRadioButtonClicked"
                 android:text="@string/radio_button_pollution"
-                android:textAllCaps="true"
                 android:textSize="20sp" />
         </info.hoang8f.android.segmented.SegmentedGroup>
 
