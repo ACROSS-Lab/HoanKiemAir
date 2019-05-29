@@ -52,9 +52,9 @@ public class MainActivity extends BaseActivity {
 
 
         mTextNumCarsMin.setText(Integer.toString(N_CARS_MIN));
-        mTextNumCarsMax.setText((Integer.toString(N_CARS_MAX)));
+        mTextNumCarsMax.setText("MAX");
         mTextNumMotorbikesMin.setText(Integer.toString(N_MOTORBIKES_MIN));
-        mTextNumMotorbikesMax.setText(Integer.toString(N_MOTORBIKES_MAX));
+        mTextNumMotorbikesMax.setText("MAX");
 
 
         mSeekBarNumCars = findViewById(R.id.seek_bar_num_people);

@@ -11,8 +11,8 @@
     <string name="radio_button_traffic">Giao thông</string>
     <string name="radio_button_pollution">Ô nhiễm</string>
     <string name="radio_button_no_close_roads">Không</string>
-    <string name="radio_button_scenario_1">Trường hợp 1</string>
-    <string name="radio_button_scenario_2">Trường hợp 2</string>
+    <string name="radio_button_scenario_1">Đường ven hồ</string>
+    <string name="radio_button_scenario_2">Đường ven hồ và 1 số đường khác</string>
     <string name="language_setting">Ngôn ngữ</string>
     <string name="toast_blank_ip">Hãy điền địa chỉ IP</string>
     <string name="toast_connection_established">Kết nối thành công</string>

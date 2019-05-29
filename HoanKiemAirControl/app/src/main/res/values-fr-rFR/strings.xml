@@ -11,10 +11,10 @@
     <string name="radio_button_traffic">Trafic</string>
     <string name="radio_button_pollution">Pollution</string>
     <string name="radio_button_no_close_roads">Nul</string>
-    <string name="radio_button_scenario_1">Scénario 1</string>
-    <string name="radio_button_scenario_2">Scénario 2</string>
+    <string name="radio_button_scenario_2">Le bord de le lac avec plus routes</string>
     <string name="language_setting">Langue</string>
     <string name="toast_blank_ip">Remplissez l\'adresse IP</string>
     <string name="toast_connection_established">La connexion a établie</string>
     <string name="toast_connection_failed">La connexion a échoué</string>
+    <string name="radio_button_scenario_1">Le bord de le lac</string>
 </resources>
