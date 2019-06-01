@@ -1,7 +1,6 @@
 package com.example.hoankiemaircontrol.ui;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -13,9 +12,8 @@ import android.widget.Toast;
 import com.example.hoankiemaircontrol.R;
 import com.example.hoankiemaircontrol.network.MQTTConnector;
 
-import org.eclipse.paho.client.mqttv3.MqttException;
-
-import java.lang.ref.WeakReference;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
 
 import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
 
@@ -53,55 +51,38 @@ public class ConnectActivity extends BaseActivity {
         mConnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String ip = mEditTextIpAddress.getText().toString();
-                if (ip.length() == 0) {
-                    Toast.makeText(ConnectActivity.this, getResources().getString(R.string.toast_blank_ip), Toast.LENGTH_SHORT).show();
+                String serverIp = mEditTextIpAddress.getText().toString();
+                if (serverIp.length() == 0) {
+                    Toast.makeText(ConnectActivity.this,
+                                    getResources().getString(R.string.toast_blank_ip),
+                                    Toast.LENGTH_SHORT).show();
                 } else {
-                    // Connect to MQTT server
-                    new ConnectTask(ConnectActivity.this).execute(ip);
+                    mConnectButton.startAnimation(() -> null);
+                    MQTTConnector.getInstance(ConnectActivity.this).connectToBroker(serverIp, 1883,
+                        new IMqttActionListener() {
+                            @Override
+                            public void onSuccess(IMqttToken asyncActionToken) {
+                                mConnectButton.revertAnimation(() -> null);
+                                Toast.makeText(ConnectActivity.this,
+                                                getResources().getString(R.string.toast_connection_established),
+                                                Toast.LENGTH_SHORT).show();
+                                Log.d("connectToBroker", "success");
+                                Intent intent = new Intent(ConnectActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                                mConnectButton.revertAnimation(() -> null);
+                                Toast.makeText(ConnectActivity.this,
+                                                getResources().getString(R.string.toast_connection_failed),
+                                                Toast.LENGTH_SHORT).show();
+                                Log.d("connectToBroker", "success");
+                            }
+                        });
                 }
             }
         });
-    }
-
-    private static class ConnectTask extends AsyncTask<String, Void, MQTTConnector> {
-        private WeakReference<ConnectActivity> mActivityWeakReference;
-
-        ConnectTask(ConnectActivity context) {
-            mActivityWeakReference = new WeakReference<>(context);
-        }
-
-        @Override
-        protected MQTTConnector doInBackground(String... strings) {
-            try {
-                MQTTConnector mqttConnector = new MQTTConnector(strings[0], null, null);
-                return mqttConnector;
-            } catch (MqttException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPreExecute() {
-            ConnectActivity connectActivity = mActivityWeakReference.get();
-            connectActivity.mConnectButton.startAnimation(() -> null);
-        }
-
-        @Override
-        protected void onPostExecute(MQTTConnector mqttConnector) {
-            ConnectActivity connectActivity = mActivityWeakReference.get();
-            if (mqttConnector != null) {
-                Toast.makeText(connectActivity, connectActivity.getResources().getString(R.string.toast_connection_established), Toast.LENGTH_SHORT).show();
-
-                Intent intent = new Intent(connectActivity, MainActivity.class);
-                intent.putExtra("ip", mqttConnector.serverIp);
-                connectActivity.startActivity(intent);
-            } else {
-                Toast.makeText(connectActivity, connectActivity.getResources().getString(R.string.toast_connection_failed), Toast.LENGTH_SHORT).show();
-            }
-            connectActivity.mConnectButton.revertAnimation(() -> null);
-        }
     }
 
     @Override

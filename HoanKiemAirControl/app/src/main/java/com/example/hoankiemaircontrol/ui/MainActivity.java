@@ -2,7 +2,6 @@ package com.example.hoankiemaircontrol.ui;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -14,9 +13,6 @@ import com.example.hoankiemaircontrol.R;
 import com.example.hoankiemaircontrol.network.MQTTConnector;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
-import org.eclipse.paho.client.mqttv3.MqttException;
-
-import java.lang.ref.WeakReference;
 
 import info.hoang8f.android.segmented.SegmentedGroup;
 
@@ -46,13 +42,6 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String ip = getIntent().getStringExtra("ip");
-        try {
-            mConnector = new MQTTConnector(ip, null, null);
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
-
         mTextNumCarsMin = findViewById(R.id.text_num_cars_min);
         mTextNumCarsMax = findViewById(R.id.text_num_cars_max);
         mTextNumMotorbikesMin = findViewById(R.id.text_num_motorbikes_min);
@@ -71,10 +60,7 @@ public class MainActivity extends BaseActivity {
         mSeekBarNumCars.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
             @Override
             public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
-                Bundle bundle = new Bundle();
-                bundle.putCharSequence("topic", "n_cars");
-                bundle.putInt("intData", value);
-                new SendMessageTask(MainActivity.this).execute(bundle);
+                MQTTConnector.getInstance(MainActivity.this).sendMessage("n_cars", value);
             }
 
             @Override
@@ -94,10 +80,7 @@ public class MainActivity extends BaseActivity {
         mSeekBarNumMotorbikes.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
             @Override
             public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
-                Bundle bundle = new Bundle();
-                bundle.putCharSequence("topic", "n_motorbikes");
-                bundle.putInt("intData", value);
-                new SendMessageTask(MainActivity.this).execute(bundle);
+                MQTTConnector.getInstance(MainActivity.this).sendMessage("n_motorbikes", value);
             }
 
             @Override
@@ -118,43 +101,37 @@ public class MainActivity extends BaseActivity {
     public void onRoadScenarioRadioButtonClicked(View v) {
         boolean checked = ((RadioButton) v).isChecked();
 
-        Bundle bundle = new Bundle();
-        bundle.putString("topic", "road_scenario");
         // Check which radio button was clicked
         switch(v.getId()) {
             case R.id.radio_button_scenario_0:
                 if (checked)
-                    bundle.putInt("intData", 0);
+                    MQTTConnector.getInstance(MainActivity.this).sendMessage("road_scenario", 0);
                 break;
             case R.id.radio_button_scenario_1:
                 if (checked)
-                    bundle.putInt("intData", 1);
+                    MQTTConnector.getInstance(MainActivity.this).sendMessage("road_scenario", 1);
                 break;
             case R.id.radio_button_scenario_2:
                 if (checked)
-                    bundle.putInt("intData", 2);
+                    MQTTConnector.getInstance(MainActivity.this).sendMessage("road_scenario", 2);
                 break;
         }
-        new SendMessageTask(MainActivity.this).execute(bundle);
     }
 
     public void onDisplayModeRadioButtonClicked(View v) {
         boolean checked = ((RadioButton) v).isChecked();
 
-        Bundle bundle = new Bundle();
-        bundle.putString("topic", "display_mode");
         // Check which radio button was clicked
         switch(v.getId()) {
             case R.id.radio_button_traffic:
                 if (checked)
-                    bundle.putInt("intData", DISPLAY_MODE_TRAFFIC);
-                    break;
+                    MQTTConnector.getInstance(MainActivity.this).sendMessage("display_mode", DISPLAY_MODE_TRAFFIC);
+                break;
             case R.id.radio_button_pollution:
                 if (checked)
-                    bundle.putInt("intData", DISPLAY_MODE_POLLUTION);
-                    break;
+                    MQTTConnector.getInstance(MainActivity.this).sendMessage("display_mode", DISPLAY_MODE_POLLUTION);
+                break;
         }
-        new SendMessageTask(MainActivity.this).execute(bundle);
     }
 
     @Override
@@ -192,35 +169,9 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private static class SendMessageTask extends AsyncTask<Bundle, Void, Void> {
-        private WeakReference<MainActivity> mActivityWeakReference;
-
-        SendMessageTask(MainActivity context) {
-            mActivityWeakReference = new WeakReference<>(context);
-        }
-
-        @Override
-        protected Void doInBackground(Bundle... bundles) {
-            MainActivity mainActivity = mActivityWeakReference.get();
-            MQTTConnector connector = mainActivity.mConnector;
-
-            Bundle bundle = bundles[0];
-            String topic = bundle.getString("topic");
-            Object data;
-            if (bundle.containsKey("intData")) {
-                data = bundle.getInt("intData");
-            } else {
-                data = bundle.getBoolean("booleanData");
-            }
-
-            if (connector != null) {
-                try {
-                    connector.sendMessage(topic, data);
-                } catch (MqttException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MQTTConnector.getInstance(this).disconnect();
     }
 }
