@@ -40,6 +40,7 @@ global {
 	
 	// Daytime management
 	string starting_date_string <- "00 00 00";
+	float refreshing_rate_plot <- 1#mn;
 	
 	// Daytime color blender
 	bool day_time_color_blender <- false;
@@ -57,8 +58,8 @@ global {
 	int max_number_of_motorbikes <- 1000 const:true;
 	bool day_time_traffic <- false;
 	map<date,float> daytime_trafic_peak <- [
-		date("01 00 00", "HH mm ss")::0.2,
-		date("04 00 00", "HH mm ss")::0.2,
+		date("01 00 00", "HH mm ss")::0.1,
+		date("04 00 00", "HH mm ss")::0.1,
 		date("07 00 00", "HH mm ss")::1.0,
 		date("08 00 00", "HH mm ss")::1.0,
 		date("09 00 00", "HH mm ss")::0.6,
@@ -109,7 +110,8 @@ global {
 	string DUMMY_ROAD <- "dummy_road";
 	string CAR <- "car";
 	string MOTOBYKE <- "motobyke";
-	string CLOSED_ROAD <- "closed_road";
+	string CLOSED_ROAD_TRAFFIC <- "closed_road_traffic";
+	string CLOSED_ROAD_POLLUTION <- "closed_road_pollution";
 	string NOT_CONGESTED_ROAD <- "not congested roads";
 	string CONGESTED_ROAD <- " congested_roads";
 	string ROAD_POLLUTION_DISPLAY <- "road pollution";
@@ -124,7 +126,8 @@ global {
 		DUMMY_ROAD::#grey,
 		CAR:: #orange,
 		MOTOBYKE:: #cyan,
-		CLOSED_ROAD:: #darkblue,
+		CLOSED_ROAD_TRAFFIC:: #darkblue,		
+		CLOSED_ROAD_POLLUTION:: #white,
 		NOT_CONGESTED_ROAD:: #white,
 		CONGESTED_ROAD::#red,
 		ROAD_POLLUTION_DISPLAY:: #white,

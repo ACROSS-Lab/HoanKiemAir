@@ -32,6 +32,8 @@ global {
 	shape_file buildings_shape_file <- shape_file(resources_dir + "buildings.shp");
 	shape_file buildings_admin_shape_file <- shape_file(resources_dir + "buildings_admin.shp");
 	shape_file naturals_shape_file <- shape_file(resources_dir + "naturals.shp");
+
+//	shape_file buildings_shape_file <- shape_file("../includes/_old_dataset/map3D/HKA_maquette - buildings.shp");
 	
 	geometry shape <- envelope(buildings_shape_file);
 	list<road> open_roads;
@@ -92,7 +94,7 @@ global {
 	action update_vehicle_population(string type, int delta) {
 		list<vehicle> vehicles <- vehicle where (each.type = type);
 		if (delta < 0) {
-			ask -delta among vehicle {
+			ask -delta among vehicles {
 				do die;
 			}
 		} else {
@@ -255,7 +257,7 @@ global {
 		time_diffuse_pollutants <- machine_time - start;
 	}
 	
-	reflex calculate_aqi when: every(1 #minute) {
+	reflex calculate_aqi when: every(refreshing_rate_plot) { //every(1 #minute) {
 		 float aqi <- max(pollutant_cell accumulate each.aqi);
 		 ask line_graph_aqi {
 		 	do update(aqi);
@@ -327,20 +329,18 @@ global {
 	}
 }
 
-experiment exp {
+experiment exp autorun: true {
 	parameter "Number of cars" var: n_cars <- 500 min: 0 max: max_number_of_cars;
 	parameter "Number of motorbikes" var: n_motorbikes <- 1000 min: 0 max: max_number_of_motorbikes;
 	parameter "Close roads" var: road_scenario <- 0 min: 0 max: 2;
 	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
+	parameter "Refreshing time plot" var: refreshing_rate_plot init: 2#mn min:1#mn max: 1#h;
 	
 	output {
 		display main type: opengl fullscreen: true toolbar: false background: day_time_color 
 		// draw_env: true
-camera_pos: {1062.8406,1476.4027,3723.6208} camera_look_pos: {1062.8406,1476.3372,-0.0018} camera_up_vector: {0.0,1.0,0.0}
-keystone: [{-0.018485313545820788,0.0020196332525379557,0.0},{-0.01513242673895121,1.022468470725567,0.0},{0.9958943214642538,1.018656522605922,0.0},{1.0027211943485277,0.002915416408466376,0.0}]		
-		// Config fullscreen  - résolution optimisée
-		//camera_pos: {2649.9132,1496.4156,3913.1789} camera_look_pos: {2649.9132,1496.3473,3.0E-4} camera_up_vector: {0.0,1.0,0.0}
-		//keystone: [{0.03872976704465195,-0.0037780075228106558,0.0},{0.039449285113880926,0.9431466070331477,0.0},{0.9667664101488327,0.9612354373001951,0.0},{0.9868345759281302,0.014214971982789648,0.0}]
+camera_pos: {983.1376,1519.9429,3978.7622} camera_look_pos: {983.1376,1519.8784,-0.0026} camera_up_vector: {0.0,1.0,0.0}
+keystone: [{-0.024201832069909168,-0.02964181368886576,0.0},{-0.019361465655927335,1.011474250460207,0.0},{0.9965425954185845,1.0076495003068047,0.0},{0.9965425954185843,0.006693312768453641,0.0}]
 		{
 			species boundary;			
 			species vehicle;
@@ -361,8 +361,11 @@ keystone: [{-0.018485313545820788,0.0020196332525379557,0.0},{-0.015132426738951
 	}
 }
 
-experiment daytime parent:exp {
+experiment daytime parent:exp autorun:true {
 	parameter "Daytime traffic" var:day_time_traffic init:true;
-	parameter "Time step" var:step init:1#mn min:1#mn max:30#mn;
+	parameter "Time step" var:step init:5#mn min:1#mn max:30#mn;
+	parameter "Refreshing time plot" var: refreshing_rate_plot init: 1#h min:1#mn max: 1#h;
 	parameter "Starting time" var:starting_date_string init:"05 00 00";
+	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
+	
 }
