@@ -25,7 +25,7 @@
 
 ## 3. Produce the STL file
 * Run the `convert.js` script
-`node convert.js input_file output_file`
+```node convert.js input_file output_file```
 
 ## 4. Repair the STL file with Netfabb
 * Some errors must be repaired manually:
