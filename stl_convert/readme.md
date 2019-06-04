@@ -11,7 +11,7 @@
 	2. Navigate to `node_modules/shp2stl/package.json` and change `"three": "^0.66.0"` to `"three": "0.105.1"`
 	3. `npm list` to check if the installation is correct
 
-## 2. Prepare the shapefiles with QGIS
+## 2. Prepare the shapefiles with *QGIS*
 * Deal with overlaps:
 	* Dissolve buffer roads
 	* Apply `difference` operation between buildings, naturals and roads
@@ -24,23 +24,31 @@
 * Merge everything together to get the final shapefile. Remember to use the shapefiles prior to `v.clean` (if not some buildings will go missing after conversion)
 
 ## 3. Produce the STL file
+* Set some important parameters for the STL file:
+	* `extrudeBy` - Either the name of the property in the shapefile to use for the z-axis extrusion, or a function that takes a topojson object representing each shape and returns a number. Required.
+	* `width` - The width in STL units to resize the 3D model to. Most 3D printers operate in millimeter units, so typically you'll want to set this to the desired mm. If this is unset then the model will not be resized and will be created in the map units, which will depend on your map's projection and bounds. Optional, but recommended.
+	* `height` - The height in STL units to make the model. This will be the height of the highest poly in your shapefile. Required.
 * Run the `convert.js` script
 ```node convert.js input_file output_file```
 
-## 4. Repair the STL file with Netfabb
+## 4. Repair the STL file with *Netfabb*
 * Some errors must be repaired manually:
-![](images/holes.png "Holes that are ambiguous to be automatically closed (solution: manually add triangles)")
-![](images/redundant_triangles.png "Redundant triangles due to bad triangulation (solution: manually remove triangles)")
+	* Holes that are ambiguous to be automatically closed. Solution: manually add triangles.
+	![](images/holes.png "Ambiguous holes")
+	* Redundant triangles due to bad triangulation. Solution: manually remove triangles.
+	![](images/redundant_triangles.png "Redundant triangles")
 * Run the "extended repair" script
 
-## 5. Split the STL file with LuBan
+## 5. Split the STL file with *LuBan*
 * Mesh > Split
 * Choose grid cut, set number of sections of your choice and plug depth to 0
 
-## 6. Repair (again) the splitted STL files with Netfabb
+## 6. Repair (again) the splitted STL files with *Netfabb*
 * Run the "default repair" script on the splitted files
 
-## 7. Check your results with Repetier-Host
+## 7. Check your results with *Repetier-Host*
 * If the non-manifold error doesn't appear then you are good to go!
-![](images/good_stl.png "File is ready to print")
-![](images/bad_stl.png "File still needs repairing")
+	* File is ready to print:
+	![](images/good_stl.png "Good STL file")
+	* File still needs repairing
+	![](images/bad_stl.png "Bad STL file")
