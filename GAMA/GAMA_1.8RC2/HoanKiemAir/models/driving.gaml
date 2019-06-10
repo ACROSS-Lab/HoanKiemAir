@@ -1,246 +1,235 @@
-/**
-* Name: Complex Road Network 
-* Author: Patrick Taillandier
-* Description: Model to show how to use the driving skill to represent the traffic on a road network imported from shapefiles (generated, for the city, with 
-* OSM Loading Driving), with intersections and traffic lights going from red to green to let people move or stop. Two experiments are presented : one concerning a 
-* a simple ring network and the other a real city network.
-* Tags: gis, shapefile, graph, agent_movement, skill, transport
-*/
-model RoadTrafficComplex
+/***
+* Name: maingridcells
+* Author: minhduc0711
+* Description: 
+* Tags: Tag1, Tag2, TagN
+***/
+
+model main
+
+import "agents/traffic_driving.gaml"
+import "agents/pollution.gaml"
+import "agents/visualization.gaml"
+import "agents/remotegui.gaml"
 
 global {
+	bool mqtt_connect <- false;
+	
+	// Benchmark execution time
+	bool benchmark <- true;
+	float time_absorb_pollutants;
+	float time_diffuse_pollutants;
+	float time_create_congestions;
 
-	graph road_network;
-	int nb_people <- 500;
+	float step <- 16#s;
+	date starting_date <- date(starting_date_string,"HH mm ss");
+	
 	// Load shapefiles
-	string resources_dir <- "../includes/bigger_map/";
-	shape_file map_boundary_rectangle_shape_file <- shape_file(resources_dir + "resize_rectangle.shp");	
+	string resources_dir <- "../includes/driving/";
 	shape_file roads_shape_file <- shape_file(resources_dir + "roads.shp");
-	shape_file external_nodes_shape_file <- shape_file(resources_dir + "external_nodes.shp");
 	shape_file intersections_shape_file <- shape_file(resources_dir + "intersections.shp");
-	shape_file dummy_roads_shape_file <- shape_file(resources_dir + "small_dummy_roads.shp");
 	shape_file buildings_shape_file <- shape_file(resources_dir + "buildings.shp");
 	shape_file buildings_admin_shape_file <- shape_file(resources_dir + "buildings_admin.shp");
-	shape_file naturals_shape_file <- shape_file(resources_dir + "naturals.shp");
-	geometry shape <- envelope(roads_shape_file) + 50.0;
+
+	geometry shape <- envelope(buildings_shape_file);
+	list<road> open_roads;
+	list<pollutant_cell> active_cells;
 	
 	init {
-	//create the intersection and check if there are traffic lights or not by looking the values inside the type column of the shapefile and linking
-	// this column to the attribute is_traffic_signal. 
-		create intersection from: intersections_shape_file {
-			is_traffic_signal <- false;
+		create intersection from: intersections_shape_file with: [is_traffic_signal::(read("type") = "traffic_signals")] {
+//			is_traffic_signal <- true;
 		}
-
-		//create road agents using the shapefile and using the oneway column to check the orientation of the roads if there are directed
 		create road from: roads_shape_file {
-			lanes <- 2;
 			geom_display <- shape + (2.5 * lanes);
-			maxspeed <-100 #km /#h;// (lanes = 1 ? 30.0 : (lanes = 2 ? 50.0 : 70.0)) °km / °h;
-			if(!oneway){
-					create road {
-						lanes <- 2;
-						shape <- polyline(reverse(myself.shape.points));
-						maxspeed <-100 #km /#h;
-						geom_display <- myself.geom_display;
-						linked_road <- myself;
-						myself.linked_road <- self;
+			maxspeed <- (lanes = 1 ? 30.0 : (lanes = 2 ? 50.0 : 70.0)) °km / °h;
+			if (!oneway) {
+				create road {
+					lanes <- max([1, int(myself.lanes / 2.0)]);
+					shape <- polyline(reverse(myself.shape.points));
+					maxspeed <- myself.maxspeed;
+					geom_display <- myself.geom_display;
+					linked_road <- myself;
+					myself.linked_road <- self;
 				}
+				lanes <- int(lanes / 2.0 + 0.5);
 			}
-
 		}
-
-		map general_speed_map <- road as_map (each::(each.shape.perimeter / each.maxspeed));
-
-		//creation of the road network using the road and intersection agents
-		road_network <- (as_driving_graph(road, intersection)) with_weights general_speed_map;
-
+		
+		open_roads <- list(road);
+		map<road, float> road_weights <- road as_map (each::(each.shape.perimeter / each.maxspeed)); 
+		road_network <- as_driving_graph(road, intersection) with_weights road_weights;
+		geometry road_geometry <- union(road accumulate (each.shape));
+		active_cells <- pollutant_cell overlapping road_geometry;
+		
 		//initialize the traffic light
 		ask intersection {
 			do initialize;
 		}
-
-		create people number: nb_people {
-			max_speed <- 50 #km / #h;
-			vehicle_length <- 3 #m;
-			right_side_driving <- true;
-			proba_lane_change_up <- 0.1 + (rnd(500) / 500);
-			proba_lane_change_down <- 0.5 + (rnd(500) / 500);
-			location <- one_of(intersection).location;
-			security_distance_coeff <- 5 / 9 * 3.6 * (1.5 - rnd(1000) / 1000);
-			proba_respect_priorities <- 1.0 - rnd(200 / 1000);
-			proba_respect_stops <- [1.0];
-			proba_block_node <- 0.0;
-			proba_use_linked_road <- 0.0;
-			max_acceleration <- 5 / 3.6;
-			speed_coeff <- 1.2 - (rnd(400) / 1000);
-			threshold_stucked <- int((1 + rnd(5)) #mn);
-			proba_breakdown <- 0.00001;
+		
+		create building from: buildings_shape_file {
+			p_cell <- pollutant_cell closest_to self;
 		}
 
-	}
-
-}
-
-//species that will represent the intersection node, it can be traffic lights or not, using the skill_road_node skill
-species intersection skills: [skill_road_node] {
-	bool is_traffic_signal;
-	list<list> stop;
-	int time_to_change <- 100;
-	int counter <- rnd(time_to_change);
-	list<road> ways1;
-	list<road> ways2;
-	bool is_green;
-	rgb color_fire;
-
-	action initialize {
-		if (is_traffic_signal) {
-			do compute_crossing;
-			stop << [];
-			if (flip(0.5)) {
-				do to_green;
-			} else {
-				do to_red;
-			}
-
-		}
-
-	}
-
-	action compute_crossing {
-		if (length(roads_in) >= 2) {
-			road rd0 <- road(roads_in[0]);
-			list<point> pts <- rd0.shape.points;
-			float ref_angle <- float(last(pts) direction_to rd0.location);
-			loop rd over: roads_in {
-				list<point> pts2 <- road(rd).shape.points;
-				float angle_dest <- float(last(pts2) direction_to rd.location);
-				float ang <- abs(angle_dest - ref_angle);
-				if (ang > 45 and ang < 135) or (ang > 225 and ang < 315) {
-					ways2 << road(rd);
-				}
-
-			}
-
-		}
-
-		loop rd over: roads_in {
-			if not (rd in ways2) {
-				ways1 << road(rd);
-			}
-
-		}
-
-	}
-
-	action to_green {
-		stop[0] <- ways2;
-		color_fire <- #green;
-		is_green <- true;
-	}
-
-	action to_red {
-		stop[0] <- ways1;
-		color_fire <- #red;
-		is_green <- false;
-	}
-
-	reflex dynamic_node when: is_traffic_signal {
-		counter <- counter + 1;
-		if (counter >= time_to_change) {
-			counter <- 0;
-			if is_green {
-				do to_red;
-			} else {
-				do to_green;
-			}
-
-		}
-
-	}
-
-	aspect default {
-		if (is_traffic_signal) {
-			draw circle(5) color: color_fire;
+		create progress_bar    with: [x::3100, y::1200, width::350, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"Max"];
+		create progress_bar    with: [x::3100, y::1550, width::500, height::100, max_val::1000, title::"Motorbikes", left_label::"0", right_label::"Max"];
+		create param_indicator with: [x::3100, y::1850, size::22, name::"Road scenario", value::"No blocked roads", with_RT::true];
+		create param_indicator with: [x::3100, y::2050, size::22, name::"Display mode", value::"Traffic"];
+		create line_graph_aqi with: [x::2500, y::2300, width::1100, height::500, label::"Hourly AQI"];
+		create param_indicator with: [x::2500, y::2803, size::30, name::"Time", value::"00:00:00", with_box::true, width::1100, height::200];		
+		
+		// Connect to remote controller
+		if (mqtt_connect) {
+			create controller;
 		}
 	}
-}
-
-//species that will represent the roads, it can be directed or not and uses the skill skill_road
-species road skills: [skill_road] {
-	geometry geom_display;
-	bool oneway;
-
-	aspect default {
-		draw shape color: #white end_arrow: 5;	
-	}
-
-}
-
-//People species that will move on the graph of roads to a target and using the driving skill
-species people skills: [advanced_driving] {
-	rgb color <- rnd_color(255);
-	int counter_stucked <- 0;
-	int threshold_stucked;
-	bool breakdown <- false;
-	float proba_breakdown;
-	intersection target;
-
-//	reflex breakdown when: flip(proba_breakdown) {
-//		breakdown <- true;
-//		max_speed <- 1 #km / #h;
-//	}
-
-	reflex time_to_go when: final_target = nil {
-		target <- one_of(intersection );
-		current_path <- compute_path(graph: road_network, target: target);
-		if (current_path = nil) {
-			location <- one_of(intersection).location;
-		} 
-	}
-
-	reflex move when: current_path != nil and final_target != nil {
-		do drive;
-		if (final_target != nil) {
-			if real_speed < 5 #km / #h {
-				counter_stucked <- counter_stucked + 1;
-				if (counter_stucked mod threshold_stucked = 0) {
-					proba_use_linked_road <- min([1.0, proba_use_linked_road + 0.1]);
-				}
 	
-			} else {
-				counter_stucked <- 0;
-				proba_use_linked_road <- 0.0;
+	action update_vehicle_population(string vehicle_type, int delta) {
+		list<vehicle> vehicles <- vehicle where (each.type = vehicle_type);
+		if (delta < 0) {
+			ask -delta among vehicles {
+				do die;
 			}
-		}
-	}
-
-	aspect default {
-		draw breakdown ? square(8) : triangle(8) color: color rotate: heading + 90;
-	}
-
-	point calcul_loc {
-		if (current_road = nil) {
-			return location;
 		} else {
-			float val <- (road(current_road).lanes - current_lane) + 0.5;
-			val <- on_linked_road ? -val : val;
-			if (val = 0) {
-				return location;
-			} else {
-				return (location + {cos(heading + 90) * val, sin(heading + 90) * val});
+			create vehicle number: delta {
+				self.type <- vehicle_type;
+				if (type = "car") {
+					vehicle_length <- 4.7#m;
+				} else {
+					vehicle_length <- 2.0#m;
+				}
 			}
-
 		}
-	} 
-}
-
-experiment experiment_city type: gui {
-	output {
-		display carte_principale type: opengl synchronized: true background: #gray{
-			species road ;
-			species intersection ;
-			species people ;
+	}
+	
+	reflex update_car_population when: n_cars != n_cars_prev {
+		int delta_cars <- n_cars - n_cars_prev;
+		do update_vehicle_population("car", delta_cars);
+		ask first(progress_bar where (each.title = "Cars")) {
+			do update(float(n_cars));
 		}
+		n_cars_prev <- n_cars;
+	}
+	
+	reflex update_motorbike_population when: n_motorbikes != n_motorbikes_prev {
+		int delta_motorbikes <- n_motorbikes - n_motorbikes_prev;
+		do update_vehicle_population("motorbike", delta_motorbikes);
+		ask first(progress_bar where (each.title = "Motorbikes")) {
+			do update(float(n_motorbikes));
+		}
+		n_motorbikes_prev <- n_motorbikes;
+	}
+
+	reflex update_display_mode when: display_mode_prev != display_mode {
+		string param_val;
+		switch (display_mode) {
+			match 0 {
+				param_val <- "Traffic";
+				break;	
+			}
+			match 1 {
+				param_val <- "Pollution";
+				break;	
+			}
+		}
+		
+		ask first(param_indicator where (each.name = "Display mode")) {
+			do update(param_val);
+		}
+		display_mode_prev <- display_mode;
+	}
+	
+	reflex update_time {
+		int h <- current_date.hour;
+		int m <- current_date.minute;
+		int s <- current_date.second;
+		string hh <- ((h < 10) ? "0" : "") + string(h);
+		string mm <- ((m < 10) ? "0" : "") + string(m);
+		string ss <- ((s < 10) ? "0" : "") + string(s);
+		string t <- hh + ":" + mm + ":" + ss;
+		ask (param_indicator where (each.name = "Time")) {
+			do update(t);
+		}
+	}
+	
+	reflex update_building_aqi {
+		ask building parallel: true {
+			aqi <- pollutant_cell(p_cell).aqi;
+		}
+	}
+	
+	matrix<float> mat_diff <- matrix([
+		[pollutant_diffusion,pollutant_diffusion,pollutant_diffusion],
+		[pollutant_diffusion, (1 - 8 * pollutant_diffusion) * pollutant_decay_rate, pollutant_diffusion],
+		[pollutant_diffusion,pollutant_diffusion,pollutant_diffusion]]);
+
+		
+	reflex produce_pollutant {
+		float start <- machine_time;
+		// Absorb pollutants emitted by vehicles
+		ask active_cells parallel: true {
+			list<vehicle> vehicles_in_cell <- vehicle inside self;
+			loop v over: vehicles_in_cell {
+				if (is_number(v.real_speed)) {
+					float dist_traveled <- (v.real_speed * step) / #m / 1000;
+	
+					co <- co + dist_traveled * EMISSION_FACTOR[v.type]["CO"];
+					nox <- nox + dist_traveled * EMISSION_FACTOR[v.type]["NOx"];
+					so2 <- so2 + dist_traveled * EMISSION_FACTOR[v.type]["SO2"];
+				    pm <- pm + dist_traveled * EMISSION_FACTOR[v.type]["PM"];
+				}
+			}
+		}
+		time_absorb_pollutants <- machine_time - start;
+		
+		// Diffuse pollutants to neighbor cells
+		start <- machine_time;
+		diffuse var: co on: pollutant_cell matrix: mat_diff;
+		diffuse var: nox on: pollutant_cell matrix: mat_diff;
+		diffuse var: so2 on: pollutant_cell matrix: mat_diff;
+		diffuse var: pm on: pollutant_cell matrix: mat_diff;
+		time_diffuse_pollutants <- machine_time - start;
+	}
+	
+	reflex calculate_aqi when: every(refreshing_rate_plot) { //every(1 #minute) {
+		 float aqi <- max(pollutant_cell accumulate each.aqi);
+		 ask line_graph_aqi {
+		 	do update(aqi);
+		 }
+		 ask indicator_health_concern_level {
+		 	do update(aqi);
+		 }
+	}
+
+	// ---------- BENCHMARK ---------- //
+	
+	reflex benchmark when: benchmark and every(10 #cycle) {
+		write "Vehicles move: " + time_vehicles_move;
+		write "Absorb pollutants: " + time_absorb_pollutants;
+		write "Diffuse pollutants: " + time_diffuse_pollutants;
+		time_vehicles_move <- 0.0;
 	}
 }
 
+experiment exp autorun: false {
+	parameter "Number of cars" var: n_cars <- max_number_of_cars min: 0 max: max_number_of_cars;
+	parameter "Number of motorbikes" var: n_motorbikes <- max_number_of_motorbikes min: 0 max: max_number_of_motorbikes;
+	parameter "Close roads" var: road_scenario <- 0 min: 0 max: 2;
+	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
+	parameter "Refreshing time plot" var: refreshing_rate_plot init: 2#mn min:1#mn max: 1#h;
+	
+	output {
+		display main type: opengl background: #black {
+			species boundary;
+			species road;
+			species vehicle;
+			species intersection;
+			species building;
+			
+		//	species background;
+			species progress_bar;
+			species param_indicator;
+	//		species line_graph;
+			species line_graph_aqi;
+		}
+	}
+}
