@@ -21,6 +21,10 @@
 	* Apply `v.clean` on the merged shapefile (else the next step would fail)
 	* Apply `difference` on the extent and the merged shapefile
 	* Apply `multipart to single parts` on the result (else the STL conversion process will be very slow)
+	* Remove features with small area (less than 100):
+		* Select the ground shapefile, `Vector -> Geometry Tools -> Add Geometry Attributes`
+		* Right click the new shapefile, open attribute tables
+		* Filter out features with `"area" < 1` and then remove them
 * Merge everything together to get the final shapefile. Remember to use the shapefiles prior to `v.clean` (if not some buildings will go missing after conversion)
 
 ## 3. Produce the STL file
