@@ -74,8 +74,8 @@ global {
 //		create param_indicator with: [x::-1300, y::1950, size::20, name::"Road scenario", value::"no blocked roads"];
 //		create param_indicator with: [x::-1300, y::2050, size::20, name::"Display mode", value::"traffic"];
 
-		create progress_bar    with: [x::3100, y::1200, width::350, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"Max"];
-		create progress_bar    with: [x::3100, y::1550, width::500, height::100, max_val::1000, title::"Motorbikes", left_label::"0", right_label::"Max"];
+		create progress_bar    with: [x::3100, y::1200, width::350, height::100, max_val::max_number_of_cars, title::"Cars",  left_label::"0", right_label::"Max"];
+		create progress_bar    with: [x::3100, y::1550, width::500, height::100, max_val::max_number_of_motorbikes, title::"Motorbikes", left_label::"0", right_label::"Max"];
 		create param_indicator with: [x::3100, y::1850, size::22, name::"Road scenario", value::"No blocked roads", with_RT::true];
 		create param_indicator with: [x::3100, y::2050, size::22, name::"Display mode", value::"Traffic"];
 		
@@ -330,8 +330,8 @@ global {
 }
 
 experiment exp autorun: true {
-	parameter "Number of cars" var: n_cars <- 500 min: 0 max: max_number_of_cars;
-	parameter "Number of motorbikes" var: n_motorbikes <- 1000 min: 0 max: max_number_of_motorbikes;
+	parameter "Number of cars" var: n_cars <- max_number_of_cars min: 0 max: max_number_of_cars;
+	parameter "Number of motorbikes" var: n_motorbikes <- max_number_of_motorbikes min: 0 max: max_number_of_motorbikes;
 	parameter "Close roads" var: road_scenario <- 0 min: 0 max: 2;
 	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
 	parameter "Refreshing time plot" var: refreshing_rate_plot init: 2#mn min:1#mn max: 1#h;

@@ -11,7 +11,7 @@ model OSMdata_to_shapefile
  
 global{
 	//map used to filter the object to build from the OSM file according to attributes. for an exhaustive list, see: http://wiki.openstreetmap.org/wiki/Map_Features
-	map filtering <- map(["highway"::["primary", "secondary", "tertiary", "motorway", "living_street","residential", "unclassified"]]);
+	map filtering <- map(["highway"::["primary", "secondary", "tertiary", "motorway", "living_street","residential", "unclassified", "primary_link"]]);
 	
 	//OSM file to load
 	string resources_dir <- "../../includes/driving/";

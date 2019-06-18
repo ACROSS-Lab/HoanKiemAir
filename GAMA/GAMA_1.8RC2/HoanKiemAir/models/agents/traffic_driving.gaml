@@ -10,17 +10,21 @@ import "../global_vars.gaml"
 
 global {
 	float time_vehicles_move;
+	
+	list<intersection> incoming_nodes;
+	list<intersection> outgoing_nodes;
+	list<intersection> internal_nodes;
 }
 
 // Driving skill
 species vehicle skills: [advanced_driving] {
 	string type;
-	int counter_stucked <- 0;
-	int threshold_stucked;
+	float time_stucked <- 0.0;
+	float threshold_stucked;
 	intersection target;
+	rgb color;
 	
 	init {
-		max_speed <- 50 #km/#h;
 		right_side_driving <- true;
 		proba_lane_change_up <- 0.1 + (rnd(500) / 500);
 		proba_lane_change_down <- 0.5 + (rnd(500) / 500);
@@ -32,14 +36,26 @@ species vehicle skills: [advanced_driving] {
 		proba_use_linked_road <- 0.5;
 		max_acceleration <- 5 / 3.6;
 		speed_coeff <- 1.2 - (rnd(400) / 1000);
-		threshold_stucked <- int((1 + rnd(5)) #mn);
+		threshold_stucked <- (1 + rnd(5)) #mn;
+	}
+	
+	action reposition {
+		if flip(0.6) {
+			location <- one_of(incoming_nodes).location;
+		} else {
+			location <- one_of(internal_nodes).location;
+		}
 	}
 
 	reflex time_to_go when: final_target = nil {
-		target <- one_of(intersection);
+		if flip(0.6) {
+			target <- one_of(outgoing_nodes);
+		} else {
+			target <- one_of(internal_nodes);
+		}
 		current_path <- compute_path(graph: road_network, target: target);
 		if (current_path = nil) {
-			location <- one_of(intersection).location;
+			do reposition;
 		} 
 	}
 
@@ -48,13 +64,12 @@ species vehicle skills: [advanced_driving] {
 		do drive;
 		if (final_target != nil) {
 			if real_speed < 5 #km / #h {
-				counter_stucked <- counter_stucked + 1;
-				if (counter_stucked mod threshold_stucked = 0) {
+				time_stucked <- time_stucked + step;
+				if (time_stucked mod threshold_stucked = 0) {
 					proba_use_linked_road <- min([1.0, proba_use_linked_road + 0.1]);
 				}
-	
 			} else {
-				counter_stucked <- 0;
+				time_stucked <- 0.0;
 				proba_use_linked_road <- 0.0;
 			}
 		}
@@ -96,9 +111,12 @@ species road skills: [skill_road] {
 
 species intersection skills: [skill_road_node] {
 	bool is_traffic_signal;
+	bool is_incoming;
+	bool is_outgoing;
+	
 	list<list> stop;
-	int time_to_change <- 100;
-	int counter <- rnd(time_to_change);
+	float time_to_change <- 100.0;
+	float counter <- rnd(time_to_change);
 	list<road> ways1;
 	list<road> ways2;
 	bool is_green;
@@ -151,9 +169,9 @@ species intersection skills: [skill_road_node] {
 	}
 
 	reflex dynamic_node when: is_traffic_signal {
-		counter <- counter + 1;
+		counter <- counter + step;
 		if (counter >= time_to_change) {
-			counter <- 0;
+			counter <- 0.0;
 			if is_green {
 				do to_red;
 			} else {
