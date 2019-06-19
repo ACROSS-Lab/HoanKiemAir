@@ -17,11 +17,16 @@ global {
 	];
 	
 	// Params
-	float cell_volume <- (shape.width / grid_size) * (shape.height / grid_size) * grid_depth;  // Unit: cubic meters	
+	// Pollution diffusion
+	float pollutant_decay_rate <- 0.99;
+	float pollutant_diffusion <- 0.05;
+	int grid_size <- 64;
+	int cell_depth <- 10; // cubic meters
+	float grid_cell_volume <- (shape.width / grid_size) * (shape.height / grid_size) * cell_depth;  // Unit: cubic meters	
 }
 
 grid pollutant_cell width: grid_size height: grid_size neighbors: 8 parallel: true {
-	// Pollutant values
+	// Pollutant values, unit g/m3 (assuming it is spread uniformly in a cell)
 	float co <- 0.0;
 	float nox <- 0.0;
 	float so2 <- 0.0;
@@ -29,22 +34,29 @@ grid pollutant_cell width: grid_size height: grid_size neighbors: 8 parallel: tr
 
 	float aqi;
 	float norm_pollution_level -> (co / ALLOWED_AMOUNT["CO"] + nox / ALLOWED_AMOUNT["NOx"] + 
-																		so2 / ALLOWED_AMOUNT["SO2"] + pm / ALLOWED_AMOUNT["PM"]) / cell_volume / 4;
+																		so2 / ALLOWED_AMOUNT["SO2"] + pm / ALLOWED_AMOUNT["PM"]) / 4;
 	
 	rgb color <- #black update: rgb(255 * norm_pollution_level, 0, 0);
 	
 	reflex calculate_aqi {
-		float aqi_co <- (co / cell_volume) / ALLOWED_AMOUNT["CO"] * 100;
-		float aqi_nox <- (nox / cell_volume) / ALLOWED_AMOUNT["NOx"] * 100;
-		float aqi_so2 <- (so2 / cell_volume) / ALLOWED_AMOUNT["SO2"] * 100;
-		float aqi_pm <- (pm / cell_volume) / ALLOWED_AMOUNT["PM"] * 100;
+		float aqi_co <- co / ALLOWED_AMOUNT["CO"] * 100;
+		float aqi_nox <- nox / ALLOWED_AMOUNT["NOx"] * 100;
+		float aqi_so2 <- so2 / ALLOWED_AMOUNT["SO2"] * 100;
+		float aqi_pm <- pm / ALLOWED_AMOUNT["PM"] * 100;
 		aqi <- max(aqi_co, aqi_nox, aqi_so2, aqi_pm);
 	}
 }
 
 species road_cell {
+	float area;
+	
+	float cell_volume;
 	list<road_cell> neighbors;
 	list<agent> affected_buildings;
+	
+	init {
+		cell_volume <- area * cell_depth;
+	}
 	
 	// Pollutant values
 	float co <- 0.0;
@@ -54,13 +66,13 @@ species road_cell {
 
 	float aqi;
 	float norm_pollution_level -> (co / ALLOWED_AMOUNT["CO"] + nox / ALLOWED_AMOUNT["NOx"] + 
-																		so2 / ALLOWED_AMOUNT["SO2"] + pm / ALLOWED_AMOUNT["PM"]) / cell_volume / 4;
+																		so2 / ALLOWED_AMOUNT["SO2"] + pm / ALLOWED_AMOUNT["PM"]) / 4;
 	
 	reflex calculate_aqi {
-		float aqi_co <- (co / cell_volume) / ALLOWED_AMOUNT["CO"] * 100;
-		float aqi_nox <- (nox / cell_volume) / ALLOWED_AMOUNT["NOx"] * 100;
-		float aqi_so2 <- (so2 / cell_volume) / ALLOWED_AMOUNT["SO2"] * 100;
-		float aqi_pm <- (pm / cell_volume) / ALLOWED_AMOUNT["PM"] * 100;
+		float aqi_co <- co / ALLOWED_AMOUNT["CO"] * 100;
+		float aqi_nox <- nox / ALLOWED_AMOUNT["NOx"] * 100;
+		float aqi_so2 <- so2 / ALLOWED_AMOUNT["SO2"] * 100;
+		float aqi_pm <- pm / ALLOWED_AMOUNT["PM"] * 100;
 		aqi <- max(aqi_co, aqi_nox, aqi_so2, aqi_pm);
 	}
 }

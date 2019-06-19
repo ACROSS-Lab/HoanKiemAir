@@ -8,6 +8,15 @@
 model remotegui
 import "../global_vars.gaml"
 
+global {
+	init {
+		// Connect to remote controller
+		if (mqtt_connect) {
+			create controller;
+		}
+	}
+}
+
 species controller skills: [remoteGUI] {
 	int n_cars_selected;
 	int n_motorbikes_selected;

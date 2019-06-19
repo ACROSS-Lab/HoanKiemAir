@@ -1,13 +1,17 @@
 /***
-* Name: staticvars
+* Name: globalvars
 * Author: minhduc0711
 * Description: 
 * Tags: Tag1, Tag2, TagN
 ***/
 
-model staticvars
+model globalvars
 
 global {
+	// Dev parameters
+	bool mqtt_connect;
+	bool benchmark;
+	
 	// Simulation parameters
 	int n_cars;
 	int n_motorbikes;
@@ -19,17 +23,26 @@ global {
 	int road_scenario_prev;
 	int display_mode_prev;
 	
+	// Shapefiles
+	string resources_dir <- "../includes/driving/";
+	shape_file roads_shape_file <- shape_file(resources_dir + "roads.shp");
+	shape_file road_cells_shape_file <- shape_file(resources_dir + "road_cells.shp");
+	shape_file intersections_shape_file <- shape_file(resources_dir + "intersections.shp");
+	shape_file buildings_shape_file <- shape_file(resources_dir + "buildings.shp");
+	shape_file buildings_admin_shape_file <- shape_file(resources_dir + "buildings_admin.shp");
+	shape_file sensors_shape_file <- shape_file(resources_dir + "sensors.shp");
+	
+	// Benchmark
+	float time_vehicles_move;
+	float time_absorb_pollutants;
+	float time_diffuse_pollutants;
+	float time_update_network_weights;
+	
+	
 	// Parameter of visualization to avoid z fighting
 	float Z_LVL1 <- 0.1;
 	float Z_LVL2 <- 0.2;
 	float Z_LVL3 <- 0.3;
-	
-	
-	// Pollution diffusion
-	float pollutant_decay_rate <-  0.99; //0.99;
-	float pollutant_diffusion <- 0.05;
-	int grid_size <- 64;
-	int grid_depth <- 10; // cubic meters
 	
 	graph road_network;
 	

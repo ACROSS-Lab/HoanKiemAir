@@ -9,10 +9,19 @@ model visualization
 
 import "../global_vars.gaml"
 
-global {
+global {	
+	init {
+		create progress_bar    with: [x::3100, y::1200, width::350, height::100, max_val::max_number_of_cars, title::"Cars",  left_label::"0", right_label::"Max"];
+		create progress_bar    with: [x::3100, y::1550, width::500, height::100, max_val::max_number_of_motorbikes, title::"Motorbikes", left_label::"0", right_label::"Max"];
+		create param_indicator with: [x::3100, y::1850, size::22, name::"Road scenario", value::"No blocked roads", with_RT::true];
+		create param_indicator with: [x::3100, y::2050, size::22, name::"Display mode", value::"Traffic"];
+		create line_graph_aqi with: [x::2500, y::2300, width::1100, height::500, label::"Hourly AQI"];
+		create param_indicator with: [x::2500, y::2803, size::30, name::"Time", value::"00:00:00", with_box::true, width::1100, height::200];		
+	}
+	
 	point midpoint(point a, point b) {
 		return (a + b) / 2;
-	}	
+	}
 }
 
 species progress_bar schedules: [] {
