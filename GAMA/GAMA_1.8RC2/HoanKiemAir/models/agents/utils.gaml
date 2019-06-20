@@ -37,31 +37,6 @@ global {
 		}
 	}
 	
-	action update_vehicle_population(string vehicle_type, int delta) {
-		list<vehicle> vehicles <- vehicle where (each.type = vehicle_type);
-		if (delta < 0) {
-			ask -delta among vehicles {
-				ask road(current_road) {
-					do unregister(myself);
-				}
-				do die;
-			}
-		} else {
-			create vehicle number: delta {
-				self.type <- vehicle_type;
-				if (type = "car") {
-					self.vehicle_length <- 4.7#m;
-					self.max_speed <- (rnd(50.0) + 10.0) #km / #h;
-					self.color <- #orange;
-				} else {
-					self.vehicle_length <- 2.0#m;
-					self.max_speed <- (rnd(40.0) + 10.0) #km / #h;
-					self.color <- #cyan;
-				}
-			}
-		}
-	}
-	
 	reflex update_car_population when: n_cars != n_cars_prev {
 		int delta_cars <- n_cars - n_cars_prev;
 		do update_vehicle_population("car", delta_cars);
@@ -78,6 +53,30 @@ global {
 			do update(float(n_motorbikes));
 		}
 		n_motorbikes_prev <- n_motorbikes;
+	}
+	
+	reflex update_road_scenario when: road_scenario != road_scenario_prev {
+		do update_road_network;
+		
+		string param_val;
+		switch road_scenario {
+			match 0 {
+				param_val <- "No closed road";
+				break;
+			}
+			match 1 {
+				param_val <- "Lake border closed";
+				break;
+			}
+			match 2 {
+				param_val <- "Lake border with \n extra roads closed";
+				break;
+			}
+		}
+		ask first(param_indicator where (each.name = "Road scenario")) {
+			do update(param_val);
+		}
+		road_scenario_prev <- road_scenario;
 	}
 
 	reflex update_display_mode when: display_mode_prev != display_mode {

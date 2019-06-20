@@ -10,6 +10,7 @@ import "../global_vars.gaml"
 
 global {
 	list<road> open_roads;
+	
 	list<intersection> incoming_nodes;
 	list<intersection> outgoing_nodes;
 	list<intersection> internal_nodes;
@@ -19,6 +20,7 @@ global {
 											with: [is_traffic_signal::(read("type") = "traffic_signals"), is_incoming::bool(read("in")), is_outgoing::bool(read("out"))] {
 //			is_traffic_signal <- true;
 		}
+
 		incoming_nodes <- intersection where each.is_incoming;
 		outgoing_nodes <- intersection where each.is_outgoing;
 		internal_nodes <- intersection - union(incoming_nodes, outgoing_nodes);
@@ -35,12 +37,14 @@ global {
 					geom_display <- myself.geom_display;
 					linked_road <- myself;
 					myself.linked_road <- self;
+					s1_closed <- myself.s1_closed;
+					s2_closed <- myself.s2_closed; 
 				}
 			}
 		}
 		
 		open_roads <- list(road);
-		map<road, float> road_weights <- road as_map (each::(each.shape.perimeter));
+		map<road, float> road_weights <- road as_map (each::(each.shape.perimeter + length(each.all_agents) * 5));
 		road_network <- as_driving_graph(road, intersection) with_weights road_weights;
 		
 		//initialize the traffic light
@@ -59,6 +63,73 @@ global {
 		time_update_network_weights <- machine_time - start;
 	}
 	
+	action reset_traffic {
+		ask vehicle {
+			final_target <- nil;
+			do reposition;
+		}
+	}
+	
+	action update_road_network {
+		switch road_scenario {
+			match 0 {
+				open_roads <- list(road);
+				break;
+			}
+			match 1 {
+				open_roads <- road where !each.s1_closed;
+				break;
+			}
+			match 2 {
+				open_roads <- road where !each.s2_closed;
+				break;
+			}
+		}
+		
+		// Change the display of roads
+		list<road> closed_roads <- road - open_roads;
+		ask open_roads {
+			closed <- false;
+		}
+		ask closed_roads {
+			closed <- true;
+		}
+		
+		// Determine reachable nodes
+		list<intersection> reachable_nodes <- intersection where (each.roads_in count (!road(each).closed) != 0);
+		internal_nodes <- reachable_nodes - union(incoming_nodes, outgoing_nodes);
+		
+		// Recreate road network
+		map<road, float> road_weights <- road as_map (each::(each.shape.perimeter + length(each.all_agents) * 5));
+		road_network <- as_driving_graph(open_roads, reachable_nodes) with_weights road_weights;
+		
+		do reset_traffic;
+	}
+	
+	action update_vehicle_population(string vehicle_type, int delta) {
+		list<vehicle> vehicles <- vehicle where (each.type = vehicle_type);
+		if (delta < 0) {
+			ask -delta among vehicles {
+				ask road(current_road) {
+					do unregister(myself);
+				}
+				do die;
+			}
+		} else {
+			create vehicle number: delta {
+				self.type <- vehicle_type;
+				if (type = "car") {
+					self.vehicle_length <- 4.7#m;
+					self.max_speed <- (rnd(50.0) + 10.0) #km / #h;
+					self.color <- #orange;
+				} else {
+					self.vehicle_length <- 2.0#m;
+					self.max_speed <- (rnd(40.0) + 10.0) #km / #h;
+					self.color <- #cyan;
+				}
+			}
+		}
+	}
 }
 
 // Driving skill
@@ -147,10 +218,24 @@ species road skills: [skill_road] {
 	geometry geom_display;
 	bool oneway;
 	int osm_id;
+	bool s1_closed;
+	bool s2_closed;
+	bool closed;
+	
+	float congestion_factor <- 0.0 update: length(all_agents) / (lanes * shape.perimeter) * 10;
 
 	aspect default {
-//		draw geom_display color: #lightgray;
-		draw shape color: #white end_arrow: 5;
+		if(display_mode = 0)  {
+			if (closed) {
+				draw shape + 5 color: palet[CLOSED_ROAD_TRAFFIC];
+			} else {
+				draw shape + max(0.7, congestion_factor) color: (congestion_factor < 0.7) ? palet[NOT_CONGESTED_ROAD] : palet[CONGESTED_ROAD] /*end_arrow: 10*/;		
+			}		
+		} else {
+			if (closed) {
+				draw shape + 5 color: palet[CLOSED_ROAD_POLLUTION];
+			}			
+		}
 	}
 }
 
@@ -249,11 +334,6 @@ species building schedules: [] {
 		if height < min_height {
 			height <- mean_height + rnd(0.3, 0.3);
 		}
-	}
-	
-	action set_connected_cell(agent cell) {
-		write(cell);
-		connected_pollutant_cell <- cell;
 	}
 	
 	aspect default {

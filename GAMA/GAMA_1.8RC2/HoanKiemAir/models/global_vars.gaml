@@ -10,7 +10,7 @@ model globalvars
 global {
 	// Dev parameters
 	bool mqtt_connect;
-	bool benchmark;
+	bool benchmark <- true;
 	
 	// Simulation parameters
 	int n_cars;

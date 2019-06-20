@@ -51,7 +51,7 @@ global {
 			loop v over: vehicles_in_cell {
 				if (is_number(v.real_speed)) {
 					float dist_traveled <- v.real_speed * step/ 1000;
-	
+
 					co <- co + dist_traveled * EMISSION_FACTOR[v.type]["CO"] / grid_cell_volume;
 					nox <- nox + dist_traveled * EMISSION_FACTOR[v.type]["NOx"] / grid_cell_volume;
 					so2 <- so2 + dist_traveled * EMISSION_FACTOR[v.type]["SO2"] / grid_cell_volume; 
