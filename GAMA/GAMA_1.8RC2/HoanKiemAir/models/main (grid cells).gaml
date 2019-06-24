@@ -70,7 +70,7 @@ global {
 		time_diffuse_pollutants <- machine_time - start;
 	}
 	
-	reflex calculate_aqi when: every(refreshing_rate_plot) { //every(1 #minute) {
+	reflex calculate_aqi when: every(refreshing_rate_plot) {
  		float aqi <- max(pollutant_cell accumulate each.aqi);
 		ask line_graph_aqi {
 			do update(aqi);
@@ -93,8 +93,8 @@ global {
 }
 
 experiment exp autorun: false {
-	parameter "Number of cars" var: n_cars <- max_number_of_cars min: 0 max: max_number_of_cars;
-	parameter "Number of motorbikes" var: n_motorbikes <- max_number_of_motorbikes min: 0 max: max_number_of_motorbikes;
+	parameter "Number of cars" var: n_cars <- max_number_of_cars min: 0 max: 700;
+	parameter "Number of motorbikes" var: n_motorbikes <- max_number_of_motorbikes min: 0 max: 2000;
 	parameter "Close roads" var: road_scenario <- 0 min: 0 max: 2;
 	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
 	parameter "Refreshing time plot" var: refreshing_rate_plot init: 2#mn min:1#mn max: 1#h;

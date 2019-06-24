@@ -1,4 +1,4 @@
-/***
+  /***
 * Name: traffic
 * Author: minhduc0711
 * Description: 
@@ -26,25 +26,31 @@ global {
 		internal_nodes <- intersection - union(incoming_nodes, outgoing_nodes);
 		
 		create road from: roads_shape_file {
-			lanes <- 3;
-			geom_display <- shape + (2.5 * lanes);
+			lanes <- 4;
+			geom_display <- shape + lanes;
 			maxspeed <- (lanes = 1 ? 30.0 : (lanes = 2 ? 50.0 : 70.0)) °km / °h;
+			capacity <- shape.perimeter * lanes * 0.4;
+			default_weight <- shape.perimeter - lanes * 2 - maxspeed * 0.5;
 			if (!oneway) {
 				create road {
 					lanes <- myself.lanes;
 					shape <- polyline(reverse(myself.shape.points));
+					capacity <- myself.capacity;
 					maxspeed <- myself.maxspeed;
 					geom_display <- myself.geom_display;
+					s1_closed <- myself.s1_closed;
+					s2_closed <- myself.s2_closed;
+					default_weight <- myself.default_weight;
+					
 					linked_road <- myself;
 					myself.linked_road <- self;
-					s1_closed <- myself.s1_closed;
-					s2_closed <- myself.s2_closed; 
+					
 				}
 			}
 		}
 		
 		open_roads <- list(road);
-		map<road, float> road_weights <- road as_map (each::(each.shape.perimeter + length(each.all_agents) * 5));
+		map<road, float> road_weights <- road as_map (each::each.default_weight);
 		road_network <- as_driving_graph(road, intersection) with_weights road_weights;
 		
 		//initialize the traffic light
@@ -56,12 +62,11 @@ global {
 		create sensor from: sensors_shape_file;
 	}
 	
-	reflex update_network_weights {
-		float start <- machine_time;
-		map<road, float> road_weights <- road as_map (each::(each.shape.perimeter + length(each.all_agents) * 5));
-		road_network <- road_network with_weights road_weights;
-		time_update_network_weights <- machine_time - start;
-	}
+//	reflex update_network_weights {
+//		float start <- machine_time;
+//		do set_network_weights;
+//		time_update_network_weights <- machine_time - start;
+//	}
 	
 	action reset_traffic {
 		ask vehicle {
@@ -139,6 +144,7 @@ species vehicle skills: [advanced_driving] {
 	float threshold_stucked;
 	intersection target;
 	rgb color;
+	road road_prev;
 	
 	init {
 		right_side_driving <- true;
@@ -162,8 +168,8 @@ species vehicle skills: [advanced_driving] {
 			location <- one_of(internal_nodes).location;
 		}
 	}
-
-	reflex time_to_go when: final_target = nil {
+	
+	reflex choose_new_target when: final_target = nil  {
 		if flip(0.7) {
 			target <- one_of(outgoing_nodes);
 		} else {
@@ -174,10 +180,19 @@ species vehicle skills: [advanced_driving] {
 			do reposition;
 		} 
 	}
+	
+	reflex check_for_encumbered_road when: current_path != nil and current_road != road_prev {
+		list<road> edges <- list<road>(current_path.edges);
+		if (current_index + 1 < length(edges)) and (road(edges[current_index + 1]).is_encumbered) and flip (0.7) {
+			current_path <- compute_path(graph: road_network, target: target);
+		}
+		road_prev <- road(current_road);
+	}
 
 	reflex move when: current_path != nil and final_target != nil {
 		float start <- machine_time;
 		do drive;
+		
 		if (final_target != nil) {
 			if real_speed < 5 #km / #h {
 				time_stucked <- time_stucked + step;
@@ -222,14 +237,32 @@ species road skills: [skill_road] {
 	bool s2_closed;
 	bool closed;
 	
-	float congestion_factor <- 0.0 update: length(all_agents) / (lanes * shape.perimeter) * 10;
+	float capacity;
+	float congestion_factor <- 0.0;
+	float encumbered_threshold <- 0.4;
+	bool is_encumbered;
+	float default_weight;
+	
+	reflex update_congestion_factor when: !closed {
+		int n_cars_on_road <- all_agents count (vehicle(each).type = "car");
+		int n_motorbikes_on_road <- all_agents count (vehicle(each).type = "motorbike");
+		congestion_factor <- (n_cars_on_road * 4.7 * 2 + n_motorbikes_on_road * 2) / capacity;
+		
+		if congestion_factor > encumbered_threshold {
+			is_encumbered <- true;
+			road_network <- road_network with_weights [self::(weight_of(road_network, self) + congestion_factor * 100)];
+		} else {
+			is_encumbered <- false;
+			road_network <- road_network with_weights [self::default_weight];
+		}
+	}
 
 	aspect default {
 		if(display_mode = 0)  {
 			if (closed) {
-				draw shape + 5 color: palet[CLOSED_ROAD_TRAFFIC];
+				draw geom_display color: palet[CLOSED_ROAD_TRAFFIC];
 			} else {
-				draw shape + max(0.7, congestion_factor) color: (congestion_factor < 0.7) ? palet[NOT_CONGESTED_ROAD] : palet[CONGESTED_ROAD] /*end_arrow: 10*/;		
+				draw geom_display color: rgb(255, (1 - congestion_factor) * 255, (1 - congestion_factor) * 255);		
 			}		
 		} else {
 			if (closed) {
