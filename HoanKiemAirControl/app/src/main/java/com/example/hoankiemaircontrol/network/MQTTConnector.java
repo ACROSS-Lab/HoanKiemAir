@@ -1,6 +1,8 @@
 package com.example.hoankiemaircontrol.network;
 
 import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.thoughtworks.xstream.XStream;
@@ -43,15 +45,10 @@ public class MQTTConnector {
     }
 
     public void sendMessage(String topic, Object data) {
-        final XStream dataStreamer = new XStream(new DomDriver());
-        final String dataS = dataStreamer.toXML(data);
-        MqttMessage message = new MqttMessage(dataS.getBytes());
-        try {
-            sClient.publish(topic, message);
-            Log.d("mqtt","Sent message: " + topic + " " + message);
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
+        long startTime = System.nanoTime();
+        new SendMessageTask(topic, data).execute();
+        long endTime = System.nanoTime();
+//            Log.d("mqtt", "Time taken to send msg:" + (endTime - startTime));
     }
 
     public void disconnect() {
@@ -70,6 +67,30 @@ public class MQTTConnector {
             });
         } catch (MqttException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static class SendMessageTask extends AsyncTask<Void, Void, Void> {
+        String topic;
+        Object data;
+
+        SendMessageTask(String topic, Object data) {
+            this.topic = topic;
+            this.data = data;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            final XStream dataStreamer = new XStream(new DomDriver());
+            final String dataS = dataStreamer.toXML(data);
+            MqttMessage message = new MqttMessage(dataS.getBytes());
+
+            try {
+                sClient.publish(topic, message);
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
     }
 }
