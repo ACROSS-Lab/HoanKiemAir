@@ -11,6 +11,7 @@ global {
 	// Dev parameters
 	bool mqtt_connect;
 	bool benchmark <- true;
+	bool debug_scheduling <- false;
 	
 	// Simulation parameters
 	int n_cars;

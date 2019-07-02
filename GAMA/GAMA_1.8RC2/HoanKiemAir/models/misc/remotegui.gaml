@@ -6,7 +6,7 @@
 ***/
 
 model remotegui
-import "../global_vars.gaml"
+import "global_vars.gaml"
 
 global {
 	init {

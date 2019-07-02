@@ -7,7 +7,7 @@
 
 model visualization
 
-import "../global_vars.gaml"
+import "global_vars.gaml"
 
 global {	
 	init {

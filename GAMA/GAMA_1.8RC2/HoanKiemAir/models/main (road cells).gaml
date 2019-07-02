@@ -8,16 +8,16 @@
 model main
 
 import "agents/traffic.gaml"
-import "agents/pollution.gaml"
-import "agents/remotegui.gaml"
-import "agents/utils.gaml"
-import "agents/visualization.gaml"
+import "agents/pollution_road.gaml"
+import "misc/remotegui.gaml"
+import "misc/utils.gaml"
+import "misc/visualization.gaml"
 
 global {
-	float pollutant_decay_rate <- 0.7;
+//	float pollutant_decay_rate <- 0.7;
 	float step <- 16#s;
 	
-	geometry shape <- envelope(buildings_shape_file);
+	geometry shape <- envelope(roads_shape_file);
 	
 	init {
 		do init_traffic;
@@ -27,7 +27,7 @@ global {
 		}
 	}
 	
-	reflex produce_pollutant {
+	reflex produce_pollutant when: false {
 		// Absorb pollutants emitted by vehicles
 		ask building parallel: true {
 			aqi <- 0.0;
@@ -81,9 +81,11 @@ global {
 	}
 }
 
+species scheduler schedules: intersection + road + vehicle + road_cell {}
+
 experiment exp {
-	parameter "Number of cars" var: n_cars <- max_number_of_cars min: 0 max: max_number_of_cars;
-	parameter "Number of motorbikes" var: n_motorbikes <- max_number_of_motorbikes min: 0 max: max_number_of_motorbikes;
+	parameter "Number of cars" var: n_cars <- 700 min: 0 max: 700;
+	parameter "Number of motorbikes" var: n_motorbikes <- 2000 min: 0 max: 2000;
 	parameter "Close roads" var: road_scenario <- 0 min: 0 max: 2;
 	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
 	parameter "Refreshing time plot" var: refreshing_rate_plot init: 2#mn min:1#mn max: 1#h;
@@ -93,7 +95,7 @@ experiment exp {
 			species vehicle;
 			species intersection;
 			species road;
-			species building;
+//			species building;
 			species progress_bar;
 			species line_graph_aqi;
 		}

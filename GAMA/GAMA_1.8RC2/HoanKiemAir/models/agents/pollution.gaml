@@ -6,7 +6,7 @@
 ***/
 
 model pollution
-import "../global_vars.gaml"
+import "../misc/global_vars.gaml"
 
 global {
 	// Constants
@@ -22,58 +22,41 @@ global {
 	float pollutant_diffusion <- 0.05;
 	int grid_size <- 64;
 	int cell_depth <- 10; // cubic meters
-	float grid_cell_volume <- (shape.width / grid_size) * (shape.height / grid_size) * cell_depth;  // Unit: cubic meters	
-}
-
-grid pollutant_cell width: grid_size height: grid_size neighbors: 8 parallel: true {
-	// Pollutant values, unit g/m3 (assuming it is spread uniformly in a cell)
-	float co <- 0.0;
-	float nox <- 0.0;
-	float so2 <- 0.0;
-	float pm <- 0.0;
-
-	float aqi;
-	float norm_pollution_level -> (co / ALLOWED_AMOUNT["CO"] + nox / ALLOWED_AMOUNT["NOx"] + 
-																		so2 / ALLOWED_AMOUNT["SO2"] + pm / ALLOWED_AMOUNT["PM"]) / 4;
+	float grid_cell_volume <- (shape.width / grid_size) * (shape.height / grid_size) * cell_depth;  // Unit: cubic meters
 	
-	rgb color <- #black update: rgb(255 * norm_pollution_level, 0, 0);
-	
-	reflex calculate_aqi {
-		float aqi_co <- co / ALLOWED_AMOUNT["CO"] * 100;
-		float aqi_nox <- nox / ALLOWED_AMOUNT["NOx"] * 100;
-		float aqi_so2 <- so2 / ALLOWED_AMOUNT["SO2"] * 100;
-		float aqi_pm <- pm / ALLOWED_AMOUNT["PM"] * 100;
-		aqi <- max(aqi_co, aqi_nox, aqi_so2, aqi_pm);
+	action init_buildings {
+		create building from: buildings_shape_file {
+			if (shape.area < 1) {
+				 do die;
+			}
+		}
+		create sensor from: sensors_shape_file;
 	}
 }
 
-species road_cell {
-	float area;
+species sensor {
+	agent connected_pollutant_cell;
+}
+
+species building schedules: [] {
+	float height;
+	string type;
+	rgb color;
 	
-	float cell_volume;
-	list<road_cell> neighbors;
-	list<agent> affected_buildings;
+	agent connected_pollutant_cell;
+	float aqi;
 	
 	init {
-		cell_volume <- area * cell_depth;
+		if height < min_height {
+			height <- mean_height + rnd(0.3, 0.3);
+		}
 	}
 	
-	// Pollutant values
-	float co <- 0.0;
-	float nox <- 0.0;
-	float so2 <- 0.0;
-	float pm <- 0.0;
-
-	float aqi;
-	float norm_pollution_level -> (co / ALLOWED_AMOUNT["CO"] + nox / ALLOWED_AMOUNT["NOx"] + 
-																		so2 / ALLOWED_AMOUNT["SO2"] + pm / ALLOWED_AMOUNT["PM"]) / 4;
-	
-	reflex calculate_aqi {
-		float aqi_co <- co / ALLOWED_AMOUNT["CO"] * 100;
-		float aqi_nox <- nox / ALLOWED_AMOUNT["NOx"] * 100;
-		float aqi_so2 <- so2 / ALLOWED_AMOUNT["SO2"] * 100;
-		float aqi_pm <- pm / ALLOWED_AMOUNT["PM"] * 100;
-		aqi <- max(aqi_co, aqi_nox, aqi_so2, aqi_pm);
+	aspect default {
+		if (display_mode = 0) {
+			draw shape color: (type = type_outArea)?palet[BUILDING_OUTAREA]:palet[BUILDING_BASE] /*border: #darkgrey*/ /*depth: height * 10*/;
+		} else {
+			draw shape color: (type = type_outArea)?palet[BUILDING_OUTAREA]:world.get_pollution_color(aqi) /*border: #darkgrey*/ depth: height * 10;
+		}
 	}
 }
-

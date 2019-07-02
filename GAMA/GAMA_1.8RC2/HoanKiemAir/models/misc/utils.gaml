@@ -7,9 +7,9 @@
 
 model utils
 
-import "../global_vars.gaml"
+import "global_vars.gaml"
 import "visualization.gaml"
-import "traffic.gaml"
+import "../agents/traffic.gaml"
 
 global {
 	reflex benchmark when: benchmark and every(10 #cycle) {
@@ -18,6 +18,8 @@ global {
 		write "Absorb pollutants: " + time_absorb_pollutants;
 		write "Diffuse pollutants: " + time_diffuse_pollutants;
 		time_vehicles_move <- 0.0;
+		time_absorb_pollutants <- 0.0;
+		time_diffuse_pollutants <- 0.0;
 	}
 	
 	string get_time {

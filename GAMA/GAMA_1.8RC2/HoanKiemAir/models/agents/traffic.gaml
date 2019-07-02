@@ -6,7 +6,7 @@
 ***/
 
 model traffic
-import "../global_vars.gaml"
+import "../misc/global_vars.gaml"
 
 global {
 	list<road> open_roads;
@@ -57,16 +57,7 @@ global {
 		ask intersection {
 			do initialize;
 		}
-		
-		create building from: buildings_shape_file;
-		create sensor from: sensors_shape_file;
 	}
-	
-//	reflex update_network_weights {
-//		float start <- machine_time;
-//		do set_network_weights;
-//		time_update_network_weights <- machine_time - start;
-//	}
 	
 	action reset_traffic {
 		ask vehicle {
@@ -126,10 +117,12 @@ global {
 				if (type = "car") {
 					self.vehicle_length <- 4.7#m;
 					self.max_speed <- (rnd(50.0) + 10.0) #km / #h;
+					self.proba_respect_stops <- [1.0];
 					self.color <- #orange;
 				} else {
 					self.vehicle_length <- 2.0#m;
 					self.max_speed <- (rnd(40.0) + 10.0) #km / #h;
+					self.proba_respect_stops <- [0.8];
 					self.color <- #cyan;
 				}
 			}
@@ -138,7 +131,7 @@ global {
 }
 
 // Driving skill
-species vehicle skills: [advanced_driving] {
+species vehicle skills: [advanced_driving] schedules: [] {
 	string type;
 	float time_stucked <- 0.0;
 	float threshold_stucked;
@@ -155,7 +148,7 @@ species vehicle skills: [advanced_driving] {
 		proba_respect_priorities <- 1.0 - rnd(200 / 1000);
 		proba_respect_stops <- [1.0];
 		proba_block_node <- 0.0;
-		proba_use_linked_road <- 0.5;
+		proba_use_linked_road <- 0.0;
 		max_acceleration <- 5 / 3.6;
 		speed_coeff <- 1.2 - (rnd(400) / 1000);
 		threshold_stucked <- (1 + rnd(5)) #mn;
@@ -205,6 +198,9 @@ species vehicle skills: [advanced_driving] {
 			}
 		}
 		time_vehicles_move <- time_vehicles_move + (machine_time - start);
+		if debug_scheduling and (name < "vehicle10") {
+			write name + "moved";	
+		}
 	}
 
 	aspect default {
@@ -216,20 +212,21 @@ species vehicle skills: [advanced_driving] {
 	point calcul_loc {
 		if (current_road = nil) {
 			return location;
+		} 
+		
+		float val;
+		if (road(current_road).oneway) {
+			val <- (current_lane - mean(range(road(current_road).lanes - 1))) / (road(current_road).lanes - 1) * 4;
 		} else {
-			float val <- (road(current_road).lanes - current_lane) + 0.5;
+			val <- (road(current_road).lanes - current_lane) + 0.5;
 			val <- on_linked_road ? -val : val;
-			if (val = 0) {
-				return location;
-			} else {
-				return (location + {cos(heading + 90) * val, sin(heading + 90) * val});
-			}
 		}
+		return (location + {cos(heading + 90) * val, sin(heading + 90) * val});
 	} 
 }
 
 //species that will represent the roads, it can be directed or not and uses the skill skill_road
-species road skills: [skill_road] {
+species road skills: [skill_road] schedules: [] {
 	geometry geom_display;
 	bool oneway;
 	int osm_id;
@@ -239,7 +236,7 @@ species road skills: [skill_road] {
 	
 	float capacity;
 	float congestion_factor <- 0.0;
-	float encumbered_threshold <- 0.4;
+	float encumbered_threshold <- 0.5;
 	bool is_encumbered;
 	float default_weight;
 	
@@ -272,7 +269,7 @@ species road skills: [skill_road] {
 	}
 }
 
-species intersection skills: [skill_road_node] {
+species intersection skills: [skill_road_node] schedules: [] {
 	bool is_traffic_signal;
 	bool is_incoming;
 	bool is_outgoing;
@@ -347,33 +344,6 @@ species intersection skills: [skill_road_node] {
 		if (is_traffic_signal) {
 			draw box(1, 1, 10) color: #black;
 			draw sphere(3) at: {location.x, location.y, 10} color: color_fire;
-		}
-	}
-}
-
-species sensor {
-	agent connected_pollutant_cell;
-}
-
-species building schedules: [] {
-	float height;
-	string type;
-	rgb color;
-	
-	agent connected_pollutant_cell;
-	float aqi;
-	
-	init {
-		if height < min_height {
-			height <- mean_height + rnd(0.3, 0.3);
-		}
-	}
-	
-	aspect default {
-		if (display_mode = 0) {
-			draw shape color: (type = type_outArea)?palet[BUILDING_OUTAREA]:palet[BUILDING_BASE] /*border: #darkgrey*/ /*depth: height * 10*/;
-		} else {
-			draw shape color: (type = type_outArea)?palet[BUILDING_OUTAREA]:world.get_pollution_color(aqi) /*border: #darkgrey*/ depth: height * 10;
 		}
 	}
 }
