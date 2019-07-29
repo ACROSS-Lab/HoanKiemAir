@@ -38,12 +38,12 @@ global{
 						}
 					}
 				} else {
-					string name <- string(geom get ("name"));
+					string osm_name <- string(geom get ("name"));
 					int oneway <- (string(geom get ("oneway")) = "yes") ? 1 : 0;
 					float maxspeed_val <- float(geom get ("maxspeed"));
 					string lanes_str <- string(geom get ("lanes"));
 					int lanes_val <- empty(lanes_str) ? 1 : ((length(lanes_str) > 1) ? int(first(lanes_str)) : int(lanes_str));
-					create road with: [name::name, shape ::geom, type:: highway_str, oneway::oneway, maxspeed::maxspeed_val, lanes::lanes_val] {
+					create road with: [name::osm_name, shape ::geom, type:: highway_str, oneway::oneway, maxspeed::maxspeed_val, lanes::lanes_val] {
 						if lanes < 1 {lanes <- 1;} //default value for the lanes attribute
 						if maxspeed = 0 {maxspeed <- 50.0;} //default value for the maxspeed attribute
 					}
