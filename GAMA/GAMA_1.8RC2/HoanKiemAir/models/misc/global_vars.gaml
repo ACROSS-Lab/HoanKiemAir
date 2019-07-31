@@ -8,9 +8,10 @@
 model globalvars
 
 global {
-	// Dev parameters
+	float seed <- 1.0;
+	// Dev parameter
 	bool mqtt_connect;
-	bool benchmark <- true;
+	bool benchmark <- false;
 	bool debug_scheduling <- false;
 	
 	// Simulation parameters
@@ -27,7 +28,7 @@ global {
 	// Shapefiles
 	string resources_dir <- "../includes/driving/";
 	shape_file roads_shape_file <- shape_file(resources_dir + "roads.shp");
-	shape_file road_cells_shape_file <- shape_file(resources_dir + "road_cells.shp");
+	shape_file road_cells_shape_file <- shape_file(resources_dir + "rc.shp");
 	shape_file intersections_shape_file <- shape_file(resources_dir + "intersections.shp");
 	shape_file buildings_shape_file <- shape_file(resources_dir + "buildings.shp");
 	shape_file buildings_admin_shape_file <- shape_file(resources_dir + "buildings_admin.shp");
@@ -38,6 +39,7 @@ global {
 	float time_absorb_pollutants;
 	float time_diffuse_pollutants;
 	float time_update_network_weights;
+	float time_spread_to_buildings;
 	
 	
 	// Parameter of visualization to avoid z fighting
@@ -72,21 +74,30 @@ global {
 	int max_number_of_motorbikes <- 2000 const:true;
 	bool day_time_traffic <- false;
 	map<date,float> daytime_trafic_peak <- [
-		date("01 00 00", "HH mm ss")::0.1,
-		date("04 00 00", "HH mm ss")::0.1,
+		date("00 00 00", "HH mm ss")::0.000689655172413793,
+		date("01 00 00", "HH mm ss")::0.005517241379310344,
+		date("02 00 00", "HH mm ss")::0.005517241379310344,
+		date("03 00 00", "HH mm ss")::0.017241379310344827,
+		date("04 00 00", "HH mm ss")::0.034482758620689655,
+		date("05 00 00", "HH mm ss")::0.12413793103448276,
+		date("06 00 00", "HH mm ss")::0.603448275862069,
 		date("07 00 00", "HH mm ss")::1.0,
-		date("08 00 00", "HH mm ss")::1.0,
-		date("09 00 00", "HH mm ss")::0.6,
-		date("10 00 00", "HH mm ss")::0.5,
-		date("11 30 00", "HH mm ss")::1.0,
-		date("13 00 00", "HH mm ss")::0.8,
-		date("16 00 00", "HH mm ss")::0.4,
-		date("17 00 00", "HH mm ss")::1.0,
-		date("18 00 00", "HH mm ss")::1.0,
-		date("19 00 00", "HH mm ss")::0.85,
-		date("20 00 00", "HH mm ss")::0.75,
-		date("22 30 00", "HH mm ss")::0.6,
-		date("23 30 00", "HH mm ss")::0.5
+		date("08 00 00", "HH mm ss")::0.4482758620689655,
+		date("09 00 00", "HH mm ss")::0.27241379310344827,
+		date("10 00 00", "HH mm ss")::0.2896551724137931,
+		date("11 00 00", "HH mm ss")::0.6206896551724138,
+		date("12 00 00", "HH mm ss")::0.2689655172413793,
+		date("13 00 00", "HH mm ss")::0.3275862068965517,
+		date("14 00 00", "HH mm ss")::0.2689655172413793,
+		date("15 00 00", "HH mm ss")::0.15862068965517243,
+		date("16 00 00", "HH mm ss")::0.503448275862069,
+		date("17 00 00", "HH mm ss")::0.6896551724137931,
+		date("18 00 00", "HH mm ss")::0.2,
+		date("19 00 00", "HH mm ss")::0.1206896551724138,
+		date("20 00 00", "HH mm ss")::0.1103448275862069,
+		date("21 00 00", "HH mm ss")::0.08275862068965517,
+		date("22 00 00", "HH mm ss")::0.041379310344827586,
+		date("23 00 00", "HH mm ss")::0.017241379310344827
 	];
 
 

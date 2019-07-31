@@ -6,13 +6,13 @@
     <string name="label_category_display">Hiển thị</string>
     <string name="label_num_cars">Số lượng ô tô</string>
     <string name="label_num_motorbikes">Số lượng xe máy</string>
-    <string name="label_close_roads">Cấm đường</string>
+    <string name="label_close_roads">Quản lý đường xá</string>
     <string name="label_display_mode">Chế độ hiện thị</string>
     <string name="radio_button_traffic">Giao thông</string>
     <string name="radio_button_pollution">Ô nhiễm</string>
-    <string name="radio_button_no_close_roads">Không</string>
-    <string name="radio_button_scenario_1">Đường ven hồ</string>
-    <string name="radio_button_scenario_2">Đường ven hồ và 1 số đường khác</string>
+    <string name="radio_button_no_close_roads">Không cấm đường</string>
+    <string name="radio_button_scenario_1">" Mở phố đi bộ"</string>
+    <string name="radio_button_scenario_2">Kế hoạch mở rộng</string>
     <string name="language_setting">Ngôn ngữ</string>
     <string name="toast_blank_ip">Hãy điền địa chỉ IP</string>
     <string name="toast_connection_established">Kết nối thành công</string>

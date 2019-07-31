@@ -6,15 +6,15 @@
     <string name="label_category_display">Affichage</string>
     <string name="label_num_cars">Nombre de voitures</string>
     <string name="label_num_motorbikes">Nombre de motos</string>
-    <string name="label_close_roads">Fermer les routes</string>
+    <string name="label_close_roads">Gestion des routes</string>
     <string name="label_display_mode">Mode d\'affichage</string>
     <string name="radio_button_traffic">Trafic</string>
     <string name="radio_button_pollution">Pollution</string>
-    <string name="radio_button_no_close_roads">Nul</string>
-    <string name="radio_button_scenario_2">Le bord de le lac avec plus routes</string>
+    <string name="radio_button_no_close_roads">Pas de routes fermées</string>
+    <string name="radio_button_scenario_2">Plan d\'extension</string>
     <string name="language_setting">Langue</string>
     <string name="toast_blank_ip">Remplissez l\'adresse IP</string>
     <string name="toast_connection_established">La connexion a établie</string>
     <string name="toast_connection_failed">La connexion a échoué</string>
-    <string name="radio_button_scenario_1">Le bord de le lac</string>
+    <string name="radio_button_scenario_1">"Zone piétonne active "</string>
 </resources>

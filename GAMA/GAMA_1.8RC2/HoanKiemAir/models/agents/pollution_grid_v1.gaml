@@ -21,8 +21,10 @@ global {
 	}
 }
 
-grid pollutant_cell width: grid_size height: grid_size neighbors: 8 parallel: true {
+grid pollutant_cell width: grid_size height: grid_size neighbors: 8 parallel: true schedules: [] {
 	// Pollutant values, unit g/m3 (assuming pollutants are spread uniformly in a cell)
+	list<pollutant_cell> nbrs <- neighbors;
+	
 	float co <- 0.0;
 	float nox <- 0.0;
 	float so2 <- 0.0;

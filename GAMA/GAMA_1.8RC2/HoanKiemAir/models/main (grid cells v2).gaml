@@ -83,15 +83,15 @@ species pollutant_manager schedules: [] {
 }
 
 experiment exp autorun: false {
-	parameter "Number of cars" var: n_cars <- max_number_of_cars min: 0 max: 700;
-	parameter "Number of motorbikes" var: n_motorbikes <- max_number_of_motorbikes min: 0 max: 2000;
+	parameter "Number of cars" var: n_cars <- max_number_of_cars min: 0 max: max_number_of_cars;
+	parameter "Number of motorbikes" var: n_motorbikes <- max_number_of_motorbikes min: 0 max: max_number_of_motorbikes;
 	parameter "Close roads" var: road_scenario <- 0 min: 0 max: 2;
 	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
 	parameter "Refreshing time plot" var: refreshing_rate_plot init: 2#mn min:1#mn max: 1#h;
 	
 	output {
 		display main type: opengl background: #black {
-			grid pollutant_cell lines: #white;
+//			grid pollutant_cell lines: #white;
 			species boundary;
 			species road;
 			species vehicle;

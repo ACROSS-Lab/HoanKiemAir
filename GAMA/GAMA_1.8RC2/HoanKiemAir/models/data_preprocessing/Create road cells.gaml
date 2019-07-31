@@ -28,7 +28,7 @@ global {
 		}
 		ask road
 		{
-			do buildPolyline(20#m, 2#m);
+			do buildPolyline(20#m, 5#m);
 			write(self.shape);
 		}
 		write length(road accumulate(each.my_geoms));

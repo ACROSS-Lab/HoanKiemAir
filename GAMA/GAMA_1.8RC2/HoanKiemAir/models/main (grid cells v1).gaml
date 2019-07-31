@@ -26,11 +26,15 @@ global {
 		geometry road_geometry <- union(road accumulate (each.shape));
 		active_cells <- pollutant_cell overlapping road_geometry;
 		
+		ask active_cells {
+			color <- rgb(#yellow, 0.5);
+		}
+		
 		create pollutant_manager;
 
 		loop s over: sensor {
 			save ["time", "co", "nox", "so2", "pm"] to: "../output/sensor_readings/" + s.name + ".csv" type: csv rewrite: true;
-		}	
+		}
 	}
 	
 	reflex read_sensors when: every(5#mn) {
@@ -42,13 +46,13 @@ global {
 	}
 }
 
-species scheduler schedules: intersection + road + vehicle + pollutant_manager {}
+species scheduler schedules: intersection + road + vehicle + pollutant_manager + pollutant_cell {}
 
 species pollutant_manager schedules: [] {
 	reflex produce_pollutants {
 		float start <- machine_time;
 		// Absorb pollutants emitted by vehicles
-		ask active_cells parallel: true {
+		ask active_cells {
 			list<vehicle> vehicles_in_cell <- vehicle inside self;
 			loop v over: vehicles_in_cell {
 				if (is_number(v.real_speed)) {
@@ -99,16 +103,16 @@ species pollutant_manager schedules: [] {
 	}
 }
 
-experiment exp autorun: false {
-	parameter "Number of cars" var: n_cars <- max_number_of_cars min: 0 max: 700;
-	parameter "Number of motorbikes" var: n_motorbikes <- max_number_of_motorbikes min: 0 max: 2000;
+experiment exp type: gui autorun: false keep_seed: true {
+	parameter "Number of cars" var: n_cars <- max_number_of_cars min: 0 max: max_number_of_cars;
+	parameter "Number of motorbikes" var: n_motorbikes <- max_number_of_motorbikes min: 0 max: max_number_of_motorbikes;
 	parameter "Close roads" var: road_scenario <- 0 min: 0 max: 2;
 	parameter "Display mode" var: display_mode <- 0 min: 0 max: 1;
 	parameter "Refreshing time plot" var: refreshing_rate_plot init: 2#mn min:1#mn max: 1#h;
 	
 	output {
 		display main type: opengl background: #black {
-//			grid pollutant_cell lines: #white;
+//			grid pollutant_cell lines: rgb(#grey, 0.8);
 			species boundary;
 			species road;
 			species vehicle;

@@ -9,14 +9,14 @@
 
     <string name="label_num_cars">Number of cars</string>
     <string name="label_num_motorbikes">Number of motorbikes</string>
-    <string name="label_close_roads">Close roads</string>
+    <string name="label_close_roads">Road management</string>
 
     <string name="label_display_mode">Display mode</string>
     <string name="radio_button_traffic">Traffic</string>
     <string name="radio_button_pollution">Pollution</string>
-    <string name="radio_button_no_close_roads">None</string>
-    <string name="radio_button_scenario_1">Lake border</string>
-    <string name="radio_button_scenario_2">Lake border with extra roads</string>
+    <string name="radio_button_no_close_roads">No closed roads</string>
+    <string name="radio_button_scenario_1">Pedestrian zone active</string>
+    <string name="radio_button_scenario_2">Extension plan</string>
     <string name="language_setting">Language</string>
     <string name="toast_blank_ip">Fill in the IP address</string>
     <string name="toast_connection_established">Connection established</string>

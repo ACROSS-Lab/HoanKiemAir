@@ -9,7 +9,10 @@ model traffic
 import "../misc/global_vars.gaml"
 
 global {
-	list<road> open_roads;
+	// params
+	int car_multiplier <- 1;
+	int motorbike_multiplier <- 1;
+	int n_vehicles_max <- 5000;
 	
 	list<intersection> incoming_nodes;
 	list<intersection> outgoing_nodes;
@@ -49,7 +52,6 @@ global {
 			}
 		}
 		
-		open_roads <- list(road);
 		map<road, float> road_weights <- road as_map (each::each.default_weight);
 		road_network <- as_driving_graph(road, intersection) with_weights road_weights;
 		
@@ -67,47 +69,72 @@ global {
 	}
 	
 	action update_road_network {
+		list<road> open_roads;
+		list<road> closed_roads;
+		
 		switch road_scenario {
 			match 0 {
-				open_roads <- list(road);
+				closed_roads <- [];
 				break;
 			}
 			match 1 {
-				open_roads <- road where !each.s1_closed;
+				closed_roads <- road where each.s1_closed;
 				break;
 			}
 			match 2 {
-				open_roads <- road where !each.s2_closed;
+				closed_roads <- road where each.s2_closed;
 				break;
 			}
 		}
-		
 		// Change the display of roads
-		list<road> closed_roads <- road - open_roads;
+		open_roads <- road - closed_roads;
 		ask open_roads {
 			closed <- false;
 		}
 		ask closed_roads {
 			closed <- true;
 		}
+		write "Open roads: " + length(open_roads);
+		write "Closed roads: " + length(closed_roads);
+
+		// Either add/remove roads
+		map<road, float> road_weights <- open_roads as_map (each::each.current_weight);
+		road_network <- as_driving_graph(open_roads, intersection) with_weights road_weights;
 		
-		// Determine reachable nodes
-		list<intersection> reachable_nodes <- intersection where (each.roads_in count (!road(each).closed) != 0);
-		internal_nodes <- reachable_nodes - union(incoming_nodes, outgoing_nodes);
+		list<intersection> unreachable_nodes <- intersection where ((road_network degree_of each) = 0);
+		internal_nodes <- intersection - incoming_nodes - outgoing_nodes - unreachable_nodes;
+		write "Internal nodes: " + length(internal_nodes);
+		write "Unreachable nodes: " + length(unreachable_nodes);
 		
-		// Recreate road network
-		map<road, float> road_weights <- road as_map (each::(each.shape.perimeter + length(each.all_agents) * 5));
-		road_network <- as_driving_graph(open_roads, reachable_nodes) with_weights road_weights;
+		// Move vehicles inside pedestrian zone elsewhere
+		list<vehicle> vehicles_in_pedestrian_zone <- list<vehicle>(closed_roads accumulate (each.all_agents));
+		write "Vehicles to be moved outside: " + length(vehicles_in_pedestrian_zone);
+		ask vehicles_in_pedestrian_zone {
+			do reposition;
+		}
 		
-		do reset_traffic;
+		
+		// Ask vehicles going to pedestrian zone to choose another targets
+		list<vehicle> vehicles_going_to_pedestrian_zone <- vehicle where (unreachable_nodes contains each.target);
+		write "Vehicles going to another target: " + length(vehicles_going_to_pedestrian_zone);
+		ask vehicles_going_to_pedestrian_zone {
+			final_target <- nil;
+		}
+		
+		// Ask all vehicles to recompute their path 
+		ask vehicle {
+			do recompute_path;
+		}
 	}
 	
 	action update_vehicle_population(string vehicle_type, int delta) {
 		list<vehicle> vehicles <- vehicle where (each.type = vehicle_type);
 		if (delta < 0) {
 			ask -delta among vehicles {
-				ask road(current_road) {
-					do unregister(myself);
+				if current_road != nil {
+					ask road(current_road) {
+						do unregister(myself);
+					}	
 				}
 				do die;
 			}
@@ -122,7 +149,7 @@ global {
 				} else {
 					self.vehicle_length <- 2.0#m;
 					self.max_speed <- (rnd(40.0) + 10.0) #km / #h;
-					self.proba_respect_stops <- [0.8];
+					self.proba_respect_stops <- [0.7];
 					self.color <- #cyan;
 				}
 			}
@@ -154,12 +181,19 @@ species vehicle skills: [advanced_driving] schedules: [] {
 		threshold_stucked <- (1 + rnd(5)) #mn;
 	}
 	
-	action reposition {
+	action reposition {		
 		if flip(0.7) {
 			location <- one_of(incoming_nodes).location;
 		} else {
 			location <- one_of(internal_nodes).location;
 		}
+	}
+	
+	action recompute_path {
+		current_path <- compute_path(graph: road_network, target: target);
+		if (current_path = nil) {
+			location <- one_of(intersection).location;
+		} 
 	}
 	
 	reflex choose_new_target when: final_target = nil  {
@@ -168,10 +202,8 @@ species vehicle skills: [advanced_driving] schedules: [] {
 		} else {
 			target <- one_of(internal_nodes);
 		}
-		current_path <- compute_path(graph: road_network, target: target);
-		if (current_path = nil) {
-			do reposition;
-		} 
+		
+		do recompute_path;
 	}
 	
 	reflex check_for_encumbered_road when: current_path != nil and current_road != road_prev {
@@ -238,20 +270,23 @@ species road skills: [skill_road] schedules: [] {
 	float congestion_factor <- 0.0;
 	float encumbered_threshold <- 0.5;
 	bool is_encumbered;
+	
 	float default_weight;
+	float current_weight;
 	
 	reflex update_congestion_factor when: !closed {
 		int n_cars_on_road <- all_agents count (vehicle(each).type = "car");
 		int n_motorbikes_on_road <- all_agents count (vehicle(each).type = "motorbike");
-		congestion_factor <- (n_cars_on_road * 4.7 * 2 + n_motorbikes_on_road * 2) / capacity;
+		congestion_factor <- (n_cars_on_road * 4.7 * 2 + n_motorbikes_on_road * 2) / capacity * 1.5;
 		
 		if congestion_factor > encumbered_threshold {
 			is_encumbered <- true;
-			road_network <- road_network with_weights [self::(weight_of(road_network, self) + congestion_factor * 100)];
+			current_weight <- default_weight + congestion_factor * 100;
 		} else {
 			is_encumbered <- false;
-			road_network <- road_network with_weights [self::default_weight];
+			current_weight <- default_weight;
 		}
+		road_network <- road_network with_weights [self::current_weight];
 	}
 
 	aspect default {
@@ -259,7 +294,7 @@ species road skills: [skill_road] schedules: [] {
 			if (closed) {
 				draw geom_display color: palet[CLOSED_ROAD_TRAFFIC];
 			} else {
-				draw geom_display color: rgb(255, (1 - congestion_factor) * 255, (1 - congestion_factor) * 255);		
+				draw geom_display color: rgb(255, (1 - congestion_factor ) * 255, (1 - congestion_factor) * 255);		
 			}		
 		} else {
 			if (closed) {
@@ -343,7 +378,7 @@ species intersection skills: [skill_road_node] schedules: [] {
 	aspect default {
 		if (is_traffic_signal) {
 			draw box(1, 1, 10) color: #black;
-			draw sphere(3) at: {location.x, location.y, 10} color: color_fire;
+			draw sphere(3) at: {location.x, location.y, 10} color: color_fire;	
 		}
 	}
 }

@@ -68,18 +68,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4b89f41d-0fd7-4a82-8385-0088749c8e0a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/includes/driving/buildings.dbf" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/includes/driving/buildings.dbf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/includes/driving/buildings.prj" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/includes/driving/buildings.prj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/includes/driving/buildings.qix" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/includes/driving/buildings.qix" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/includes/driving/buildings.shp" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/includes/driving/buildings.shp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/includes/driving/buildings.shx" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/includes/driving/buildings.shx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/includes/driving/roads.dbf" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/includes/driving/roads.dbf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/includes/driving/roads.qix" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/agents/pollution.gaml" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/agents/pollution.gaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/agents/pollution_grid_v1.gaml" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/agents/pollution_grid_v1.gaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/agents/pollution_grid_v2.gaml" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/agents/pollution_grid_v2.gaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/agents/pollution_road.gaml" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/agents/pollution_road.gaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/agents/traffic.gaml" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/agents/traffic.gaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/global_vars.gaml" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/global_vars.gaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/main (grid cells).gaml" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/main (grid cells).gaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/main (grid cells v1).gaml" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/main (grid cells v1).gaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/main (grid cells v2).gaml" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/main (grid cells v2).gaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/main (road cells).gaml" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/main (road cells).gaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/misc/global_vars.gaml" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/misc/global_vars.gaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/misc/utils.gaml" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/misc/utils.gaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/misc/visualization.gaml" beforeDir="false" afterPath="$PROJECT_DIR$/../GAMA/GAMA_1.8RC2/HoanKiemAir/models/misc/visualization.gaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/hoankiemaircontrol/network/MQTTConnector.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/hoankiemaircontrol/network/MQTTConnector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-fr-rFR/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-fr-rFR/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-vi-rVN/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-vi-rVN/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -96,11 +102,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/hoankiemaircontrol/ui/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2251">
-              <caret line="84" selection-start-line="84" selection-end-line="84" />
+            <state relative-caret-position="299">
+              <caret line="149" column="50" selection-start-line="149" selection-start-column="50" selection-end-line="149" selection-end-column="50" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -108,11 +114,25 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="588">
+              <caret line="21" selection-start-line="21" selection-end-line="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="android-dummy:///media/minhduc0711/Libraries/Codes/simulation/HoanKiemAir/HoanKiemAir/HoanKiemAirControl/app/Translations Editor">
+          <provider selected="true" editor-type-id="string-resource-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/hoankiemaircontrol/network/MQTTConnector.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="297">
-              <caret line="61" lean-forward="true" selection-start-line="61" selection-end-line="61" />
+            <state relative-caret-position="840">
+              <caret line="45" selection-start-line="45" selection-end-line="45" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -122,12 +142,12 @@
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-          <provider editor-type-id="android-manifest" />
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="168">
               <caret line="6" selection-start-line="6" selection-end-line="6" />
             </state>
           </provider>
+          <provider editor-type-id="android-manifest" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -167,6 +187,8 @@
       <find>primaryColor</find>
       <find>putBoolean</find>
       <find>booleanData</find>
+      <find>quality</find>
+      <find>qualit</find>
     </findStrings>
     <replaceStrings>
       <replace>marginStart</replace>
@@ -207,7 +229,6 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1920" />
     <option name="y" value="31" />
     <option name="width" value="1920" />
     <option name="height" value="1049" />
@@ -220,7 +241,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane" />
       <pane id="AndroidView">
         <subPane>
@@ -243,26 +263,13 @@
             <path>
               <item name="HoanKiemAirControl" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="hoankiemaircontrol" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="network" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="HoanKiemAirControl" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="hoankiemaircontrol" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="ui" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="HoanKiemAirControl" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="generatedJava" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
             </path>
             <path>
               <item name="HoanKiemAirControl" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
               <item name="res" type="d4f16f75:AndroidResFolderNode" />
+              <item name="values" type="ddeffd01:AndroidResFolderTypeNode" />
             </path>
             <path>
               <item name="HoanKiemAirControl" type="1abcf292:AndroidViewProjectNode" />
@@ -273,15 +280,16 @@
         </subPane>
       </pane>
       <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="ScreenshotViewer.SavePath" value="$PROJECT_DIR$/../../../../Pictures" />
+    <property name="ScreenshotViewer.SavePath" value="$PROJECT_DIR$/../../../../../Pictures" />
     <property name="android.project.structure.last.selected" value="SDK Location" />
     <property name="android.project.structure.proportion" value="0.15" />
     <property name="android.sdk.path" value="$USER_HOME$/Android/Sdk" />
-    <property name="device.picker.selection" value="27574509" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../Pictures" />
+    <property name="device.picker.selection" value="HQ99JVRK99999999" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../android_projects/MqttTest" />
     <property name="project.structure.last.edited" value="Build Variants" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -417,8 +425,17 @@
     <option name="localTasksCounter" value="5" />
     <servers />
   </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="1920" y="31" width="1920" height="1049" extended-state="6" />
+    <frame x="0" y="31" width="1920" height="1049" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Structure" order="0" side_tool="true" />
@@ -431,13 +448,13 @@
       <window_info id="Captures" order="7" side_tool="true" weight="0.25" />
       <window_info id="Resources Explorer" order="8" />
       <window_info anchor="bottom" id="Version Control" order="0" show_stripe_button="false" />
-      <window_info anchor="bottom" id="TODO" order="1" />
+      <window_info anchor="bottom" id="TODO" order="1" weight="0.32896176" />
       <window_info anchor="bottom" id="Terminal" order="2" />
       <window_info anchor="bottom" id="Event Log" order="3" side_tool="true" />
-      <window_info anchor="bottom" id="Build" order="4" weight="0.29524887" />
-      <window_info anchor="bottom" id="Android Profiler" order="5" />
-      <window_info anchor="bottom" id="Logcat" order="6" weight="0.32692307" />
-      <window_info anchor="bottom" id="Run" order="7" weight="0.31561086" />
+      <window_info anchor="bottom" id="Build" order="4" visible="true" weight="0.29298642" />
+      <window_info anchor="bottom" id="Android Profiler" order="5" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Logcat" order="6" weight="0.32677597" />
+      <window_info anchor="bottom" id="Run" order="7" weight="0.31447965" />
       <window_info anchor="bottom" id="Debug" order="8" weight="0.32918552" />
       <window_info anchor="bottom" id="Find" order="9" weight="0.32924107" />
       <window_info anchor="right" id="Capture Analysis" order="0" />
@@ -467,7 +484,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../../../../Pictures/device-2019-04-16-110821.png" />
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_connect.xml" />
     <entry file="file://$PROJECT_DIR$/app/src/main/res/values/dimens.xml" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/br.com.simplepass/loading-button-android/2.1.0/c74f87654d1c1add5ec3e8ff68d108f90d77fd40/loading-button-android-2.1.0-sources.jar!/br/com/simplepass/loadingbutton/customViews/CircularProgressButton.kt" />
@@ -497,20 +513,8 @@
     <entry file="jar://$APPLICATION_HOME_DIR$/jre/jre/lib/rt.jar!/java/net/PlainSocketImpl.class">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.paho/org.eclipse.paho.client.mqttv3/1.2.1/2c07655b3aac410763a974fc716bc5f8654b6bfb/org.eclipse.paho.client.mqttv3-1.2.1-sources.jar!/org/eclipse/paho/client/mqttv3/internal/ClientComms.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="721" selection-start-line="721" selection-end-line="721" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.paho/org.eclipse.paho.client.mqttv3/1.2.1/2c07655b3aac410763a974fc716bc5f8654b6bfb/org.eclipse.paho.client.mqttv3-1.2.1-sources.jar!/org/eclipse/paho/client/mqttv3/internal/TCPNetworkModule.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="173">
-          <caret line="71" column="26" selection-start-line="71" selection-start-column="26" selection-end-line="71" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.paho/org.eclipse.paho.client.mqttv3/1.2.1/2c07655b3aac410763a974fc716bc5f8654b6bfb/org.eclipse.paho.client.mqttv3-1.2.1-sources.jar!/org/eclipse/paho/client/mqttv3/internal/ClientComms.java" />
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.paho/org.eclipse.paho.client.mqttv3/1.2.1/2c07655b3aac410763a974fc716bc5f8654b6bfb/org.eclipse.paho.client.mqttv3-1.2.1-sources.jar!/org/eclipse/paho/client/mqttv3/internal/TCPNetworkModule.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.razir.progressbutton/progressbutton/1.0.3/e8d015e6e816ece38f9c23fc489f3e153d76201f/progressbutton-1.0.3-sources.jar!/com/github/razir/progressbutton/ProgressButtonUtils.kt" />
     <entry file="file://$USER_HOME$/Android/Sdk/sources/android-28/android/view/View.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -521,12 +525,12 @@
     </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/26ea448d95b3f40900217a13d42d7e60/jars/classes.jar!/br/com/simplepass/loadingbutton/customViews/ProgressButton.class" />
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_connect.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="672">
           <caret line="24" column="54" selection-start-line="24" selection-start-column="54" selection-end-line="24" selection-end-column="54" />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/hoankiemaircontrol/utils/LocaleHelper.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -539,37 +543,15 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/menu_languages.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="140">
           <caret line="5" column="36" selection-start-line="5" selection-start-column="36" selection-end-line="5" selection-end-column="36" />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="347">
-          <caret line="21" selection-start-line="21" selection-end-line="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="android-dummy:///media/minhduc0711/Libraries/Codes/simulation/HoanKiemAir/HoanKiemAir/HoanKiemAirControl/app/Translations Editor">
-      <provider selected="true" editor-type-id="string-resource-editor" />
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.paho/org.eclipse.paho.client.mqttv3/1.2.1/2c07655b3aac410763a974fc716bc5f8654b6bfb/org.eclipse.paho.client.mqttv3-1.2.1-sources.jar!/org/eclipse/paho/client/mqttv3/MqttClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="267">
-          <caret line="60" column="45" selection-start-line="60" selection-start-column="45" selection-end-line="60" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.paho/org.eclipse.paho.client.mqttv3/1.2.1/2c07655b3aac410763a974fc716bc5f8654b6bfb/org.eclipse.paho.client.mqttv3-1.2.1-sources.jar!/org/eclipse/paho/client/mqttv3/IMqttClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="61" column="47" selection-start-line="61" selection-start-column="47" selection-end-line="61" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.paho/org.eclipse.paho.client.mqttv3/1.2.1/2c07655b3aac410763a974fc716bc5f8654b6bfb/org.eclipse.paho.client.mqttv3-1.2.1-sources.jar!/org/eclipse/paho/client/mqttv3/MqttClient.java" />
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.paho/org.eclipse.paho.client.mqttv3/1.2.1/2c07655b3aac410763a974fc716bc5f8654b6bfb/org.eclipse.paho.client.mqttv3-1.2.1-sources.jar!/org/eclipse/paho/client/mqttv3/IMqttClient.java" />
     <entry file="file://$USER_HOME$/Android/Sdk/sources/android-28/java/lang/AutoCloseable.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="101">
@@ -578,27 +560,20 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/menu_main.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="280">
           <caret line="10" column="22" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5936">
           <caret line="212" column="52" selection-start-line="212" selection-start-column="52" selection-end-line="212" selection-end-column="52" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="9" column="50" selection-start-line="9" selection-start-column="50" selection-end-line="9" selection-end-column="50" />
-        </state>
-      </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$USER_HOME$/Android/Sdk/sources/android-28/android/content/BroadcastReceiver.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -651,20 +626,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="784">
-          <caret line="28" column="54" selection-start-line="28" selection-start-column="54" selection-end-line="28" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/hoankiemaircontrol/ui/BaseActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1820">
-          <caret line="75" column="22" selection-start-line="75" selection-start-column="22" selection-end-line="75" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/hoankiemaircontrol/ui/ConnectActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="493">
@@ -672,14 +633,6 @@
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-      <provider editor-type-id="android-manifest" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="168">
-          <caret line="6" selection-start-line="6" selection-end-line="6" />
         </state>
       </provider>
     </entry>
@@ -697,30 +650,83 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.paho/org.eclipse.paho.android.service/1.1.1/f12a679a207391e812b891615a9f6b527f02bbd4/org.eclipse.paho.android.service-1.1.1-sources.jar!/org/eclipse/paho/android/service/MqttAndroidClient.java">
+    <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="341">
-          <caret line="814" column="59" selection-start-line="814" selection-start-column="59" selection-end-line="814" selection-end-column="59" />
+        <state relative-caret-position="-122">
+          <caret line="9" column="50" selection-start-line="9" selection-start-column="50" selection-end-line="9" selection-end-column="50" />
         </state>
       </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.paho/org.eclipse.paho.android.service/1.1.1/f12a679a207391e812b891615a9f6b527f02bbd4/org.eclipse.paho.android.service-1.1.1-sources.jar!/org/eclipse/paho/android/service/MqttAndroidClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="332" column="46" selection-start-line="332" selection-start-column="46" selection-end-line="332" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.paho/org.eclipse.paho.client.mqttv3/1.1.0/c4e2860ca315d2f24287112093c7e58305b30a30/org.eclipse.paho.client.mqttv3-1.1.0-sources.jar!/org/eclipse/paho/client/mqttv3/MqttConnectOptions.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="589">
+          <caret line="153" column="28" selection-start-line="153" selection-start-column="22" selection-end-line="153" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../Pictures/device-2019-07-13-203218.png" />
+    <entry file="file://$PROJECT_DIR$/../../../../../Pictures/main_activity.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../Pictures/connect_activity.png">
+      <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/hoankiemaircontrol/ui/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2251">
-          <caret line="84" selection-start-line="84" selection-end-line="84" />
+        <state relative-caret-position="299">
+          <caret line="149" column="50" selection-start-line="149" selection-start-column="50" selection-end-line="149" selection-end-column="50" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="588">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="android-dummy:///media/minhduc0711/Libraries/Codes/simulation/HoanKiemAir/HoanKiemAir/HoanKiemAirControl/app/Translations Editor">
+      <provider selected="true" editor-type-id="string-resource-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/hoankiemaircontrol/network/MQTTConnector.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="61" lean-forward="true" selection-start-line="61" selection-end-line="61" />
+        <state relative-caret-position="840">
+          <caret line="45" selection-start-line="45" selection-end-line="45" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="6" selection-start-line="6" selection-end-line="6" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-manifest" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="784">
+          <caret line="28" column="54" selection-start-line="28" selection-start-column="54" selection-end-line="28" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/hoankiemaircontrol/ui/BaseActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1820">
+          <caret line="75" column="22" selection-start-line="75" selection-start-column="22" selection-end-line="75" selection-end-column="22" />
         </state>
       </provider>
     </entry>

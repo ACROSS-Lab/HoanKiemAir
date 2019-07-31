@@ -11,7 +11,7 @@ import "pollution.gaml"
 
 global {
 	float diffu_factor(float d1, float d2) {
-		return min(exp((d1 - d2) /1000), 1.0);
+		return min(max(0.1 * (d1-d2) + 1.0, 0.0), 1.0);
 	}
 	
 	init {
@@ -33,22 +33,15 @@ global {
 		}
 		
 		ask pollutant_cell {
-			loop neighbor over: neighbors {
+			loop neighbor over: nbrs {
 				diffusion_rates[neighbor] <- pollutant_diffusion * myself.diffu_factor(building_density, neighbor.building_density);
-			}
-		}
-	}
-	
-	reflex debug {
-		ask pollutant_cell[2078] {
-			if (norm_pollution_level > 0) {
-				write norm_pollution_level;
 			}
 		}
 	}
 }
 
 grid pollutant_cell width: grid_size height: grid_size neighbors: 8 parallel: true {
+	list<pollutant_cell> nbrs <- neighbors;
 	// Pollutant values, unit g/m3 (assuming pollutants are spread uniformly in a cell)
 	float building_density <- 0.0;
 	
@@ -67,27 +60,11 @@ grid pollutant_cell width: grid_size height: grid_size neighbors: 8 parallel: tr
 	
 	reflex diffuse {
 		float start <- machine_time;
-		ask neighbors {
-			if (myself.name="pollutant_cell2077") and (self.name="pollutant_cell2078") {
-				write "Before diffusion:";
-				write "2077 co: " + myself.co;
-				write "2078 co: " + self.co;
-			}
-			
+		ask nbrs {
 			self.co <- self.co + myself.diffusion_rates[self] * myself.co;
-			if (myself.name="pollutant_cell2077") and (self.name="pollutant_cell2078") {
-				write "After diffusion:";
-				write "2077 co: " + myself.co;
-				write "2078 co: " + self.co;
-				write "diffusion rate: " + myself.diffusion_rates[self];
-				write myself.name;
-				write self.name;
-			}
 			self.nox <- self.nox + myself.diffusion_rates[self] * myself.nox;
 			self.so2 <- self.so2 + myself.diffusion_rates[self] * myself.so2;
 			self.pm <- self.pm + myself.diffusion_rates[self] * myself.pm;
-			
-			
 		}
 		
 		co <- co * (1 - sum(diffusion_rates));
