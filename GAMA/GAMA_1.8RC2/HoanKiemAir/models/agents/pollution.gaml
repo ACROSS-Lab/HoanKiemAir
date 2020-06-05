@@ -10,7 +10,7 @@ import "../misc/global_vars.gaml"
 
 global {
 	// Constants
-	map<string, float> ALLOWED_AMOUNT <- ["CO"::30000, "NOx"::200, "SO2"::350, "PM"::300]; // Unit: ug/m3
+	map<string, float> ALLOWED_AMOUNT <- ["CO"::30000.0, "NOx"::200.0, "SO2"::350.0, "PM"::300.0]; // Unit: ug/m3
 	map<string, map<string, float>> EMISSION_FACTOR <- [
 		"motorbike"::["CO"::3.62 * 10e6, "NOx"::0.3 * 0.05 * 10e6, "SO2"::0.03 * 10e6, "PM"::0.1 * 10e6],  // Unit: ug/km
 		"car"::["CO"::3.62 * 10e6, "NOx"::1.5 * 0.05 * 10e6, "SO2"::0.17 * 10e6, "PM"::0.1 * 10e6]
