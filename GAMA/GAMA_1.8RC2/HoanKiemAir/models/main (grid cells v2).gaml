@@ -70,7 +70,7 @@ species pollutant_manager schedules: [] {
 		}
 	}
 		
-	reflex calculate_aqi when: every(refreshing_rate_plot) {
+	reflex calculate_aqi when: every(refreshing_rate_plot) and !(empty(line_graph_aqi)) {
  		float aqi <- max(pollutant_cell accumulate each.aqi);
 		ask line_graph_aqi {
 			do update(aqi);
