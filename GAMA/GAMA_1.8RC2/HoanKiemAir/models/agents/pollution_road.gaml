@@ -8,6 +8,7 @@
 model pollutionroad
 
 import "pollution.gaml"
+import "buildings.gaml"
 
 global {
 	float cell_depth <- 10#m;

@@ -7,6 +7,7 @@
 
 model pollutiongridv2
 
+import "buildings.gaml"
 import "pollution.gaml"
 
 global {

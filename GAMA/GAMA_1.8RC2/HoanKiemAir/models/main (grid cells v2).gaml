@@ -31,6 +31,8 @@ global {
 		loop s over: sensor {
 			save ["time", "co", "nox", "so2", "pm"] to: "../output/sensor_readings/" + s.name + ".csv" type: csv rewrite: true;
 		}	
+		
+		do init_visualization;
 	}
 	
 	reflex read_sensors when: every(5#mn) {

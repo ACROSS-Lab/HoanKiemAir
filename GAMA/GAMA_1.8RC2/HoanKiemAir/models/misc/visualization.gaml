@@ -7,10 +7,11 @@
 
 model visualization
 
-import "global_vars.gaml"
+import "../agents/pollution.gaml"
+import "../Contantes and Parameters/global_vars.gaml"
 
 global {	
-	init {
+	action init_visualization {
 		create progress_bar    with: [x::2700, y::1200, width::350, height::100, max_val::max_number_of_cars, title::"Cars",  left_label::"0", right_label::"Max"];
 		create progress_bar    with: [x::2700, y::1550, width::500, height::100, max_val::max_number_of_motorbikes, title::"Motorbikes", left_label::"0", right_label::"Max"];
 		create param_indicator with: [x::2700, y::1850, size::22, name::"Road management", value::"No blocked roads", with_RT::true];

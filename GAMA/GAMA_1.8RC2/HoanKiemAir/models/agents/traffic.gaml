@@ -6,7 +6,8 @@
 ***/
 
 model traffic
-import "../misc/global_vars.gaml"
+
+import "../Contantes and Parameters/global_vars.gaml"
 
 global {
 	// params

@@ -45,7 +45,7 @@ global {
 //		loop s over: sensor {
 //			save ["time", "CO", "NOx", "SO2", "PM"] to: "../output/sensors/" + s.name + ".csv" type: csv rewrite: true;
 //		}
-		
+		do init_visualization;
 		do load_aqi_data;
 	}
 	

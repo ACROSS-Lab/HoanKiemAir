@@ -7,23 +7,14 @@
 
 model globalvars
 
+import "Pollution param and constants.gaml"
+
 global {
 	float seed <- 1.0;
 	// Dev parameter
 	bool mqtt_connect;
 	bool benchmark <- false;
 	bool debug_scheduling <- false;
-	
-	// Simulation parameters
-	int n_cars;
-	int n_motorbikes;
-	int road_scenario;
-	int display_mode;
-	// Save params' old values to detect value changes
-	int n_cars_prev;
-	int n_motorbikes_prev;
-	int road_scenario_prev;
-	int display_mode_prev;
 	
 	// Shapefiles
 	string resources_dir <- "../includes/driving/";
@@ -33,6 +24,19 @@ global {
 	shape_file buildings_shape_file <- shape_file(resources_dir + "buildings.shp");
 	shape_file buildings_admin_shape_file <- shape_file(resources_dir + "buildings_admin.shp");
 	shape_file sensors_shape_file <- shape_file(resources_dir + "sensors.shp");
+	
+	
+	// Simulation parameters
+	int n_cars;
+	int n_motorbikes;
+	int road_scenario;
+	int display_mode;
+	
+	// Save params' old values to detect value changes
+	int n_cars_prev;
+	int n_motorbikes_prev;
+	int road_scenario_prev;
+	int display_mode_prev;	
 	
 	// Benchmark
 	float time_vehicles_move;
@@ -100,32 +104,6 @@ global {
 		date("23 00 00", "HH mm ss")::0.017241379310344827
 	];
 
-
-	// Pollution threshold 
-	string THRESHOLD_HAZARDOUS <- " Hazardous";
-	string THRESHOLD_VERY_UNHEALTY <- " Very Unhealthy";
-	string THRESHOLD_UNHEALTHY <- " Unhealty";
-	string THRESHOLD_UNHEALTHY_SENSITIVE <- " Unhealthy for \nSensitive Groups";
-	string THRESHOLD_MODERATE <- " Moderate";
-	string THRESHOLD_GOOD <- " Good";
-	
-	map<string,rgb> zone_colors <- [
-		THRESHOLD_GOOD:: #green, //rgb(104,225,66,255), 
-		THRESHOLD_MODERATE:: #yellow, //rgb(255,255,83,255), 
-		THRESHOLD_UNHEALTHY_SENSITIVE::#orange,//rgb(240,131,51,255),
-		THRESHOLD_UNHEALTHY::#red, //rgb(218,56,50,255), 
-		THRESHOLD_VERY_UNHEALTY::rgb(116,49,121,255),
-		THRESHOLD_HAZARDOUS::rgb(66,18,39,255)
-	];
-	map<int,string> thresholds_pollution <- [
-		0::THRESHOLD_GOOD,
-		51::THRESHOLD_MODERATE,
-		101::THRESHOLD_UNHEALTHY_SENSITIVE,
-		151::THRESHOLD_UNHEALTHY,
-		201::THRESHOLD_VERY_UNHEALTY,
-		301::THRESHOLD_HAZARDOUS
-	];
-
 	
 	// Color 
 	string BUILDING_BASE <- "building_base";
@@ -159,24 +137,5 @@ global {
 		TEXT_COLOR::#white,
 		AQI_CHART::#black
 	];
-
-
-	int get_pollution_threshold(float aqi) {
-		int threshold <- 0;
-		loop thr over: thresholds_pollution.keys {
-			if(aqi > thr) {
-				threshold <- thr;
-			}
-		}
-		return threshold;
-	}
-	
-	string get_pollution_state(float aqi) {
-		return thresholds_pollution[get_pollution_threshold(aqi)];
-	}
-	
-	rgb get_pollution_color(float aqi) {
-		return zone_colors[thresholds_pollution[get_pollution_threshold(aqi)]];		
-	}
 }
 

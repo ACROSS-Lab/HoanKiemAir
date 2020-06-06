@@ -7,7 +7,7 @@
 
 model utils
 
-import "global_vars.gaml"
+import "../Contantes and Parameters/global_vars.gaml"
 import "visualization.gaml"
 import "../agents/traffic.gaml"
 
