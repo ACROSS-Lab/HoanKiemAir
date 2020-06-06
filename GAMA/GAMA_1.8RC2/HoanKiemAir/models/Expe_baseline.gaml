@@ -44,6 +44,7 @@ experiment exp2 type: gui autorun: true {
 				data "Mean AQI" value: building mean_of(each.aqi);
 				data "Median AQI" value: median(building collect(each.aqi));
 				data "Std Dev" value: standard_deviation(building collect(each.aqi));
+				data "SUM AQI /1000" value: (building sum_of(each.aqi)) / 1000;				
 			}
 		}
 	}
