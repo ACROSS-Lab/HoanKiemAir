@@ -12,9 +12,10 @@ import "Pollution param and constants.gaml"
 global {
 	float seed <- 1.0;
 	// Dev parameter
-	bool mqtt_connect;
+	bool mqtt_connect <- false;
 	bool benchmark <- false;
 	bool debug_scheduling <- false;
+	bool extra_visualization <- true;
 	
 	// Shapefiles
 	string resources_dir <- "../includes/driving/";
