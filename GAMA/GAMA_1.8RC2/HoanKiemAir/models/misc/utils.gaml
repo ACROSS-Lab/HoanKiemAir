@@ -25,12 +25,6 @@ global {
 		time_spread_to_buildings <- 0.0;
 	}
 	
-//	reflex test_seed {
-//		if (cycle < 10) {
-//			write rnd(1000);
-//		}
-//	}
-	
 	string get_time {
 		int h <- current_date.hour;
 		int m <- current_date.minute;
@@ -51,61 +45,79 @@ global {
 	reflex update_car_population when: n_cars != n_cars_prev {
 		int delta_cars <- n_cars - n_cars_prev;
 		do update_vehicle_population("car", delta_cars);
-		ask first(progress_bar where (each.title = "Cars")) {
-			do update(float(n_cars));
+		
+		progress_bar cars_bar <-  first(progress_bar where (each.title = "Cars"));
+		if(cars_bar != nil) {
+			ask cars_bar {
+				do update(float(n_cars));
+			}		
 		}
+		
 		n_cars_prev <- n_cars;
 	}
 	
 	reflex update_motorbike_population when: n_motorbikes != n_motorbikes_prev {
 		int delta_motorbikes <- n_motorbikes - n_motorbikes_prev;
 		do update_vehicle_population("motorbike", delta_motorbikes);
-		ask first(progress_bar where (each.title = "Motorbikes")) {
-			do update(float(n_motorbikes));
+		
+		progress_bar moto_bars <- first(progress_bar where (each.title = "Motorbikes"));
+		if(moto_bars != nil) {
+			ask moto_bars {
+				do update(float(n_motorbikes));
+			}			
 		}
+
 		n_motorbikes_prev <- n_motorbikes;
 	}
 	
 	reflex update_road_scenario when: road_scenario != road_scenario_prev {
 		do update_road_network;
 		
-		string param_val;
-		switch road_scenario {
-			match 0 {
-				param_val <- "No closed road";
-				break;
+		param_indicator param_road_management <- first(param_indicator where (each.name = "Road management"));		
+		if(param_road_management != nil) {
+			string param_val;
+			switch road_scenario {
+				match 0 {
+					param_val <- "No closed road";
+					break;
+				}
+				match 1 {
+					param_val <- "Pedestrian zone active";
+					break;
+				}
+				match 2 {
+					param_val <- "Extension plan";
+					break;
+				}
 			}
-			match 1 {
-				param_val <- "Pedestrian zone active";
-				break;
-			}
-			match 2 {
-				param_val <- "Extension plan";
-				break;
-			}
+			ask param_road_management {
+				do update(param_val);
+			}	
 		}
-		ask first(param_indicator where (each.name = "Road management")) {
-			do update(param_val);
-		}
+		
 		road_scenario_prev <- road_scenario;
 	}
 
-	reflex update_display_mode when: display_mode_prev != display_mode {
-		string param_val;
-		switch (display_mode) {
-			match 0 {
-				param_val <- "Traffic";
-				break;	
+	reflex update_display_mode when: display_mode_prev != display_mode {	
+		param_indicator param_display <- first(param_indicator where (each.name = "Display mode"));
+		if(param_display != nil) {
+			string param_val;
+			switch (display_mode) {
+				match 0 {
+					param_val <- "Traffic";
+					break;	
+				}
+				match 1 {
+					param_val <- "Pollution";
+					break;	
+				}
 			}
-			match 1 {
-				param_val <- "Pollution";
-				break;	
+			
+			ask param_display {
+				do update(param_val);
 			}
 		}
 		
-		ask first(param_indicator where (each.name = "Display mode")) {
-			do update(param_val);
-		}
 		display_mode_prev <- display_mode;
 	}
 	
