@@ -40,13 +40,13 @@ global {
 		do init_visualization;
 	}
 	
-	reflex read_sensors when: every(5#mn) {
-		string t <- get_time();
-		loop s over: sensor {
-			pollutant_cell cell <- pollutant_cell(s.connected_pollutant_cell);
-			save [t, cell.co, cell.nox, cell.so2, cell.pm] to: "../output/sensor_readings/" + s.name + ".csv" type: csv rewrite: false;
-		}	
-	}
+//	reflex read_sensors when: every(5#mn) {
+//		string t <- get_time();
+//		loop s over: sensor {
+//			pollutant_cell cell <- pollutant_cell(s.connected_pollutant_cell);
+//			save [t, cell.co, cell.nox, cell.so2, cell.pm] to: "../output/sensor_readings/" + s.name + ".csv" type: csv rewrite: false;
+//		}	
+//	}
 }
 
 species scheduler schedules: intersection + road + vehicle + pollutant_manager + pollutant_cell {}
@@ -92,7 +92,7 @@ species pollutant_manager schedules: [] {
 		}
 	}
 	
-	reflex calculate_aqi when: every(refreshing_rate_plot) {
+	reflex calculate_aqi when: every(refreshing_rate_plot) and !empty(line_graph_aqi) {
  		float aqi <- max(pollutant_cell accumulate each.aqi);
 		ask line_graph_aqi {
 			do update(aqi);

@@ -37,10 +37,10 @@ global {
 	reflex create_outputs {	
 		if(cycle = 0) {
 			save ["Mean AQI", "Stdv AQI", "Sum AQI", "Mean max on interval"]
-				type: "csv" to: "results/re.csv" header: false rewrite: true;	
+				type: "csv" to: "results/res"+world.seed+".csv" header: false rewrite: true;	
 		}	
 		save [building mean_of(each.aqi), standard_deviation(building collect(each.aqi)),(building sum_of(each.aqi)),mean(max_on_interval)]
-			type: "csv" to: "results/re.csv" rewrite: false;
+			type: "csv" to: "results/res"+world.seed+".csv" rewrite: false;
 	}
 }
 

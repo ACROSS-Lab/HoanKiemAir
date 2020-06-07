@@ -75,7 +75,7 @@ global {
 		}
 	}
 	
-	reflex update_aqi_graph when: every(refreshing_rate_plot) {
+	reflex update_aqi_graph when: every(refreshing_rate_plot) and !empty(line_graph_aqi) {
 		 float aqi <- max(building accumulate each.aqi);
 		 ask line_graph_aqi {
 		 	do update(aqi);
