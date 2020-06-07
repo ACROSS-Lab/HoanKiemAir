@@ -82,6 +82,14 @@ experiment exp2 type: gui autorun: true {
 	}
 }
 
+/*
+ * 	HEADLESS
+ * ---
+ * Every experiment below that point are only for headless exploration purpose
+ */
 experiment expSensi type: gui autorun: true {
 	output {}
+}
+experiment headless_ClosingRoads type: gui {
+	parameter "Closing Roads" var: road_scenario init: 1 among: [1, 2];
 }
