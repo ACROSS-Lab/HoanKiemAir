@@ -12,6 +12,7 @@ import "main (grid cells v1).gaml"
 
 global {
 	int SIZE_WINDOW <- 20;
+	string result_folder <- "results/";
 	
 	bool extra_visualization <- false;
 	
@@ -37,10 +38,10 @@ global {
 	reflex create_outputs {	
 		if(cycle = 0) {
 			save ["Mean AQI", "Stdv AQI", "Sum AQI", "Mean max on interval"]
-				type: "csv" to: "results/res"+world.seed+".csv" header: false rewrite: true;	
+				type: "csv" to: result_folder + "res"+world.seed+".csv" header: false rewrite: true;	
 		}	
 		save [building mean_of(each.aqi), standard_deviation(building collect(each.aqi)),(building sum_of(each.aqi)),mean(max_on_interval)]
-			type: "csv" to: "results/res"+world.seed+".csv" rewrite: false;
+			type: "csv" to: result_folder + "res"+world.seed+".csv" rewrite: false;
 	}
 }
 
@@ -88,6 +89,9 @@ experiment exp2 type: gui autorun: true {
  * Every experiment below that point are only for headless exploration purpose
  */
 experiment expSensi type: gui autorun: true {
+	
+	parameter "Folder for CSV" var: result_folder init: "results/";
+	
 	output {}
 }
 experiment headless_ClosingRoads type: gui {
