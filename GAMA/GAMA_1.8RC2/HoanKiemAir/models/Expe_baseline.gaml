@@ -90,6 +90,7 @@ experiment exp2 type: gui autorun: true {
  */
 experiment expSensi type: gui autorun: true {
 	
+	parameter "step" var: step init: 16#s among: [16#s, 30#s, 1#mn, 2#mn, 3#mn, 5#mn];
 	parameter "Folder for CSV" var: result_folder init: "results/";
 	
 	output {}
