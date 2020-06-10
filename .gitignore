@@ -241,3 +241,6 @@ GAMA/GAMA_1.8RC2/3D map/.DS_Store
 GAMA/GAMA_1.8RC2/HoanKiemAir/output
 
 .vscode
+
+# Headless results
+*.csv
