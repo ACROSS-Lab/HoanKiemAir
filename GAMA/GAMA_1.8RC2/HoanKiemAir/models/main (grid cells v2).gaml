@@ -127,3 +127,9 @@ experiment exp autorun: false {
 		}
 	}
 }
+
+experiment shortExplo_GridV2 type: gui {
+	parameter "P Decay" var: pollutant_decay_rate init: 0.01 among: [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99];
+	parameter "P Decay" var: pollutant_diffusion init: 0.02 min: 0.02 max: 0.11 step: 0.02;
+	parameter "Folder for CSV" var: result_folder init: "results/";
+}
