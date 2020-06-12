@@ -11,15 +11,11 @@ import "main (grid cells v1).gaml"
 //import "main (road cells).gaml"
 
 global {
-	int SIZE_WINDOW <- 20;
-	string result_folder <- "results/";
 	
 	bool extra_visualization <- false;
 	
 	float pollutant_decay_rate <- 0.99;
 	float pollutant_diffusion <- 0.05;
-	
-	list<float> max_on_interval <- [];
 
 	int n_cars <- max_number_of_cars;
 	int n_motorbikes <- max_number_of_motorbikes;
@@ -27,6 +23,10 @@ global {
 	int display_mode <- 1 ;
 	float refreshing_rate_plot init: 2#mn ;
 
+	
+	int SIZE_WINDOW <- 20;
+	string result_folder <- "results/";
+	list<float> max_on_interval <- [];
 	
 	reflex update_max_on_interval {
 		if(length(max_on_interval) > SIZE_WINDOW) {
@@ -97,4 +97,12 @@ experiment expSensi type: gui autorun: true {
 }
 experiment headless_ClosingRoads type: gui {
 	parameter "Closing Roads" var: road_scenario init: 1 among: [1, 2];
+	parameter "Folder for CSV" var: result_folder init: "results/";
+}
+
+
+experiment shortExplo_GridV1 type: gui {
+	parameter "P Decay" var: pollutant_decay_rate init: 0.01 among: [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99];
+	parameter "P Decay" var: pollutant_diffusion init: 0.02 min: 0.02 max: 0.11 step: 0.02;
+	parameter "Folder for CSV" var: result_folder init: "results/";
 }
