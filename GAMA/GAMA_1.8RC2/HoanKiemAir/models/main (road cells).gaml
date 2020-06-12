@@ -359,3 +359,8 @@ experiment explore type: batch repeat: 1 until:  time > 23#h {
 	method tabu iter_max: 15 tabu_list_size: 3 minimize: mae_pollutants;
 //	method exhaustive minimize: mae_pollutants;
 }
+
+experiment shortExplo_Road type: gui {
+	parameter "P Decay" var: pollutant_decay_rate init: 0.01 among: [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99];
+	parameter "Folder for CSV" var: result_folder init: "results/";
+}
