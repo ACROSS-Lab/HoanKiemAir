@@ -102,8 +102,25 @@ global {
 		}
 	}
 	
-	reflex pause when: time > 23#h{
-		do pause;
+	// Headless package
+	int SIZE_WINDOW <- 20;
+	string result_folder <- "results/";
+	list<float> max_on_interval <- [];
+	
+	reflex update_max_on_interval {
+		if(length(max_on_interval) > SIZE_WINDOW) {
+			remove index: 0 from: max_on_interval;
+		} 	
+		add building max_of(each.aqi) to: max_on_interval;	
+	}
+	
+	reflex create_outputs {	
+		if(cycle = 0) {
+			save ["Mean AQI", "Stdv AQI", "Sum AQI", "Mean max on interval"]
+				type: "csv" to: result_folder + "res"+world.seed+".csv" header: false rewrite: true;	
+		}	
+		save [building mean_of(each.aqi), standard_deviation(building collect(each.aqi)),(building sum_of(each.aqi)),mean(max_on_interval)]
+			type: "csv" to: result_folder + "res"+world.seed+".csv" rewrite: false;
 	}
 }
 
