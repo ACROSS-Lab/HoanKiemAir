@@ -77,8 +77,8 @@ global{
 		write "node agents filtered";
 		
 		//Save all the road agents inside the file with the path written, using the with: facet to make a link between attributes and columns of the resulting shapefiles. 
-		save road type:"shp" to: resources_dir + "roads.shp" with: [name::"name", lanes::"lanes",maxspeed::"maxspeed", oneway::"oneway"] ;
-		save intersection type:"shp" to: resources_dir + "intersections.shp" with:[type::"type", crossing::"crossing"] ;
+		save road type:"shp" to: resources_dir + "roads.shp" attributes: ["name"::name, "lanes"::lanes,"maxspeed"::maxspeed, "oneway"::oneway] ;
+		save intersection type:"shp" to: resources_dir + "intersections.shp" attributes:["type"::type, "crossing"::crossing] ;
 		write "road and node shapefile saved";
 	}
 }

@@ -49,7 +49,7 @@ global {
 		}
 		
 	//	create cell from:road accumulate(each.my_geoms);
-		save cell type:'shp' to:"../../includes/driving/road_cells.shp" with:[id_cell_in_road::"num_cell"];
+		save cell type:'shp' to:"../../includes/driving/road_cells.shp" attributes:["num_cell"::id_cell_in_road];
 	}
 	
 }
