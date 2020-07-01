@@ -6,8 +6,10 @@ library(dplyr)
 library(dygraphs)
 library(xts)
 
-#setwd("~/Dev/Rworkspace/HKA_results")
-setwd("~/Dev/Rworkspace/HKA_results/Exp1-100rep")
+# setwd("~/Dev/Rworkspace/HKA_results")
+# setwd("~/Dev/Rworkspace/HKA_results/Exp1-100rep")
+setwd("~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/Exp1-Daytime-24rep/")
+setwd("~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/Daytime-scenarios/1/")
 
 #################################################
 # Functions 
@@ -70,8 +72,9 @@ data <- data.frame(
   min=unlist(min)
 )
 
+# dyAxis("y", label = nameY, valueRange = c(0, 1700)) %>%
 p <- dygraph(data) %>%
-  dyAxis("y", label = nameY, valueRange = c(0, 1700)) %>%
+  dyAxis("y", label = nameY, valueRange = c(0, 130000)) %>%
   dySeries(c("max","mean","min"))
 p
 
@@ -96,8 +99,9 @@ data <- data.frame(
   min=unlist(min)
 )
 
+#   dyAxis("y", label = nameY, valueRange = c(0, 600)) %>%
 p <- dygraph(data) %>%
-  dyAxis("y", label = nameY, valueRange = c(0, 600)) %>%
+  dyAxis("y", label = nameY, valueRange = c(0, 42000)) %>%
   dySeries(c("max","mean","min"))
 p
 
@@ -147,8 +151,9 @@ data <- data.frame(
   min=unlist(min)
 )
 
+#    dyAxis("y", label = nameY, valueRange = c(0, 3000)) %>%
 p <- dygraph(data) %>%
-  dyAxis("y", label = nameY, valueRange = c(0, 3000)) %>%
+  dyAxis("y", label = nameY, valueRange = c(0, 390000)) %>%
   dySeries(c("max","mean","min"))
 p
 
