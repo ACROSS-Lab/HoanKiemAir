@@ -70,7 +70,11 @@ global {
 		n_motorbikes_prev <- n_motorbikes;
 	}
 	
-	reflex update_road_scenario when: road_scenario != road_scenario_prev {
+	reflex R_update_road_scenario when: road_scenario != road_scenario_prev {
+		do update_road_scenario;
+	}
+	
+	action update_road_scenario  {
 		do update_road_network;
 		
 		param_indicator param_road_management <- first(param_indicator where (each.name = "Road management"));		
@@ -142,11 +146,11 @@ global {
 	
 	reflex update_vehicle_population_according_to_daytime when:day_time_traffic {
 		float t_rate <- general_traffic_daytime();
-		write current_date;
+//		write current_date;
 		n_cars <- int(n_vehicles_max * 0.05 * t_rate);
 		n_motorbikes <- int(n_vehicles_max * 0.95 * t_rate);
-		write n_cars;
-		write n_motorbikes;
+//		write n_cars;
+//		write n_motorbikes;
 	}
 }
 

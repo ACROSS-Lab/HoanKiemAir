@@ -8,6 +8,7 @@
 model traffic
 
 import "../Contantes and Parameters/global_vars.gaml"
+import  "../misc/utils.gaml"
 
 global {
 	// params
@@ -60,6 +61,8 @@ global {
 		ask intersection {
 			do initialize;
 		}
+		
+		do update_road_scenario;
 	}
 	
 	action reset_traffic {
