@@ -95,8 +95,9 @@ create_dygraphs <- function(df,m_folder,maxRange,n_Y) {
   folders <- list.dirs(m_folder,recursive = FALSE)
   
   p<- dygraph(df)%>%
-    dyAxis("y", label = n_Y, valueRange = c(0, maxRange)) %>%
-    dyLegend(show = "follow")
+    dyAxis("y", label = n_Y, valueRange = c(0, maxRange)) 
+  # %>%
+#    dyLegend(show = "follow")
   
   for(i in 1:length(folders)) {
     f <- getRelativePath(folders[i], relativeTo = m_folder)
@@ -114,9 +115,9 @@ create_dygraphs <- function(df,m_folder,maxRange,n_Y) {
 ## CONSTANTES
 #################################################
 
-main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/Exp3/server8-Roads"
-main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/Exp3/server8-gridV1"
-
+main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/Exp3/grid1"
+main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/Exp3/road"
+#main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/Exp3/server8-gridV1"
 #main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/Exp3/pollutionMod/rog"
 #main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/Exp3/pollutionMod/server7"
 # main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/Exp3/pollutionMod/road-Serv8"
@@ -133,6 +134,7 @@ col <- 1
 
 df_mean <- df_from_list_folders(main_folder,size_of_csv,col)
 
+p_mean <- create_dygraphs(df_mean,main_folder,5000,nameY)
 p_mean <- create_dygraphs(df_mean,main_folder,200,nameY)
 p_mean
 
@@ -146,7 +148,8 @@ col <- 2
 
 df_stdDev <- df_from_list_folders(main_folder,size_of_csv,col)
 
-p_stdDev <- create_dygraphs(df_stdDev,main_folder,65,nameY)
+p_stdDev <- create_dygraphs(df_stdDev,main_folder,150
+                            ,nameY)
 p_stdDev
 
 
@@ -159,7 +162,7 @@ col <- 4
 
 df_meanMax <- df_from_list_folders(main_folder,size_of_csv,col)
 
-p_meanMax <- create_dygraphs(df_meanMax,main_folder,2000,nameY)
+p_meanMax <- create_dygraphs(df_meanMax,main_folder,7000,nameY)
 p_meanMax
 
 

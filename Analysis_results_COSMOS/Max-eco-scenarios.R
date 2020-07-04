@@ -103,8 +103,8 @@ create_dygraphs <- function(df,folders,maxRange,n_Y) {
 ## CONSTANTES
 #################################################
 
-main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/Daytime-scenarios"
-list_of_folders <- c("0","1","2")
+main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/Max-evo-scenarios"
+list_of_folders <- c("1","2")
 size_of_csv <- 3000
 
 
@@ -117,7 +117,7 @@ col <- 1
 
 df_mean <- df_from_list_folders(main_folder,list_of_folders,size_of_csv,col)
 
-p_mean <- create_dygraphs(df_mean,list_of_folders,140000,nameY)
+p_mean <- create_dygraphs(df_mean,list_of_folders,1800,nameY)
 p_mean
 
 
@@ -130,7 +130,7 @@ col <- 2
 
 df_stdDev <- df_from_list_folders(main_folder,list_of_folders,size_of_csv,col)
 
-p_stdDev <- create_dygraphs(df_stdDev,list_of_folders,75000,nameY)
+p_stdDev <- create_dygraphs(df_stdDev,list_of_folders,750,nameY)
 p_stdDev
 
 #################################################
@@ -142,7 +142,7 @@ col <- 4
 
 df_meanMax <- df_from_list_folders(main_folder,list_of_folders,size_of_csv,col)
 
-p_meanMax <- create_dygraphs(df_meanMax,list_of_folders,550000,nameY)
+p_meanMax <- create_dygraphs(df_meanMax,list_of_folders,4000,nameY)
 p_meanMax
 
 #################################################
@@ -154,8 +154,12 @@ col <- 5
 
 df_meanMin <- df_from_list_folders(main_folder,list_of_folders,size_of_csv,col)
 
-p_meanMin <- create_dygraphs(df_meanMin,list_of_folders,18000,nameY)
+p_meanMin <- create_dygraphs(df_meanMin,list_of_folders,300,nameY)
 p_meanMin
+
+
+
+
 
 
 
