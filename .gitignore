@@ -244,3 +244,4 @@ GAMA/GAMA_1.8RC2/HoanKiemAir/output
 
 # Headless results
 *.csv
+*.png
