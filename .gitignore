@@ -243,5 +243,4 @@ GAMA/GAMA_1.8RC2/HoanKiemAir/output
 .vscode
 
 # Headless results
-*.csv
 *.png
