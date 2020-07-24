@@ -1,9 +1,9 @@
 # Libraries
 library(ggplot2)
 library(dplyr)
-# install.packages("dygraphs")
 library(dygraphs)
 library(xts)
+library(R.utils)
 
 
 #################################################
@@ -65,19 +65,22 @@ create_dataframe <- function(wd,size_csv,col) { #col) {
 # Parse a set of folders to create the dataframe
 ##
 
-df_from_list_folders <- function(m_folder,folders,nb_steps,col){
+df_from_list_folders <- function(m_folder,nb_steps,col){
+  folders <- list.dirs(m_folder,recursive = FALSE)
   data <- data.frame()
   
   for(f in folders){
-    d <- create_dataframe(paste(m_folder,f,sep="/"),nb_steps,col)
+    d <- create_dataframe(f,nb_steps,col)
     
     if(length(data) == 0) {
       data <- data.frame(time=d$time)
     }
+    f <- getRelativePath(f, relativeTo = m_folder)
     data[paste("mean",f,sep="")] = d$mean
     data[paste("max",f,sep="")] = d$max
     data[paste("min",f,sep="")] = d$min
   }
+  print(summary(data))
   return(data)
 }
 
@@ -85,12 +88,16 @@ df_from_list_folders <- function(m_folder,folders,nb_steps,col){
 # Create a plot with confidence interval from df
 ##
 
-create_dygraphs <- function(df,folders,maxRange,n_Y) {
+create_dygraphs <- function(df,m_folder,maxRange,n_Y) {
+  folders <- list.dirs(m_folder,recursive = FALSE)
+  
   p<- dygraph(df)%>%
-    dyAxis("y", label = n_Y, valueRange = c(0, maxRange))
+    dyAxis("y", label = n_Y, valueRange = c(0, maxRange)) 
+  # %>%
+  #    dyLegend(show = "follow")
   
   for(i in 1:length(folders)) {
-    f <- list_of_folders[i]
+    f <- getRelativePath(folders[i], relativeTo = m_folder)
     print(paste("mean",f,sep=""))
     p <- p %>%
       dySeries(c(paste("max",f,sep=""),paste("mean",f,sep=""),paste("min",f,sep="")))
@@ -99,13 +106,13 @@ create_dygraphs <- function(df,folders,maxRange,n_Y) {
   return(p)
 }
 
+
 #################################################
 ## CONSTANTES
 #################################################
 
-main_folder <- "~/Dev/Rworkspace/HKA_results/Exp2"
-list_of_folders <- c("step_16.0","step_30.0","step_60.0","step_120.0","step_180.0","step_300.0")
-size_of_csv <- 3000
+main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/exp2"
+size_of_csv <- 1500
 
 
 #################################################
@@ -115,9 +122,9 @@ size_of_csv <- 3000
 nameY <- "Mean.AQI"
 col <- 1
 
-df_mean <- df_from_list_folders(main_folder,list_of_folders,size_of_csv,col)
+df_mean <- df_from_list_folders(main_folder,size_of_csv,col)
 
-p_mean <- create_dygraphs(df_mean,list_of_folders,3000,nameY)
+p_mean <- create_dygraphs(df_mean,main_folder,270,nameY)
 p_mean
 
 
@@ -128,9 +135,9 @@ p_mean
 nameY = "stdv.AQI"
 col <- 2
 
-df_stddev <- df_from_list_folders(main_folder,list_of_folders,size_of_csv,col)
+df_stddev <- df_from_list_folders(main_folder,size_of_csv,col)
 
-p_stddev <- create_dygraphs(df_mean,list_of_folders,1900,nameY)
+p_stddev <- create_dygraphs(df_stddev,main_folder,80,nameY)
 p_stddev
 
 
@@ -141,8 +148,19 @@ p_stddev
 nameY = "Mean Max on interval"
 col <- 4
 
-df_meanMax <- df_from_list_folders(main_folder,list_of_folders,size_of_csv,col)
+df_meanMax <- df_from_list_folders(main_folder,size_of_csv,col)
 
-p_meanMax <- create_dygraphs(df_mean,list_of_folders,3000,nameY)
+p_meanMax <- create_dygraphs(df_meanMax,main_folder,600,nameY)
 p_meanMax
 
+#################################################
+# Mean Min : 5
+#################################################
+
+nameY = "Mean Min on interval"
+col <- 5
+
+df_meanMin <- df_from_list_folders(main_folder,size_of_csv,col)
+
+p_meanMin <- create_dygraphs(df_meanMin,main_folder,25,nameY)
+p_meanMin

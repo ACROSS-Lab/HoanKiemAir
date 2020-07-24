@@ -1,8 +1,10 @@
+# Libraries
 library(ggplot2)
 library(dplyr)
 library(dygraphs)
 library(xts)
 library(R.utils)
+
 
 #################################################
 # Functions 
@@ -24,19 +26,6 @@ mean_line_col <- function(d,i,col) {
   x <- lapply(d, function(x) x[i,col])
   return(mean(as.numeric(unlist(x))))
 }
-
-valParam <- function(name,param) {
-  l <- strsplit(name, "--")
-  l <- lapply(l, function(z) strsplit(z,"-"))
-  for(i in 1:length(l[[1]])) {
-    if(l[[1]][[i]][1] == param) {
-      return(l[[1]][[i]][2])
-    }
-  }
-  return(-1)
-}
-# val("meanDecay-0.699999988079071--Diffusion-0.019999999552965164","Diffusion")
-# val("meanDecay-0.699999988079071--Diffusion-0.019999999552965164","meanDecay")
 
 #################################################
 # Import data 
@@ -71,35 +60,6 @@ create_dataframe <- function(wd,size_csv,col) { #col) {
   return(data)
 }
 
-#################################################
-# Parse a set of folders to create the dataframe
-##
-
-df_from_list_folders_given_value_param <- function(m_folder,nb_steps,col,param,value){
-  folders <- list.dirs(m_folder,recursive = FALSE)
-  data <- data.frame()
-  
-  for(f in folders){
-    print(f)
-    print(valParam(f,param))
-    print(value)
-    if(valParam(f,param) == value) {
-      d <- create_dataframe(f,nb_steps,col)
-      
-      if(length(data) == 0) {
-        data <- data.frame(time=d$time)
-      }
-      f <- getRelativePath(f, relativeTo = m_folder)
-      data[paste("mean",f,sep="")] = d$mean
-      data[paste("max",f,sep="")] = d$max
-      data[paste("min",f,sep="")] = d$min      
-    }
-  }
-  print(summary(data))
-  return(data)
-}
-
-df_from_list_folders_given_value_param(main_folder,size_of_csv,col,)
 
 #################################################
 # Parse a set of folders to create the dataframe
@@ -134,7 +94,7 @@ create_dygraphs <- function(df,m_folder,maxRange,n_Y) {
   p<- dygraph(df)%>%
     dyAxis("y", label = n_Y, valueRange = c(0, maxRange)) 
   # %>%
-#    dyLegend(show = "follow")
+  #    dyLegend(show = "follow")
   
   for(i in 1:length(folders)) {
     f <- getRelativePath(folders[i], relativeTo = m_folder)
@@ -147,13 +107,12 @@ create_dygraphs <- function(df,m_folder,maxRange,n_Y) {
 }
 
 
-
 #################################################
 ## CONSTANTES
 #################################################
 
-main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/exp3"
-size_of_csv <- 1500
+main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/exp62"
+size_of_csv <- 3000
 
 
 #################################################
@@ -165,8 +124,7 @@ col <- 1
 
 df_mean <- df_from_list_folders(main_folder,size_of_csv,col)
 
-p_mean <- create_dygraphs(df_mean,main_folder,5000,nameY)
-p_mean <- create_dygraphs(df_mean,main_folder,120,nameY)
+p_mean <- create_dygraphs(df_mean,main_folder,100,nameY)
 p_mean
 
 
@@ -177,11 +135,10 @@ p_mean
 nameY = "stdv.AQI"
 col <- 2
 
-df_stdDev <- df_from_list_folders(main_folder,size_of_csv,col)
+df_stddev <- df_from_list_folders(main_folder,size_of_csv,col)
 
-p_stdDev <- create_dygraphs(df_stdDev,main_folder,150
-                            ,nameY)
-p_stdDev
+p_stddev <- create_dygraphs(df_stddev,main_folder,50,nameY)
+p_stddev
 
 
 #################################################
@@ -193,28 +150,18 @@ col <- 4
 
 df_meanMax <- df_from_list_folders(main_folder,size_of_csv,col)
 
-p_meanMax <- create_dygraphs(df_meanMax,main_folder,7000,nameY)
+p_meanMax <- create_dygraphs(df_meanMax,main_folder,250,nameY)
 p_meanMax
 
-
-##################################################################################################
-##################################################################################################
-##################################################################################################
-main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/Exp3/server8-gridV1"
-size_of_csv <- 3000
-
 #################################################
-# MEANAQI : 1
+# Mean Min : 5
 #################################################
 
-nameY <- "Mean.AQI"
-col <- 1
+nameY = "Mean Min on interval"
+col <- 5
 
-df_mean_Roads <- df_from_list_folders(main_folder,size_of_csv,col)
+df_meanMin <- df_from_list_folders(main_folder,size_of_csv,col)
 
-p_mean_Roads <- create_dygraphs(df_mean_Roads,main_folder,0.05,nameY)
-p_mean_Roads
-
-
-
+p_meanMin <- create_dygraphs(df_meanMin,main_folder,10,nameY)
+p_meanMin
 

@@ -1,15 +1,10 @@
 # Libraries
 library(ggplot2)
 library(dplyr)
-#
-# install.packages("dygraphs")
 library(dygraphs)
 library(xts)
 
-# setwd("~/Dev/Rworkspace/HKA_results")
-# setwd("~/Dev/Rworkspace/HKA_results/Exp1-100rep")
-setwd("~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/Exp1-Daytime-24rep/")
-setwd("~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/Daytime-scenarios/1/")
+setwd("~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/exp11/")
 
 #################################################
 # Functions 
@@ -74,7 +69,7 @@ data <- data.frame(
 
 # dyAxis("y", label = nameY, valueRange = c(0, 1700)) %>%
 p <- dygraph(data) %>%
-  dyAxis("y", label = nameY, valueRange = c(0, 130000)) %>%
+  dyAxis("y", label = nameY, valueRange = c(0, 100)) %>%
   dySeries(c("max","mean","min"))
 p
 
@@ -101,16 +96,16 @@ data <- data.frame(
 
 #   dyAxis("y", label = nameY, valueRange = c(0, 600)) %>%
 p <- dygraph(data) %>%
-  dyAxis("y", label = nameY, valueRange = c(0, 42000)) %>%
+  dyAxis("y", label = nameY, valueRange = c(0, 50)) %>%
   dySeries(c("max","mean","min"))
 p
 
 #################################################
-# SUM.AQI : 3
+# MAX.AQI : 4
 #################################################
 
-nameY = "SUM.AQI"
-col <- 3
+nameY = "MAX.AQI"
+col <- 4
 max <- lapply(nb_elements,function(ind) max_line_col(myfiles,ind,col))
 #unlist(max)
 min  <- lapply(nb_elements,function(ind) min_line_col(myfiles,ind,col))
@@ -126,17 +121,17 @@ data <- data.frame(
 )
 
 p <- dygraph(data) %>%
-  dyAxis("y", label = nameY, valueRange = c(0, 10000000)) %>%
+  dyAxis("y", label = nameY, valueRange = c(0, 200)) %>%
   dySeries(c("max","mean","min"))
 p
 
 
 #################################################
-# Mean Max : 4
+# MIN.AQI : 5
 #################################################
 
-nameY = "Mean Max on interval"
-col <- 4
+nameY = "Mean Min on interval"
+col <- 5
 max <- lapply(nb_elements,function(ind) max_line_col(myfiles,ind,col))
 #unlist(max)
 min  <- lapply(nb_elements,function(ind) min_line_col(myfiles,ind,col))
@@ -153,7 +148,7 @@ data <- data.frame(
 
 #    dyAxis("y", label = nameY, valueRange = c(0, 3000)) %>%
 p <- dygraph(data) %>%
-  dyAxis("y", label = nameY, valueRange = c(0, 390000)) %>%
+  dyAxis("y", label = nameY, valueRange = c(0, 20)) %>%
   dySeries(c("max","mean","min"))
 p
 
@@ -162,6 +157,7 @@ p
 ##################################################################################################
 stableStep <- 2000
 finalStep <- 2998
+setwd("~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/exp12/")
 
 
 
@@ -212,11 +208,12 @@ standard_error_on_replication <- function(sst,fst,col) {
 
 
 
-m<-matrix(c(1,2,3),ncol=3,byrow=TRUE)
+m<-matrix(c(1,2,3,4),ncol=4,byrow=TRUE)
 layout(m)
 
 standard_error_on_replication(stableStep,finalStep,1)
 standard_error_on_replication(stableStep,finalStep,2)
 #standard_error_on_replication(stableStep,finalStep,3)
 standard_error_on_replication(stableStep,finalStep,4)
+standard_error_on_replication(stableStep,finalStep,5)
 
