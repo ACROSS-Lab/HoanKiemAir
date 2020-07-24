@@ -153,6 +153,7 @@ create_dygraphs <- function(df,m_folder,maxRange,n_Y) {
 #################################################
 
 main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/exp3"
+main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/exp3-roads"
 size_of_csv <- 1500
 
 
@@ -166,7 +167,7 @@ col <- 1
 df_mean <- df_from_list_folders(main_folder,size_of_csv,col)
 
 p_mean <- create_dygraphs(df_mean,main_folder,5000,nameY)
-p_mean <- create_dygraphs(df_mean,main_folder,120,nameY)
+p_mean <- create_dygraphs(df_mean,main_folder,600,nameY)
 p_mean
 
 
@@ -179,7 +180,7 @@ col <- 2
 
 df_stdDev <- df_from_list_folders(main_folder,size_of_csv,col)
 
-p_stdDev <- create_dygraphs(df_stdDev,main_folder,150
+p_stdDev <- create_dygraphs(df_stdDev,main_folder,450
                             ,nameY)
 p_stdDev
 
@@ -195,6 +196,18 @@ df_meanMax <- df_from_list_folders(main_folder,size_of_csv,col)
 
 p_meanMax <- create_dygraphs(df_meanMax,main_folder,7000,nameY)
 p_meanMax
+
+#################################################
+# Mean Min : 5
+#################################################
+
+nameY = "Mean Min on interval"
+col <- 5
+
+df_meanMin <- df_from_list_folders(main_folder,size_of_csv,col)
+
+p_meanMin <- create_dygraphs(df_meanMin,main_folder,10,nameY)
+p_meanMin
 
 
 ##################################################################################################
