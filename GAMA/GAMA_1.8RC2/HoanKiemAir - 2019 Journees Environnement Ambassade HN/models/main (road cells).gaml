@@ -50,12 +50,6 @@ global {
 		road_network <- as_edge_graph(road) with_weights road_weights;
 		geometry road_geometry <- union(road accumulate (each.shape));
 		
-		// Init pollutant cells
-		create road_cell from: road_cells_shape_file {
-			neighbors <- road_cell at_distance 10#cm;
-			affected_buildings <- building at_distance 50 #m;
-		}
-		
 		// Additional visualization
 		create building from: buildings_shape_file;
 		create decoration_building from: buildings_admin_shape_file;
@@ -64,6 +58,12 @@ global {
 		create progress_bar with: [x::-700, y::1800, width::500, height::100, max_val::500, title::"Cars",  left_label::"0", right_label::"500"];
 		create progress_bar with: [x::-700, y::2000, width::500, height::100, max_val::1500, title::"Motorbikes", left_label::"0", right_label::"1500"];
 		create line_graph with: [x::2600, y::1400, width::1300, height::1000, label::"Hourly AQI"];
+	
+		// Init pollutant cells
+		create road_cell from: road_cells_shape_file {
+			neighbors <- road_cell at_distance 10#cm;
+			affected_buildings <- building at_distance 50 #m;
+		}
 	}
 	
 	action update_vehicle_population(string type, int delta) {
@@ -163,18 +163,26 @@ global {
 				}
 			}
 			time_absorb_pollutants <- time_absorb_pollutants + (machine_time - start);
+			
 			// Diffuse pollutants to neighbor cells
 			start <- machine_time;
 			ask neighbors {
-				self.co <- self.co + 0.05 * myself.co;
-				self.nox <- self.nox + 0.05 * myself.nox;
-				self.so2 <- self.so2 + 0.05 * myself.so2;
-				self.pm <- self.pm + 0.05 * myself.pm;
+				self.co <- self.co + pollutant_diffusion * myself.co;
+				self.nox <- self.nox + pollutant_diffusion * myself.nox;
+				self.so2 <- self.so2 + pollutant_diffusion * myself.so2;
+				self.pm <- self.pm + pollutant_diffusion * myself.pm;
 			}
+			co <- co * (1 - pollutant_diffusion * length(neighbors));
+			nox <- nox * (1 - pollutant_diffusion * length(neighbors));
+			so2 <- so2 * (1 - pollutant_diffusion * length(neighbors));
+			pm <- pm * (1 - pollutant_diffusion * length(neighbors));			
+			
+			// Decay pollutants
 			co <- pollutant_decay_rate * co;
 			nox <- pollutant_decay_rate * nox;
 			so2 <- pollutant_decay_rate * so2;
 			pm <- pollutant_decay_rate * pm;
+			
 			time_diffuse_pollutants <- time_diffuse_pollutants + (machine_time - start);
 			list<building> buildings <- list<building>(self.affected_buildings);
 			ask buildings {

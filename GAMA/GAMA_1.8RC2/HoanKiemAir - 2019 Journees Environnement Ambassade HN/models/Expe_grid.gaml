@@ -5,7 +5,7 @@
 * Tags: Tag1, Tag2, TagN
 ***/
 
-model Expebaseline
+model ExpebaselineGrid
 
 import "main (grid cells).gaml"
 
@@ -43,21 +43,18 @@ global {
 			result_folder <- result_folder + "daytime-true--roadScenario-" + road_scenario + "/";
 		} else if(exp_name = "exp62") {
 			result_folder <- result_folder + "daytime-false--roadScenario-" + road_scenario + "/";
-		} 
-//		else if(exp_name = "exp71") {
-//			result_folder <- result_folder + "daytime-true--objective_scenario-" + objective_scenario + "/";
-//		} else if(exp_name = "exp72") {
-//			result_folder <- result_folder + "daytime-false--objective_scenario-" + objective_scenario + "/";	
-//		}
-		
-		
+		} else if(exp_name = "exp63") {
+			result_folder <- result_folder + "daytime-true--objective_scenario-" + objective_scenario + "/";
+		} else if(exp_name = "exp64") {
+			result_folder <- result_folder + "daytime-false--objective_scenario-" + objective_scenario + "/";	
+		}	
 	}
 
 	
-/*	int modif_scenario_day <- 1;
-	int objective_scenario  <- 1;
+	int modif_scenario_day <- 1;
+	int objective_scenario  <- 0;
 	
-	reflex update_scenario when: day_time_traffic and (modif_scenario_day != current_date.day) and ((current_date.day - starting_date.day) mod 3 = 0) {
+	reflex update_scenario_daytime when: day_time_traffic and (modif_scenario_day != current_date.day) and ((current_date.day - starting_date.day) mod 3 = 0) {
 		modif_scenario_day <- current_date.day;
 		if(cycle >  0) {
 			if(road_scenario = 0) {
@@ -68,7 +65,7 @@ global {
 		}
 	}
 	
-	reflex update_scenario when: not(day_time_traffic) and (cycle mod 800 = 0) {
+	reflex update_scenario_maxTraffic when: not(day_time_traffic) and (cycle mod 800 = 0) {
 		if(cycle >  0) {
 			if(road_scenario = 0) {
 				road_scenario <- objective_scenario;
@@ -77,7 +74,7 @@ global {
 			}
 		}
 	}	
-*/	
+	
 	reflex update_max_on_interval {
 		if(length(max_on_interval) > SIZE_WINDOW) {
 			remove index: 0 from: max_on_interval;
@@ -198,22 +195,62 @@ experiment exp62 type: gui {
 	parameter "Time step" var:step init: 16#s;
 }
 
-
-/*experiment GridV1_daytime_alternative_closingmode type: batch until: (cycle > 3000) repeat: 8 {
+// Experiment on change  of pedestrian area scenario  (en mode daytime)
+// Parameters:
+//   - objective_scenario among: [1, 2];
+//   - initial objective_scenario: 0
+//   - day_time_traffic : true
+//   - step : 5#mn
+// Replications: 10
+// Stop condition: (cycle > 3000)
+experiment exp63 type: gui {
+	parameter  "Experiment name" var: exp_name init: "exp63";
+	
 	parameter "Daytime traffic" var: day_time_traffic init:true;
 	parameter "Closing Roads" var: road_scenario init: 0;
 	parameter "Objective scenario" var: objective_scenario <- 1 among: [1,2];
 	
 	parameter "Time step" var:step init:5#mn;
 	parameter "Starting time" var:starting_date_string init:"05 00 00";
-	parameter "Folder for CSV" var: result_folder init: "results/";	
 }
 
-experiment GridV1_max_alternative_closingmode type: batch until: (cycle > 3000) repeat: 8 {
-	parameter "Daytime traffic" var: day_time_traffic init:false;
+experiment exp63_batch type: batch until: (cycle > 3000) repeat: 10 {
+	parameter  "Experiment name" var: exp_name init: "exp63";
+	
+	parameter "Daytime traffic" var: day_time_traffic init:true;
 	parameter "Closing Roads" var: road_scenario init: 0;
 	parameter "Objective scenario" var: objective_scenario <- 1 among: [1,2];
 	
-	parameter "Folder for CSV" var: result_folder init: "results/";	
+	parameter "Time step" var:step init:5#mn;
+	parameter "Starting time" var:starting_date_string init:"05 00 00";
 }
-*/
+
+// Experiment on change  of pedestrian area scenario  (en mode max traffic)
+// Parameters:
+//   - objective_scenario among: [1, 2];
+//   - initial objective_scenario: 0
+//   - day_time_traffic : falsse
+//   - step : 5#mn
+// Replications: 10
+// Stop condition: (cycle > 3000)
+experiment exp64 type: gui {
+	parameter  "Experiment name" var: exp_name init: "exp64";
+	
+	parameter "Daytime traffic" var: day_time_traffic init: false;
+	parameter "Closing Roads" var: road_scenario init: 0;
+	parameter "Objective scenario" var: objective_scenario <- 1 ;
+	
+	parameter "Time step" var:step init: 16#s;
+	parameter "Starting time" var:starting_date_string init:"05 00 00";
+}
+
+experiment exp64_batch type: batch until: (cycle > 3000) repeat: 10 {
+	parameter  "Experiment name" var: exp_name init: "exp64";
+	
+	parameter "Daytime traffic" var: day_time_traffic init: false;
+	parameter "Closing Roads" var: road_scenario init: 0;
+	parameter "Objective scenario" var: objective_scenario <- 1 among: [1,2];
+	
+	parameter "Time step" var:step init: 16#s;
+	parameter "Starting time" var:starting_date_string init:"05 00 00";
+}
