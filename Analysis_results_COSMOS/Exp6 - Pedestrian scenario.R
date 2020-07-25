@@ -253,9 +253,70 @@ col <- 1
 
 df_mean <- df_from_list_folders(main_folder,size_of_csv,col)
 
-p_mean <- create_dygraphs(df_mean,main_folder,300,nameY)
+p_mean <- create_dygraphs(df_mean,main_folder,220,nameY)
 p_mean
 
+
+#################################################
+# STDVAQI : 2
+#################################################
+
+nameY = "stdv.AQI"
+col <- 2
+
+df_stddev <- df_from_list_folders(main_folder,size_of_csv,col)
+
+p_stddev <- create_dygraphs(df_stddev,main_folder,60,nameY)
+p_stddev
+
+
+#################################################
+# Mean Max : 4
+#################################################
+
+nameY = "Mean Max on interval"
+col <- 4
+
+df_meanMax <- df_from_list_folders(main_folder,size_of_csv,col)
+
+p_meanMax <- create_dygraphs(df_meanMax,main_folder,520,nameY)
+p_meanMax
+
+#################################################
+# Mean Min : 5
+#################################################
+
+nameY = "Mean Min on interval"
+col <- 5
+
+df_meanMin <- df_from_list_folders(main_folder,size_of_csv,col)
+
+p_meanMin <- create_dygraphs(df_meanMin,main_folder,15,nameY)
+p_meanMin
+
+
+################################################################  
+################################  exp64
+
+#################################################
+## CONSTANTES
+#################################################
+
+main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/exp64"
+size_of_csv <- 3000
+
+
+#################################################
+# MEANAQI : 1
+#################################################
+
+nameY <- "Mean.AQI"
+col <- 1
+
+df_mean <- df_from_list_folders(main_folder,size_of_csv,col)
+
+p_mean <- create_dygraphs(df_mean,main_folder,100,nameY)
+p_mean
 
 #################################################
 # STDVAQI : 2
@@ -279,7 +340,7 @@ col <- 4
 
 df_meanMax <- df_from_list_folders(main_folder,size_of_csv,col)
 
-p_meanMax <- create_dygraphs(df_meanMax,main_folder,400,nameY)
+p_meanMax <- create_dygraphs(df_meanMax,main_folder,250,nameY)
 p_meanMax
 
 #################################################
@@ -291,6 +352,6 @@ col <- 5
 
 df_meanMin <- df_from_list_folders(main_folder,size_of_csv,col)
 
-p_meanMin <- create_dygraphs(df_meanMin,main_folder,10,nameY)
+p_meanMin <- create_dygraphs(df_meanMin,main_folder,5,nameY)
 p_meanMin
 
