@@ -78,7 +78,7 @@ global {
 // Parameters:
 //   - diffusion model: road 
 //   - pollutant_decay_rate among [0.01, 0.1, 0.3, 0.5, 0.7, 0.9, 0.99]
-//   - pollutant_diffusion  among: [0.02,0.04,0.06,0.08,1.0,1.2]
+//   - pollutant_diffusion  among: [0.02,0.04,0.06,0.08,0.10,0.12]
 // Replications: 10 to 20
 // Stop condition: (cycle > 1500)
 //
@@ -88,7 +88,7 @@ experiment exp3 type: gui {
 	parameter "Benchmark" var: benchmark <- false;
 	
 	parameter "P Decay" var: pollutant_decay_rate init: 0.01; // among: [0.01, 0.1, 0.3, 0.5, 0.7, 0.9, 0.99];
-	parameter "P Diffu" var: pollutant_diffusion init: 0.06 ; //among: [0.02,0.04,0.06,0.08,1.0,1.2];
+	parameter "P Diffu" var: pollutant_diffusion init: 0.06 ; //among: [0.02,0.04,0.06,0.08,0.10,0.12];
 }
 
 experiment exp3_batch type: batch until: (cycle > 1500)  repeat: 8 { 
@@ -96,5 +96,5 @@ experiment exp3_batch type: batch until: (cycle > 1500)  repeat: 8 {
 	parameter "Benchmark" var: benchmark <- false;
 	
 	parameter "P Decay" var: pollutant_decay_rate init: 0.99; // among: [0.01, 0.1, 0.3, 0.5, 0.7, 0.9, 0.99];
-	parameter "P Diffu" var: pollutant_diffusion init: 0.06 ; //among: [0.02,0.04,0.06,0.08,1.0,1.2];
+	parameter "P Diffu" var: pollutant_diffusion init: 0.06 ; //among: [0.02,0.04,0.06,0.08,0.10,0.12]
 }

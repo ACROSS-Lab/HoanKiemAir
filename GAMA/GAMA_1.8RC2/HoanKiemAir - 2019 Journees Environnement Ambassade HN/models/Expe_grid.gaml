@@ -128,7 +128,7 @@ experiment exp2 type: gui {
 // Parameters:
 //   - diffusion model: grid / road 
 //   - pollutant_decay_rate among [0.01, 0.1, 0.3, 0.5, 0.7, 0.9, 0.99]
-//   - pollutant_diffusion  among: [0.02,0.04,0.06,0.08,1.0,1.2]
+//   - pollutant_diffusion  among: [0.02,0.04,0.06,0.08,0.10,0.12]
 // Replications: 10 to 20
 // Stop condition: (cycle > 1500)
 //
@@ -137,7 +137,7 @@ experiment exp3 type: gui {
 	parameter  "Experiment name" var: exp_name init: "exp3";
 	
 	parameter "P Decay" var: pollutant_decay_rate init: 0.01; // among: [0.01, 0.1, 0.3, 0.5, 0.7, 0.9, 0.99];
-	parameter "P Diffu" var: pollutant_diffusion init: 0.02 ; //among: [0.02,0.04,0.06,0.08,1.0,1.2];
+	parameter "P Diffu" var: pollutant_diffusion init: 0.02 ; //among: [0.02,0.04,0.06,0.08,0.10,0.12];
 }
 
 // Experiment on nb vehicles
