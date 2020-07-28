@@ -25,16 +25,38 @@ mean_line_col <- function(d,i,col) {
   return(mean(as.numeric(unlist(x))))
 }
 
-valParam <- function(name,param) {
+#valParam <- function(name,param) {
+#  l <- strsplit(name, "--")
+#  l <- lapply(l, function(z) strsplit(z,"-"))
+#  for(i in 1:length(l[[1]])) {
+#    if(l[[1]][[i]][1] == param) {
+#      return(l[[1]][[i]][2])
+#    }
+#  }
+#  return(-1)
+#}
+
+namesParams <- function(name,param) {
+  names <- c()
   l <- strsplit(name, "--")
   l <- lapply(l, function(z) strsplit(z,"-"))
   for(i in 1:length(l[[1]])) {
-    if(l[[1]][[i]][1] == param) {
-      return(l[[1]][[i]][2])
-    }
+    names <- c(names,l[[1]][[i]][1])
   }
-  return(-1)
+  return(names)
 }
+valuesParamsRounded <- function(name,param) {
+  values <- c()
+  l <- strsplit(name, "--")
+  l <- lapply(l, function(z) strsplit(z,"-"))
+  for(i in 1:length(l[[1]])) {
+    values <- c(values, round(as.numeric(l[[1]][[i]][2]), digits = 2))
+  }
+  return(values)
+} 
+#namesParams("meanDecay-0.699999988079071--Diffusion-0.019999999552965164")
+#valuesParamsRounded("meanDecay-0.699999988079071--Diffusion-0.019999999552965164")
+
 # val("meanDecay-0.699999988079071--Diffusion-0.019999999552965164","Diffusion")
 # val("meanDecay-0.699999988079071--Diffusion-0.019999999552965164","meanDecay")
 
@@ -75,31 +97,31 @@ create_dataframe <- function(wd,size_csv,col) { #col) {
 # Parse a set of folders to create the dataframe
 ##
 
-df_from_list_folders_given_value_param <- function(m_folder,nb_steps,col,param,value){
-  folders <- list.dirs(m_folder,recursive = FALSE)
-  data <- data.frame()
-  
-  for(f in folders){
-    print(f)
-    print(valParam(f,param))
-    print(value)
-    if(valParam(f,param) == value) {
-      d <- create_dataframe(f,nb_steps,col)
-      
-      if(length(data) == 0) {
-        data <- data.frame(time=d$time)
-      }
-      f <- getRelativePath(f, relativeTo = m_folder)
-      data[paste("mean",f,sep="")] = d$mean
-      data[paste("max",f,sep="")] = d$max
-      data[paste("min",f,sep="")] = d$min      
-    }
-  }
-  print(summary(data))
-  return(data)
-}
-
-df_from_list_folders_given_value_param(main_folder,size_of_csv,col,)
+#df_from_list_folders_given_value_param <- function(m_folder,nb_steps,col,param,value){
+#  folders <- list.dirs(m_folder,recursive = FALSE)
+#  data <- data.frame()
+#  
+#  for(f in folders){
+#    print(f)
+#    print(valParam(f,param))
+#    print(value)
+#    if(valParam(f,param) == value) {
+#      d <- create_dataframe(f,nb_steps,col)
+#      
+#      if(length(data) == 0) {
+#        data <- data.frame(time=d$time)
+#      }
+#      f <- getRelativePath(f, relativeTo = m_folder)
+#      data[paste("mean",f,sep="")] = d$mean
+#      data[paste("max",f,sep="")] = d$max
+#      data[paste("min",f,sep="")] = d$min      
+#    }
+#  }
+#  print(summary(data))
+#  return(data)
+#}
+#
+#df_from_list_folders_given_value_param(main_folder,size_of_csv,col,)
 
 #################################################
 # Parse a set of folders to create the dataframe
@@ -125,6 +147,55 @@ df_from_list_folders <- function(m_folder,nb_steps,col){
 }
 
 #################################################
+# Parse a set of folders to create the dataframe with 1 value and parameter values
+##
+
+df_from_list_folders_all_values <- function(m_folder,step){
+  colNames <- c("mean","stdDev","sum","max","min")
+  paramNames <- c()
+  first_line <- TRUE
+  
+  folders <- list.dirs(m_folder,recursive = FALSE)
+  data <- data.frame()
+  
+  for(f in folders){
+ #   d <- create_dataframe(f,nb_steps,col)
+    f_relative <- getRelativePath(f, relativeTo = m_folder)
+    
+    if(length(data) == 0) {
+      paramNames <- namesParams(f_relative)
+      cols <- c(paramNames,colNames)
+      data <- data.frame(0.0)
+      names(data) <- c("id")
+      for(i in 1:length(cols)) {
+        data[cols[i]] <- 0.0
+      }
+      data <- data[,-1]
+    }      
+    
+    paramValuess <- valuesParamsRounded(f_relative);
+    
+    # Import data
+    setwd(f)
+    temp = list.files(pattern="*.csv")
+    print(temp)
+    for(i in  1:length(temp)) {
+      df_local <- read.csv2(temp[i],sep=",",header = T)
+      rowValues <- c(paramValuess,df_local[step,])
+      if(first_line == TRUE) {
+        data[1,] = rowValues
+        first_line <- FALSE
+      } else {
+        data[nrow(data) + 1,] = rowValues
+      }
+      print(data)   
+    }
+  }
+  return(data)
+}
+
+
+#################################################
 # Create a plot with confidence interval from df
 ##
 
@@ -132,9 +203,8 @@ create_dygraphs <- function(df,m_folder,maxRange,n_Y) {
   folders <- list.dirs(m_folder,recursive = FALSE)
   
   p<- dygraph(df)%>%
-    dyAxis("y", label = n_Y, valueRange = c(0, maxRange)) 
-  # %>%
-#    dyLegend(show = "follow")
+    dyAxis("y", label = n_Y, valueRange = c(0, maxRange)) %>%
+    dyLegend(show = "follow")
   
   for(i in 1:length(folders)) {
     f <- getRelativePath(folders[i], relativeTo = m_folder)
@@ -152,7 +222,7 @@ create_dygraphs <- function(df,m_folder,maxRange,n_Y) {
 ## CONSTANTES
 #################################################
 
-main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/exp3"
+#main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/exp3"
 main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/exp3-roads"
 size_of_csv <- 1500
 
@@ -166,8 +236,132 @@ col <- 1
 
 df_mean <- df_from_list_folders(main_folder,size_of_csv,col)
 
-p_mean <- create_dygraphs(df_mean,main_folder,5000,nameY)
-p_mean <- create_dygraphs(df_mean,main_folder,600,nameY)
+p_mean <- create_dygraphs(df_mean,main_folder,200,nameY)
+p_mean
+
+
+#################################################
+# STDVAQI : 2
+#################################################
+
+nameY = "stdv.AQI"
+col <- 2
+
+df_stdDev <- df_from_list_folders(main_folder,size_of_csv,col)
+
+p_stdDev <- create_dygraphs(df_stdDev,main_folder,70
+                            ,nameY)
+p_stdDev
+
+
+#################################################
+# Mean Max : 4
+#################################################
+
+nameY = "Mean Max on interval"
+col <- 4
+
+df_meanMax <- df_from_list_folders(main_folder,size_of_csv,col)
+
+p_meanMax <- create_dygraphs(df_meanMax,main_folder,300,nameY)
+p_meanMax
+
+#################################################
+# Mean Min : 5
+#################################################
+
+nameY = "Mean Min on interval"
+col <- 5
+
+df_meanMin <- df_from_list_folders(main_folder,size_of_csv,col)
+
+p_meanMin <- create_dygraphs(df_meanMin,main_folder,10,nameY)
+p_meanMin
+
+
+##################################################################################################
+##################################################################################################
+##################################################################################################
+
+#################################################
+# Sensitivity analysis
+#################################################
+main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/exp3"
+step <- 500
+
+dataexf <- df_from_list_folders_all_values(main_folder,step)
+#dataexf
+
+
+#################################################
+# MEANAQI : mean
+#################################################
+
+aovexf <- aov(mean~Decay*Diffusion,data=dataexf)
+aovexf
+#summary(aovexf)
+df_mean <- round(summary(aovexf)[[1]][2]/sum(summary(aovexf)[[1]][2])*100,2)
+
+df_res <- df_mean
+names(df_res) <- c("mean")
+
+#################################################
+# stdDeviation : stdDev
+#################################################
+
+aovexf <- aov(stdDev~Decay*Diffusion,data=dataexf)
+aovexf
+#summary(aovexf)
+df_std <- round(summary(aovexf)[[1]][2]/sum(summary(aovexf)[[1]][2])*100,2)
+
+df_res["std"] <- df_std
+
+#################################################
+# MAXAQI : max
+#################################################
+
+aovexf <- aov(max~Decay*Diffusion,data=dataexf)
+aovexf
+#summary(aovexf)
+df_max <- round(summary(aovexf)[[1]][2]/sum(summary(aovexf)[[1]][2])*100,2)
+
+df_res["max"] <- df_max
+
+#################################################
+# MINAQI : min
+#################################################
+
+aovexf <- aov(min~Decay*Diffusion,data=dataexf)
+aovexf
+#summary(aovexf)
+df_min <- round(summary(aovexf)[[1]][2]/sum(summary(aovexf)[[1]][2])*100,2)
+
+df_res["min"] <- df_min
+
+df_res
+
+
+
+
+
+#################################################
+## CONSTANTES
+#################################################
+
+main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/exp3-roads"
+size_of_csv <- 1500
+
+
+#################################################
+# MEANAQI : 1
+#################################################
+
+nameY <- "Mean.AQI"
+col <- 1
+
+df_mean <- df_from_list_folders(main_folder,size_of_csv,col)
+
+p_mean <- create_dygraphs(df_mean,main_folder,650,nameY)
 p_mean
 
 
@@ -194,7 +388,7 @@ col <- 4
 
 df_meanMax <- df_from_list_folders(main_folder,size_of_csv,col)
 
-p_meanMax <- create_dygraphs(df_meanMax,main_folder,7000,nameY)
+p_meanMax <- create_dygraphs(df_meanMax,main_folder,3500,nameY)
 p_meanMax
 
 #################################################
@@ -213,21 +407,61 @@ p_meanMin
 ##################################################################################################
 ##################################################################################################
 ##################################################################################################
-main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/Exp3/server8-gridV1"
-size_of_csv <- 3000
 
 #################################################
-# MEANAQI : 1
+# Sensitivity analysis
+#################################################
+main_folder <- "~/Dev/GitRepository/HoanKiemAir/Analysis_results_COSMOS/exp3-roads"
+step <- 500
+
+dataexf <- df_from_list_folders_all_values(main_folder,step)
+#dataexf
+
+
+#################################################
+# MEANAQI : mean
 #################################################
 
-nameY <- "Mean.AQI"
-col <- 1
+aovexf <- aov(mean~Decay*Diffusion,data=dataexf)
+aovexf
+#summary(aovexf)
+df_mean <- round(summary(aovexf)[[1]][2]/sum(summary(aovexf)[[1]][2])*100,2)
 
-df_mean_Roads <- df_from_list_folders(main_folder,size_of_csv,col)
+df_res <- df_mean
+names(df_res) <- c("mean")
 
-p_mean_Roads <- create_dygraphs(df_mean_Roads,main_folder,0.05,nameY)
-p_mean_Roads
+#################################################
+# stdDeviation : stdDev
+#################################################
 
+aovexf <- aov(stdDev~Decay*Diffusion,data=dataexf)
+aovexf
+#summary(aovexf)
+df_std <- round(summary(aovexf)[[1]][2]/sum(summary(aovexf)[[1]][2])*100,2)
 
+df_res["std"] <- df_std
 
+#################################################
+# MAXAQI : max
+#################################################
+
+aovexf <- aov(max~Decay*Diffusion,data=dataexf)
+aovexf
+#summary(aovexf)
+df_max <- round(summary(aovexf)[[1]][2]/sum(summary(aovexf)[[1]][2])*100,2)
+
+df_res["max"] <- df_max
+
+#################################################
+# MINAQI : min
+#################################################
+
+aovexf <- aov(min~Decay*Diffusion,data=dataexf)
+aovexf
+#summary(aovexf)
+df_min <- round(summary(aovexf)[[1]][2]/sum(summary(aovexf)[[1]][2])*100,2)
+
+df_res["min"] <- df_min
+
+df_res
 
