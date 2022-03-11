@@ -10,6 +10,7 @@
 	1. Install specified packages: `npm install`
 	2. Navigate to `node_modules/shp2stl/package.json` and change `"three": "^0.66.0"` to `"three": "0.105.1"`
 	3. `npm list` to check if the installation is correct
+	3. You need to use a Node.js version inferior to Node.js 12. For example, Node.js 11.15 can be downloaded here: https://nodejs.org/download/release/v11.15.0/
 
 ## 2. Prepare the shapefiles with *QGIS*
 * Deal with overlaps:
