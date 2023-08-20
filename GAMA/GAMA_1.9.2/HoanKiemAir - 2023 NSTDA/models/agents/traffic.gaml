@@ -7,12 +7,7 @@
 
 model traffic
 import "../global_vars.gaml"
-
-global {
-	float time_vehicles_move;
-	int nb_recompute_path;
-}
-
+ 
 species road schedules: [] {
 	string type;
 	bool oneway;
@@ -72,8 +67,7 @@ species vehicle skills: [moving] {
 		if (recompute_path) {
 			recompute_path <- false;
 		}
-		float end <- machine_time;
-		time_vehicles_move <- time_vehicles_move + (end - start);
+		float end <- machine_time; 
 	}
 	
 	aspect default {

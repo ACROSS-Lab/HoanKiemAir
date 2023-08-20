@@ -12,13 +12,7 @@ import "agents/pollution.gaml"
 import "agents/visualization.gaml" 
 
 global { 
-
-	// Benchmark execution time
-	bool benchmark <- false;
-	float time_absorb_pollutants;
-	float time_diffuse_pollutants;
-	float time_create_congestions;
-
+ 
 	float step <- 0.5#h;
 	date starting_date <- date(starting_date_string,"HH mm ss");
 	
@@ -192,7 +186,6 @@ global {
 	}
 	
 	reflex create_congestions {
-		float start <- machine_time; 
 		ask open_roads {
 			list<vehicle> vehicles_on_road <- vehicle at_distance 1;
 			int n_cars_on_road <- vehicles_on_road count (each.type = "car");
@@ -201,8 +194,7 @@ global {
 		}
 		
 		map<float, float> road_weights <- open_roads as_map (each::(each.shape.perimeter / each.speed_coeff));
-		road_network <- road_network with_weights road_weights;
-		time_create_congestions <- machine_time - start;
+		road_network <- road_network with_weights road_weights;  
 	}
 	
 	matrix<float> mat_diff <- matrix([
@@ -212,7 +204,6 @@ global {
 
 		
 	reflex produce_pollutant {
-		float start <- machine_time;
 		// Absorb pollutants emitted by vehicles
 		ask active_cells parallel: true {
 			list<vehicle> vehicles_in_cell <- vehicle inside self;
@@ -227,15 +218,12 @@ global {
 				}
 			}
 		}
-		time_absorb_pollutants <- machine_time - start;
 		
 		// Diffuse pollutants to neighbor cells
-		start <- machine_time;
 		diffuse var: co on: pollutant_cell matrix: mat_diff;
 		diffuse var: nox on: pollutant_cell matrix: mat_diff;
 		diffuse var: so2 on: pollutant_cell matrix: mat_diff;
 		diffuse var: pm on: pollutant_cell matrix: mat_diff;
-		time_diffuse_pollutants <- machine_time - start;
 	}
 	
 	reflex calculate_aqi when: every(refreshing_rate_plot) { //every(1 #minute) {
@@ -296,17 +284,6 @@ global {
 			
 			return daytime_traffic_peak[fd] * (1-blend_factor) + daytime_traffic_peak[pd] * blend_factor;
 		}	
-	}
-
-	// ---------- BENCHMARK ---------- //
-	
-	reflex benchmark when: benchmark and every(10 #cycle) {
-		write "Vehicles move: " + time_vehicles_move;
-		write "Path recomputed: " + nb_recompute_path;
-		write "Create congestions: " + time_create_congestions;
-		write "Absorb pollutants: " + time_absorb_pollutants;
-		write "Diffuse pollutants: " + time_diffuse_pollutants;
-		time_vehicles_move <- 0.0;
 	}
 }
 
