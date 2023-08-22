@@ -46,7 +46,8 @@ species motorbike parent: vehicle {
 	int num_lanes_occupied <-1;
 	float max_speed <-rnd(40,50) #km / #h;
 }
-species vehicle skills:[driving,moving] virtual:true  {
+
+species vehicle skills:[driving] {
 	string type;
 	building target;
 	point shift_pt <- location ;	
@@ -61,24 +62,11 @@ species vehicle skills:[driving,moving] virtual:true  {
 		linked_lane_limit <- 0; 
 		location <- one_of(building).location;
 	}
-	
-	point loc_to_send {return shift_pt;}
-	
-	
+
 	action select_target_path {
 		target <- one_of(building);
 		location <- (intersection closest_to self).location;
 		do compute_path graph: road_network target: target.closest_intersection; 
-	}
-	
-	bool overlapping_lane(vehicle other) {
-		int other_max <- other.lowest_lane + (other.num_lanes_occupied) - 1;
-		if other_max < lowest_lane {return false;}
-		if (other.lowest_lane) > (lowest_lane + num_lanes_occupied - 1) {
-			return false;
-		}
-		
-		return true;
 	}
 	
 	reflex choose_path when: final_target = nil  {
@@ -123,7 +111,3 @@ species building schedules: [] {
 	int pollution_index;
 	
 }
-
-species decoration_building schedules: [] {}
-
-species natural schedules: [] {}

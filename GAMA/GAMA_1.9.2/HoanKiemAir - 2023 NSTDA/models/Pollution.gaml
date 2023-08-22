@@ -12,7 +12,6 @@ global {
 	
 	
 	// Params
-	field cell <- field(grid_size, grid_size);
 	
 	float aqi_worst_max <- 3000.0;
 	float aqi_worst_mean <- 60.0;
@@ -23,6 +22,10 @@ global {
 	float pollutant_decay_rate <- 0.1;
 	float pollutant_diffusion <- 0.05;
 	int grid_size <- 150;
+	
+	
+	field cell <- field(grid_size, grid_size);
+	
 	matrix<float> mat_diff <- matrix([[pollutant_diffusion, pollutant_diffusion, pollutant_diffusion], [pollutant_diffusion, pollutant_decay_rate, pollutant_diffusion], [pollutant_diffusion, pollutant_diffusion, pollutant_diffusion]]);
 
 	// 0 -> good ; 3 -> bad
@@ -59,11 +62,11 @@ global {
 		return 0;
 	}
 	
-	reflex building_pollution {
-		ask building {
-			pollution_index <- myself.index_of_pollution(pollution_perception);
-		}
-	}
+//	reflex building_pollution {
+//		ask building {
+//			pollution_index <- myself.index_of_pollution(pollution_perception);
+//		}
+//	}
 
 
 	reflex pollution_evolution {
