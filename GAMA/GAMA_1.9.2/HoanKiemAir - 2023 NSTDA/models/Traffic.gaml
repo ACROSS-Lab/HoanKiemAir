@@ -35,6 +35,7 @@ species road  skills: [road_skill]{
 
 
 species car parent: vehicle {
+	string type <- CAR;
 	float vehicle_length <- 4.5 #m;
 	int num_lanes_occupied <-2;
 	float max_speed <-rnd(50,70) #km / #h;
@@ -42,6 +43,7 @@ species car parent: vehicle {
 }
 
 species motorbike parent: vehicle {
+	string type <- MOTO;
 	float vehicle_length <- 2.8 #m;
 	int num_lanes_occupied <-1;
 	float max_speed <-rnd(40,50) #km / #h;
@@ -80,7 +82,7 @@ species vehicle skills:[driving] {
 			at_home <- true;
 			location <- target.location;
 		} else {
-			shift_pt <-compute_position();
+			shift_pt <- compute_position();
 		}
 		
 	}
@@ -111,3 +113,5 @@ species building schedules: [] {
 	int pollution_index;
 	
 }
+
+
